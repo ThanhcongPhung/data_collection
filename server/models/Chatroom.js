@@ -6,6 +6,12 @@ const chatroomSchema = new mongoose.Schema({
     type:String,
     maxlength:50
   },
+  task: {
+    type:String,
+    maxlength:50
+  },
+  // need to design some stuff for intent.
+  // intent goes here
 })
 
 

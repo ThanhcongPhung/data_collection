@@ -6,13 +6,18 @@ const { auth } = require("../middleware/auth");
 
 router.post("/", async (req, res) => {
 
-  const chatroom = new Chatroom(req.body)
-  
-  chatroom.save((err, doc) => {
+  const { name, task } = req.body;
+
+  const chatroom = new Chatroom({
+    name,
+    task,
+  })
+
+  chatroom.save((err, roomCreated) => {
     if (err) return res.json({ success: false, err});
-    console.log(doc)
     return res.status(200).json({
-      success: true
+      success: true,
+      roomCreated
     });
   });
   
