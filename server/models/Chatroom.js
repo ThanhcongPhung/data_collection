@@ -10,6 +10,16 @@ const chatroomSchema = new mongoose.Schema({
     type:String,
     maxlength:50
   },
+  // user1 gives command
+  user1: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',      
+  },
+  // user2 receive command and shoot back response.
+  user2: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',      
+  },
   // need to design some stuff for intent.
   // intent goes here
 })

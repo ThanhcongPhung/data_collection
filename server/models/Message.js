@@ -10,7 +10,6 @@ const messageSchema = new mongoose.Schema({
 
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    // required: "Chatroom is required",
     ref: 'User',      
   },
 
