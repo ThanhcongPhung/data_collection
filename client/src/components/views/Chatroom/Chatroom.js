@@ -6,7 +6,7 @@ import './Chatroom.css'
 export default function Chatroom(props) {
 
   
-  const [ visible, setVisible ] = useState(false)
+  // const [ visible, setVisible ] = useState(false)
 
   return (
     <div className="app">

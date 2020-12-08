@@ -1,22 +1,8 @@
 import React, { useState } from 'react';
 import ReactRecord from 'react-record';
 import { Button } from 'antd';
-import bodyParser from 'body-parser';
 // @ant-design/icons doesn't work...
 // import { AudioOutlined } from '@ant-design/icons';
-
-// const onStop = blobObject => {
-//   console.log('blobObject is: ', blobObject);
-//   this.setState({
-//     blobURL: blobObject.blobURL
-//   });
-// }
-
-
-const onSave = blobObject => {
-  console.log("You can tap into the onSave callback", blobObject);
-};
-
 
 export default function RecordButton() {
 

@@ -4,21 +4,28 @@ import { useDispatch } from "react-redux";
 
 import { getRandomRoom } from '../../../../_actions/chatroom_actions'
 import ErrorInternalSystem from '../../Error/ErrorInternalSystem'
+import ErrorNotFound from '../../Error/ErrorNotFound'
 
 export default function RandomRoomButton() {
 
   const [ randomRoomID, setRandomRoomID ] = useState("")
+  const [ alert, setAlert ] = useState(0)
   const dispatch = useDispatch();
 
-  let alert = 0
   if (randomRoomID === '') {
     dispatch(getRandomRoom())
     .then(async (response) => {
       if (response.payload.success) {
-        setRandomRoomID(response.payload.roomFound._id)
+        if (response.payload.roomFound === null) { 
+          setAlert(2)
+        } else {
+          setAlert(0)
+          setRandomRoomID(response.payload.roomFound._id)
+        }
+        
       } else {
-        alert = 1
-        alert("Something's wrong with the server. We are very sorry for the inconvenience!")
+        setAlert(1)
+        window.alert("Something's wrong with the server. We are very sorry for the inconvenience!")
         return class extends React.Component {
           render() {
             return (
@@ -30,14 +37,18 @@ export default function RandomRoomButton() {
     })
   }
   
-     
-
-  return (
-    <>
-      {alert === 0 ? 
-        <Button><a href={`/chatroom/${randomRoomID}`}>Join a random room</a></Button> : 
-        <ErrorInternalSystem />}
-    </>
-  )
+  if (alert === 2) {
+    return (
+      <><ErrorNotFound target="room"/></>
+    )
+  } else if (alert  === 1) {
+    return (
+      <><ErrorInternalSystem /></>
+    )
+  } else {
+    return (
+      <><Button><a href={`/chatroom/${randomRoomID}`}>Join a random room</a></Button></>
+    )
+  }
   
 }
