@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { Chatroom } = require("../models/Chatroom");
 
-const { auth } = require("../middleware/auth");
+// const { auth } = require("../middleware/auth");
 
+// GET ALL
 router.get("/", (req, res) => {
 
   Chatroom.find({})
@@ -18,6 +19,24 @@ router.get("/", (req, res) => {
       })
     });
     
+})
+
+// GET RANDOM
+router.get("/random", (req, res) => {
+
+  // Get the count of all records
+  Chatroom.estimatedDocumentCount().exec((err, count) => {
+    if (err) res.status(500).send({ success: false, err })
+    // Get a random entry 
+    var random = Math.floor(Math.random() * count)
+    Chatroom.findOne().skip(random).exec((err, roomFound) => {
+      if (err) res.status(500).send({ success: false, err })
+      return res.status(200).send({
+        success: true,
+        roomFound
+      })
+    })
+  })
 })
 
 router.post("/", async (req, res) => {

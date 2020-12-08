@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
 import { getAllRooms } from '../../../../_actions/chatroom_actions';
+import ErrorInternalSystem from '../../Error/ErrorInternalSystem'
 
 import { Table } from 'antd'
 
@@ -11,7 +12,7 @@ function RoomList(props) {
 
   // !!! POTENTIAL BUG!!! 
   // IF THE ROOM COUNT IS TOO BIG, IT MAY NOT LOAD EVERYTHING.
-  if (roomList.length == 0) {
+  if (roomList.length === 0) {
     dispatch(getAllRooms())
     .then(response => {
       if (response.payload.success) {
@@ -52,7 +53,7 @@ function RoomList(props) {
   if (roomList == null) {
     return (
       <>
-        <span style={{ fontSize: '2rem' }}>We are very sorry for the inconvenience! Something's wrong with the server! </span>
+        <ErrorInternalSystem />
       </>
     )
   } else {

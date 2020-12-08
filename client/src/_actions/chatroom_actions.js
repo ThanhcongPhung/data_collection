@@ -2,7 +2,7 @@ import axios from 'axios';
 import {
   GET_ONE,
   GET_ALL,
-  // GET_RANDOM,
+  GET_RANDOM,
 } from './types';
 import { ROOM_SERVER } from '../components/Config.js';
 
@@ -24,6 +24,17 @@ export function getAllRooms() {
 
   return {
     type: GET_ALL,
+    payload: request
+  }
+}
+
+export function getRandomRoom() {
+  const request = 
+    axios.get(`${ROOM_SERVER}/random`)
+      .then(response => response.data);
+
+  return {
+    type: GET_RANDOM,
     payload: request
   }
 }

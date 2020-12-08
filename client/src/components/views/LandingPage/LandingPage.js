@@ -1,5 +1,7 @@
 import React from 'react'
+
 import RoomList from './Section/RoomList'
+import RandomRoomButton from './Section/RandomRoomButton'
 
 function LandingPage() {
 
@@ -13,6 +15,7 @@ function LandingPage() {
       <div style={{ float: 'right' }}>Thanks For Using This Boiler Plate by John Ahn</div> */}
       <div className="app">
         <RoomList pageSize= "10"/>
+        <RandomRoomButton />
       </div>
     </>
   )
