@@ -5,7 +5,6 @@ import RandomRoomButton from './Section/RandomRoomButton'
 
 function LandingPage() {
 
-  
   return (
     <>
       {/* <div className="app">
