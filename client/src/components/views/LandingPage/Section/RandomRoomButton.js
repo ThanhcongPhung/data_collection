@@ -34,7 +34,9 @@ export default function RandomRoomButton() {
 
   return (
     <>
-      {alert === 0 ? <Button><a href={`/chatroom/${randomRoomID}`}>Join a random room</a></Button> : <ErrorInternalSystem />}
+      {alert === 0 ? 
+        <Button><a href={`/chatroom/${randomRoomID}`}>Join a random room</a></Button> : 
+        <ErrorInternalSystem />}
     </>
   )
   

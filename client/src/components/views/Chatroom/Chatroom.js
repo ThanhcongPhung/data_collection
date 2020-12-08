@@ -1,10 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react';
+// import { Popover, Button } from 'antd';
+import RecordButton from './Section/RecordButton'
+import './Chatroom.css'
 
 export default function Chatroom(props) {
-  console.log(props.match.params.id)
+
+  
+  const [ visible, setVisible ] = useState(false)
+
   return (
-    <div>
-      
+    <div className="app">
+      {/* Popover looks ugly as shit */}
+        {/* <Popover
+          className="record-button"
+          trigger="click"
+          visible={visible}
+          onVisibleChange={() => setVisible(!visible)}
+          content={<RecordButton />}>
+          <Button>Record</Button>
+        </Popover> */}
+        <RecordButton />
     </div>
   )
 }
