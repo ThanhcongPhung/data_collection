@@ -12,7 +12,7 @@ function LandingPage() {
       </div>
       <div style={{ float: 'right' }}>Thanks For Using This Boiler Plate by John Ahn</div> */}
       <div className="app">
-        <RoomList pageSize= "1"/>
+        <RoomList pageSize= "10"/>
       </div>
     </>
   )

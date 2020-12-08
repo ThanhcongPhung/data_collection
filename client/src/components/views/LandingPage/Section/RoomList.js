@@ -18,6 +18,12 @@ axios.get(`${ROOM_SERVER}`)
     }
   });
 
+let lastIndex = 0
+const updateIndex = () => {
+  lastIndex++
+  return lastIndex
+}
+
 const columns = [
   {
     dataIndex: 'name',
@@ -30,7 +36,7 @@ const columns = [
   {
     render: () => (
       <>
-        <a href="#">Join</a>
+        <a href={`/chatroom/${updateIndex()}`}>Join</a>
       </>
     )
   }
@@ -47,7 +53,7 @@ function RoomList(props) {
   } else {
     return (
       <>
-        <Table 
+        <Table
           pagination={{ pageSize: parseInt(props.pageSize) }} 
           columns={columns} 
           dataSource={roomList}/>
