@@ -90,4 +90,26 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log("Disconnected: " + socket.userId)
   });
-})
+
+  socket.on('joinRoom', ({ chatroomID }) => {
+      socket.join(chatroomID);
+      console.log("An user has joined chatroom: " + chatroomID)
+  });
+
+  socket.on('leaveRoom', ( data ) => {
+    console.log("DATAAAAA")
+    console.log(data)
+    socket.leave(chatroomID);
+    console.log("An user has left chatroom: " + chatroomID)
+    
+  });
+
+  // Just receive a signal
+  socket.on('chatroomAudio', ({ chatroomID, sender }) => {
+    io.to(chatroomID).emit('newAudioURL', {
+      userID: socket.userId,
+      sender: sender
+    });
+    console.log("Receive audio in chatroom " + chatroomID + " from " + sender)
+  });
+});
