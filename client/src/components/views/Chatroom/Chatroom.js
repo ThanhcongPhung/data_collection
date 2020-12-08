@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 // import { Popover, Button } from 'antd';
-import RecordButton from './Section/RecordButton'
+
 import './Chatroom.css'
+import RecordButton from './Section/RecordButton'
+
 
 export default function Chatroom(props) {
 
+  // const chatroomID = props.match.params.id;
   
   // const [ visible, setVisible ] = useState(false)
 
