@@ -25,6 +25,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  /* margin-top: 90px; */
+  /* height: 100%; */
 }
 
 input.error {
