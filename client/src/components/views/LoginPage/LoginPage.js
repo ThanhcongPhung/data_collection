@@ -19,6 +19,8 @@ function LoginPage(props) {
     setRememberMe(!rememberMe)
   };
 
+  props.passingData()
+
   const initialEmail = localStorage.getItem("rememberMe") ? localStorage.getItem("rememberMe") : '';
 
   return (

@@ -1,5 +1,6 @@
-import React from 'react';
-// import { Popover, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button } from 'antd';
+import { useSelector } from 'react-redux';
 
 import './Chatroom.css'
 import RecordButton from './Section/RecordButton'
@@ -7,22 +8,52 @@ import RecordButton from './Section/RecordButton'
 
 export default function Chatroom(props) {
 
-  // const chatroomID = props.match.params.id;
+  var socket = props.socket
+  const chatroomID = window.location.href.split("/")[4]
+  const [ userId, setUserId ] = useState('')
+  let user = useSelector(state => state.user);
   
-  // const [ visible, setVisible ] = useState(false)
+  useEffect(() => {
+    if(socket) { 
+      socket.emit("joinRoom", {
+        chatroomID,
+      });
+    }
+  
+    return () => {
+      if(socket) {
+        console.log(chatroomID)
+        socket.emit("leaveRoom", {
+          chatroomID,
+        });
+      } 
+    };
+  }, [socket, chatroomID])
+
+  useEffect(() => {
+    if(user.userData) setUserId(user.userData._id)
+    if(socket) {
+      socket.on('newAudioURL', (data) => {
+        // console.log(data)
+        console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}`)
+      })
+    }
+  })
+
+  const sendAudio = () => {
+    if(socket) {
+      let sender = user.userData.name
+      socket.emit("chatroomAudio", {
+        chatroomID,
+        sender, 
+      })
+    }
+  }
 
   return (
     <div className="app">
-      {/* Popover looks ugly as shit */}
-        {/* <Popover
-          className="record-button"
-          trigger="click"
-          visible={visible}
-          onVisibleChange={() => setVisible(!visible)}
-          content={<RecordButton />}>
-          <Button>Record</Button>
-        </Popover> */}
         <RecordButton />
+        <Button onClick={sendAudio}>Send Signal</Button>
     </div>
   )
 }
