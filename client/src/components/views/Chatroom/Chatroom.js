@@ -10,28 +10,27 @@ export default function Chatroom(props) {
 
   var socket = props.socket
   const chatroomID = window.location.href.split("/")[4]
-  const [ userId, setUserId ] = useState('')
-  let user = useSelector(state => state.user);
-  
+  const user = useSelector(state => state.user);
+  let username = user.userData ? user.userData.name : ""
+
   useEffect(() => {
     if(socket) { 
       socket.emit("joinRoom", {
         chatroomID,
+        username,
       });
     }
   
     return () => {
       if(socket) {
-        console.log(chatroomID)
         socket.emit("leaveRoom", {
           chatroomID,
         });
       } 
     };
-  }, [socket, chatroomID])
+  }, [socket, chatroomID, username])
 
   useEffect(() => {
-    if(user.userData) setUserId(user.userData._id)
     if(socket) {
       socket.on('newAudioURL', (data) => {
         // console.log(data)
