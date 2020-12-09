@@ -91,9 +91,9 @@ io.on('connection', (socket) => {
     console.log("Disconnected: " + socket.userId)
   });
 
-  socket.on('joinRoom', ({ chatroomID }) => {
+  socket.on('joinRoom', ({ chatroomID, username }) => {
       socket.join(chatroomID);
-      console.log("An user has joined chatroom: " + chatroomID)
+      console.log(`The user ${username} has joined chatroom: ${chatroomID}`)
   });
 
   socket.on('leaveRoom', ( data ) => {
