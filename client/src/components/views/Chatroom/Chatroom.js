@@ -22,18 +22,22 @@ export default function Chatroom(props) {
     }
   
     return () => {
+      console.log("adsf;klfadk;jds;ksad")
       if(socket) {
+        // console.log("adfghjrfghjrtyjk")
         socket.emit("leaveRoom", {
           chatroomID,
+          username,
         });
       } 
     };
+    // Sua het <a> thanh <Link>
   }, [socket, chatroomID, username])
+ 
 
   useEffect(() => {
     if(socket) {
       socket.on('newAudioURL', (data) => {
-        // console.log(data)
         console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}`)
       })
     }

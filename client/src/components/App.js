@@ -38,6 +38,8 @@ function App(props) {
     socket.on('disconnect', () => {
       socket = null
       console.log("Socket Disconnected!")
+
+      // socket leaveroom
     });
 
     socket.on("connection", () => {

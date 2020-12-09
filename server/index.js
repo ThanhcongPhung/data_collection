@@ -96,11 +96,9 @@ io.on('connection', (socket) => {
       console.log(`The user ${username} has joined chatroom: ${chatroomID}`)
   });
 
-  socket.on('leaveRoom', ( data ) => {
-    console.log("DATAAAAA")
-    console.log(data)
+  socket.on('leaveRoom', ({ chatroomID, username }) => {
     socket.leave(chatroomID);
-    console.log("An user has left chatroom: " + chatroomID)
+    console.log(`The user ${username} has left chatroom: ${chatroomID}`)
     
   });
 
