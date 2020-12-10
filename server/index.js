@@ -70,13 +70,15 @@ io.use(async (socket, next) => {
   try {
     // Must be matched with the frontend.
     const token = socket.handshake.query.token;
-    await jwt.verify(token,'secret', (err, decode) => {
-      if(err) console.log(err)
-      else {
-        socket.userId = decode
-        next()
-      }
-    });
+    if(token !== "undefined") {
+      await jwt.verify(token,'secret', (err, decode) => {
+        if(err) console.log(err)
+        else {
+          socket.userId = decode
+          next()
+        }
+      });
+    }
   } catch (err) {
     console.log(err)
   }
