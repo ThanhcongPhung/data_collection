@@ -22,9 +22,7 @@ export default function Chatroom(props) {
     }
   
     return () => {
-      console.log("adsf;klfadk;jds;ksad")
       if(socket) {
-        // console.log("adfghjrfghjrtyjk")
         socket.emit("leaveRoom", {
           chatroomID,
           username,
