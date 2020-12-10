@@ -59,6 +59,55 @@ if (process.env.NODE_ENV === "production") {
 
 const port = process.env.PORT || 5000
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server Listening on ${port}`)
+});
+
+const io = require('socket.io')(server, { cors: { origin: "http://localhost:3000" } });
+const jwt = require('jsonwebtoken');
+
+io.use(async (socket, next) => {
+  try {
+    // Must be matched with the frontend.
+    const token = socket.handshake.query.token;
+    await jwt.verify(token,'secret', (err, decode) => {
+      if(err) console.log(err)
+      else {
+        socket.userId = decode
+        next()
+      }
+    });
+  } catch (err) {
+    console.log(err)
+  }
+})
+// ^^^^^ server socket
+
+// vvvvv client socket
+io.on('connection', (socket) => {
+  console.log("Connected: " + socket.userId);
+
+  socket.on('disconnect', () => {
+    console.log("Disconnected: " + socket.userId)
+  });
+
+  socket.on('joinRoom', ({ chatroomID, username }) => {
+      socket.join(chatroomID);
+      console.log(`The user ${username} has joined chatroom: ${chatroomID}`)
+  });
+
+  socket.on('leaveRoom', ({ chatroomID, username }) => {
+    socket.leave(chatroomID);
+    console.log(`The user ${username} has left chatroom: ${chatroomID}`)
+    
+  });
+
+  // Just receive a signal
+  socket.on('chatroomAudio', ({ chatroomID, sender }) => {
+    io.to(chatroomID).emit('newAudioURL', {
+      userID: socket.userId,
+      sender: sender
+    });
+    console.log("Receive audio in chatroom " + chatroomID + " from " + sender)
+  });
 });

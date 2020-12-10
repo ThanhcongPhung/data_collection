@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from 'antd';
 import { useDispatch } from "react-redux";
-
 import { getRandomRoom } from '../../../../_actions/chatroom_actions'
 import ErrorInternalSystem from '../../Error/ErrorInternalSystem'
 import ErrorNotFound from '../../Error/ErrorNotFound'
@@ -47,7 +47,8 @@ export default function RandomRoomButton() {
     )
   } else {
     return (
-      <><Button><a href={`/chatroom/${randomRoomID}`}>Join a random room</a></Button></>
+      <>
+        <Link to={`/chatroom/${randomRoomID}`}><Button>Join a random room</Button></Link></>
     )
   }
   

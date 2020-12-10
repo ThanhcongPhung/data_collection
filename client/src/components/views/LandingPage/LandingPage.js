@@ -3,9 +3,8 @@ import React from 'react'
 import RoomList from './Section/RoomList'
 import RandomRoomButton from './Section/RandomRoomButton'
 
-function LandingPage() {
+function LandingPage(props) {
 
-  
   return (
     <>
       {/* <div className="app">

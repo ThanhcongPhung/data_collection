@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import  { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getAllRooms } from '../../../../_actions/chatroom_actions';
 import ErrorInternalSystem from '../../Error/ErrorInternalSystem'
@@ -44,7 +45,9 @@ function RoomList(props) {
       render: () => (
         <>
           {/* !!! A BUG !!! CHAT ROOM INDEX DOESN'T REFRESH AFTER {LOG OUT THEN RE LOGIN}*/}
-          <a href={`/chatroom/${updateIndex()}`}>Join</a>
+          <Link to={`/chatroom/${updateIndex()}`}>
+            Join
+          </Link>
         </>
       )
     }

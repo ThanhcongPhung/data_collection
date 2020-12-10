@@ -28,7 +28,10 @@
     "mongoose": "^5.4.20",
     "react-record": "^1.0.5",
     "react-redux": "^5.0.7",
+    "react-router-dom": "^5.2.0",
     "saslprep": "^1.0.3",
+    "socket.io": "^3.0.4",
+    "socket.io-client": "^3.0.4",
     "supports-color": "^7.1.0"
   },
   "devDependencies": {
