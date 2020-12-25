@@ -4,10 +4,25 @@ import { useSelector } from 'react-redux';
 
 import './Chatroom.css'
 import RecordButton from './Section/RecordButton'
+import {ReactMediaRecorder} from "react-media-recorder";
 
 
 export default function Chatroom(props) {
-
+  const RecordView = () => (
+      <div>
+        <ReactMediaRecorder
+            video
+            render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+                <div>
+                  <p>{status}</p>
+                  <button onClick={startRecording}>Start Recording</button>
+                  <button onClick={stopRecording}>Stop Recording</button>
+                  <video src={mediaBlobUrl} controls autoplay loop />
+                </div>
+            )}
+        />
+      </div>
+  );
   var socket = props.socket
   const chatroomID = window.location.href.split("/")[4]
   const user = useSelector(state => state.user);
@@ -56,7 +71,7 @@ export default function Chatroom(props) {
   return (
     <div className="app">
         <RecordButton />
-        <Button onClick={sendAudio}>Send Signal</Button>
+        {/*<Button onClick={sendAudio}>Send Signal</Button>*/}
     </div>
   )
 }

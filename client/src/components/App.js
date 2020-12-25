@@ -33,6 +33,7 @@ function App(props) {
       query: {
         token: w_auth,
       },
+      transports:['websocket','polling','flashsocket']
     });
     
     socket.on('disconnect', () => {
