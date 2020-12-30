@@ -1,0 +1,36 @@
+.primary-button {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 18px;
+    background: white;
+}
+
+.background {
+    position: absolute;
+    margin: 0 auto;
+    border-radius: 50%;
+    width: 109px;
+    height: 109px;
+    filter: blur(7.6px);
+    transition: opacity .2s linear;
+    opacity: 0.7;
+    background: linear-gradient(90deg,#f89096,#b1b4e5);
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 2;
+    border: none;
+    border-radius: 50%;
+    width: 88px;
+    height: 88px;
+    background: white;
+    opacity: 1;
+    cursor: pointer;
+}
+
