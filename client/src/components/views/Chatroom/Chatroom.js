@@ -1,31 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Row, Col, Steps,Checkbox,Collapse,Button} from 'antd';
-
+import {Row, Col, Steps,Collapse,Affix,Button} from 'antd';
+import {locations} from './Section/Data';
 import './Chatroom.css'
 import RecordButton from './Section/RecordButton'
-import {ReactMediaRecorder} from "react-media-recorder";
-import { UserOutlined, SolutionOutlined, LoadingOutlined, SmileOutlined } from '@ant-design/icons';
+import Checkbox from './Section/Checkbox'
+import Checkbox2 from "./Section/Checkbox2";
+
 
 const { Step } = Steps;
 const { Panel } = Collapse
 
 export default function Chatroom(props) {
-    const RecordView = () => (
-        <div>
-            <ReactMediaRecorder
-                video
-                render={({status, startRecording, stopRecording, mediaBlobUrl}) => (
-                    <div>
-                        <p>{status}</p>
-                        <button onClick={startRecording}>Start Recording</button>
-                        <button onClick={stopRecording}>Stop Recording</button>
-                        <video src={mediaBlobUrl} controls autoplay loop/>
-                    </div>
-                )}
-            />
-        </div>
-    );
+    const [Filters, setFilters] = useState({
+        locations: [],
+    })
+    const [container, setContainer] = useState(10);
     var socket = props.socket
     const chatroomID = window.location.href.split("/")[4]
     const user = useSelector(state => state.user);
@@ -60,7 +50,12 @@ export default function Chatroom(props) {
             })
         }
     })
-
+    const handleFilters = (filters, category) => {
+        const newFilters = {...Filters}
+        newFilters[category] = filters
+        // console.log(newFilters)
+        setFilters(newFilters)
+    }
     const sendAudio = () => {
         if (socket) {
             let sender = user.userData.name
@@ -75,70 +70,50 @@ export default function Chatroom(props) {
     }
     return (
         <div>
-
             <Row>
                 <Col span={18} >
                     <Row style={{textAlign:"center"}}>
-                        <RecordButton>
-                        </RecordButton>
-                    </Row>
-                    <Row>
-                        <Col span={24}>Xác nhận câu lệnh:</Col>
+                        <div className="primary-buttons">
+                            <canvas style={{width:'100%',position:'absolute',maxWidth:'calc(1400px - 40px)'}}>
+                            </canvas>
+                            <RecordButton>
+                            </RecordButton>
+                        </div>
                     </Row>
                     <Row>
                         <Col >
-                            <Collapse defaultActiveKey={['0']} >
-                                <Panel header="Locations" key="1">
-                                    <Checkbox.Group style={{ width: '100%' }} onChange={onChange}>
-                                        <Row>
-                                            <Col span={8}>
-                                                <Checkbox value="A">A</Checkbox>
-                                            </Col>
-                                            <Col span={8}>
-                                                <Checkbox value="B">B</Checkbox>
-                                            </Col>
-                                            <Col span={8}>
-                                                <Checkbox value="C">C</Checkbox>
-                                            </Col>
-                                            <Col span={8}>
-                                                <Checkbox value="D">D</Checkbox>
-                                            </Col>
-                                            <Col span={8}>
-                                                <Checkbox value="E">E</Checkbox>
-                                            </Col>
-                                        </Row>
-                                    </Checkbox.Group>
-                                </Panel>
-                            </Collapse>
+                            <Checkbox
+                                list={locations}
+                                handleFilters={filters => handleFilters(filters, "locations")}
+                            />
                         </Col>
-
-
                     </Row>
-
-
                 </Col>
                 <Col span={6}>
-                    <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between",alignItems:"stretch",height:400}}>
-                        <Row style={{border:"1px solid black",flexGrow:'1'}}>
-                            <Col span={24}>Bạn muốn bật lò vi sóng trong phòng ăn ở tầng 1. Hãy nói yêu cầu trên bằng tiếng
+                    <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between",alignItems:"stretch"}}>
+                        <Row style={{borderLeft:"1px solid",height:"100%"}}>
+                            <h3 style={{fontWeight:'bold',fontSize:'18px'}}>Kịch bản hội thoại</h3>
+                            <Col span={24} style={{fontSize:"15px",marginTop:"auto"}}>Bạn muốn bật lò vi sóng trong phòng ăn ở tầng 1. Hãy nói yêu cầu trên bằng tiếng
                                 Việt ( có thể bằng 1 hoặc nhiều lần nói).</Col>
+                            <Col span={24}>
+                                <Checkbox2
+                                    list={locations}
+                                    handleFilters={filters => handleFilters(filters, "locations")}
+                                />
+                            </Col>
                         </Row>
-                        <Row style={{border:"1px solid black",flexGrow:'1'}}>
-                            <Col span={24}><Steps>
-                                <Step status="finish" title="Login" icon={<UserOutlined />} />
-                                <Step status="finish" title="Verification" icon={<SolutionOutlined />} />
-                                <Step status="process" title="Pay" icon={<LoadingOutlined />} />
-                                <Step status="wait" title="Done" icon={<SmileOutlined />} />
-                            </Steps>,</Col>
-                        </Row>
+
                     </div>
-                    <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between",height:300}}>
-                        <Row style={{border:"1px solid black",flexGrow:'1'}}>
+                    <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between",height:"100%"}}
+                         ref={setContainer}>
+                        <Row style={{fontWeight:'bold',border:"1px solid black",flexGrow:'1'}}>
                             <Col span={24}>Lịch sử hội thoại</Col>
+                            <Affix target={() => container}>
+
+                            </Affix>
                         </Row>
                     </div>
                 </Col>
-
             </Row>
             {/*<Button onClick={sendAudio}>Send Signal</Button>*/}
         </div>

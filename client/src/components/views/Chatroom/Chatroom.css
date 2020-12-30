@@ -7,3 +7,9 @@
 .ant-popover-arrow {
   color: black;
 }
+.primary-buttons{
+  margin-top: 2vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
