@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 18px;
+    /*margin: 0 18px;*/
     background: white;
 }
 
@@ -32,5 +32,24 @@
     background: white;
     opacity: 1;
     cursor: pointer;
+}
+.button-ready {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 25px;
+    z-index: 2;
+    border: none;
+    border-radius: 50%;
+    width: 88px;
+    height: 88px;
+    background: sienna;
+    opacity: 1;
+    cursor: pointer;
+    margin-top: 3em;
+}
+button:hover{
+
 }
 
