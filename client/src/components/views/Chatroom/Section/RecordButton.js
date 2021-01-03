@@ -2,13 +2,10 @@ import React, {useState} from 'react';
 import './RecordButton.css';
 import ReactRecord from 'react-record';
 
-
-export default function RecordButton() {
+export default function RecordButton({sendDataFromChild}) {
     const id = 25;
 
     const [isRecording, setIsRecording] = useState(false)
-    const [audioURL, setAudioURL] = useState(null)
-
     return (
         <div style={{margin: '4rem auto'}}>
             <div className="primary-button">
@@ -18,8 +15,8 @@ export default function RecordButton() {
                     onSave={blobObject => console.log("Call onSave call back here, ", blobObject)}
                     onStart={() => console.log("Call the onStart callback here")}
                     onStop={blobObject => {
-                        console.log('blobObject is: ', blobObject);
-                        setAudioURL(blobObject.blobURL)
+                        // console.log('blobObject is: ', blobObject);
+                        sendDataFromChild(blobObject.blobURL);
                     }}>
                     {isRecording ?
                         <button onClick={() => setIsRecording(false)} className="primary-button button" type="button">

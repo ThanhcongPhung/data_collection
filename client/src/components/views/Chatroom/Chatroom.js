@@ -6,6 +6,7 @@ import './Chatroom.css'
 import RecordButton from './Section/RecordButton'
 import Checkbox from './Section/Checkbox'
 import Checkbox2 from "./Section/Checkbox2";
+import useCanvas from "./Section/useCanvas";
 
 
 const { Step } = Steps;
@@ -20,7 +21,12 @@ export default function Chatroom(props) {
     const chatroomID = window.location.href.split("/")[4]
     const user = useSelector(state => state.user);
     let username = user.userData ? user.userData.name : ""
+    const [canvasRef] = useCanvas();
+    const [audioUrl,setAudioUrl] = useState(null);
 
+    const sendData=(e)=>{
+        setAudioUrl(e);
+    }
     useEffect(() => {
         if (socket) {
             socket.emit("joinRoom", {
@@ -30,9 +36,7 @@ export default function Chatroom(props) {
         }
 
         return () => {
-            console.log("adsf;klfadk;jds;ksad")
             if (socket) {
-                // console.log("adfghjrfghjrtyjk")
                 socket.emit("leaveRoom", {
                     chatroomID,
                     username,
@@ -65,19 +69,28 @@ export default function Chatroom(props) {
             })
         }
     }
-    function onChange(checkedValues) {
-        console.log('checked = ', checkedValues);
+    const renderAudio = (audioURL) => {
+        if (audioURL !== null) {
+            return (
+                <div>
+                    <audio
+                        controls="controls"
+                        src={audioURL}>
+                        <track kind="captions"/>
+                    </audio>
+                </div>
+            );
+        }
     }
     return (
-        <div>
+        <div className="chatroom">
             <Row>
                 <Col span={18} >
                     <Row style={{textAlign:"center"}}>
                         <div className="primary-buttons">
-                            <canvas style={{width:'100%',position:'absolute',maxWidth:'calc(1400px - 40px)'}}>
-                            </canvas>
-                            <RecordButton>
-                            </RecordButton>
+                            <canvas className="primary-buttons canvas" ref={canvasRef}
+                                    style={{width:'100%',position:'absolute',maxWidth:'calc(1400px - 40px)'}}/>
+                            <RecordButton sendDataFromChild={sendData}/>
                         </div>
                     </Row>
                     <Row>
@@ -87,6 +100,14 @@ export default function Chatroom(props) {
                                 handleFilters={filters => handleFilters(filters, "locations")}
                             />
                         </Col>
+                    </Row>
+                    <Row>
+                        <div className="submit-button">
+                            {renderAudio(audioUrl)}
+                            <button className="submit-button buttons">
+                                Send
+                            </button>
+                        </div>
                     </Row>
                 </Col>
                 <Col span={6}>
@@ -115,7 +136,6 @@ export default function Chatroom(props) {
                     </div>
                 </Col>
             </Row>
-            {/*<Button onClick={sendAudio}>Send Signal</Button>*/}
         </div>
     )
 }
