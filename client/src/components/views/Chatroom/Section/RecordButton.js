@@ -1,13 +1,55 @@
 import React, {useState} from 'react';
 import './RecordButton.css';
 import ReactRecord from 'react-record';
+// import axios from 'axios';
 
+import Test from './Test';
+// import { BACKEND_URL } from '../../../Config';
 
 export default function RecordButton() {
     const id = 25;
 
     const [isRecording, setIsRecording] = useState(false)
-    const [audioURL, setAudioURL] = useState(null)
+    const [audio, setAudio] = useState(null)
+
+    // const uploadAudio = async () => {
+    //     // const path = 'C:/Users/thovi/Desktop/Data/data_collection/server/public/uploads'
+    //     const data = new FormData()
+    //     data.append('file', {
+    //         uri: audioURL,
+    //         name: 'test.wav',
+    //         type: 'audio/wav',
+    //     })
+    //     const requestConfig = {     
+    //         headers: { 'content-type': 'multipart/form-data' }
+    //     }
+
+    //     try {
+    //         const res = await axios.post(
+    //             `${BACKEND_URL}/api/upload/file`,
+    //             data,
+    //             requestConfig,
+    //         ).then(res => {
+    //             console.log(res)
+    //         })
+    //     } catch(error){
+    //         alert(error)
+    //     }
+
+    //     // try {
+    //     //     const res = await fetch(`${BACKEND_URL}/api/upload/file`, {
+    //     //         method: 'POST',
+    //     //         headers: {
+    //     //             'Content-Type': 'multipart/form-data',
+    //     //         },
+    //     //         body: formdata,
+    //     //     })
+    //     //     const json = await res.json()
+    //     //     console.log(res)
+    //     // } catch (err) {
+    //     //     alert(err)
+    //     // }
+    // }
 
     return (
         <div style={{margin: '4rem auto'}}>
@@ -15,11 +57,14 @@ export default function RecordButton() {
                 <ReactRecord
                     record={isRecording}
                     onData={recordedBlob => console.log('chunk of data is: ', recordedBlob)}
-                    onSave={blobObject => console.log("Call onSave call back here, ", blobObject)}
+                    onSave={blobObject => {
+                        console.log("Call onSave call back here, ", blobObject)
+                        // uploadAudio()
+                    }}
                     onStart={() => console.log("Call the onStart callback here")}
                     onStop={blobObject => {
                         console.log('blobObject is: ', blobObject);
-                        setAudioURL(blobObject.blobURL)
+                        setAudio(blobObject)
                     }}>
                     {isRecording ?
                         <button onClick={() => setIsRecording(false)} className="primary-button button" type="button">
@@ -62,6 +107,7 @@ export default function RecordButton() {
                 </ReactRecord>
                 <div className="primary-button background"/>
             </div>
+            <Test audio={audio}/>
         </div>
     )
 }
