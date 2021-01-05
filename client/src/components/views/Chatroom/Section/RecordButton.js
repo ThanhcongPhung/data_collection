@@ -2,19 +2,28 @@ import React, {useState} from 'react';
 import './RecordButton.css';
 import ReactRecord from 'react-record';
 
+import Test from './Test';
+
 export default function RecordButton({sendDataFromChild}) {
     const id = 25;
 
     const [isRecording, setIsRecording] = useState(false)
+    const [audio, setAudio] = useState(null)
+
     return (
         <div style={{margin: '4rem auto'}}>
             <div className="primary-button">
                 <ReactRecord
                     record={isRecording}
                     onData={recordedBlob => console.log('chunk of data is: ', recordedBlob)}
-                    onSave={blobObject => console.log("Call onSave call back here, ", blobObject)}
+                    onSave={blobObject => {
+                        console.log("Call onSave call back here, ", blobObject)
+                        // uploadAudio()
+                    }}
                     onStart={() => console.log("Call the onStart callback here")}
                     onStop={blobObject => {
+                        console.log('blobObject is: ', blobObject);
+                        setAudio(blobObject)
                         // console.log('blobObject is: ', blobObject);
                         sendDataFromChild(blobObject.blobURL);
                     }}>
@@ -59,6 +68,7 @@ export default function RecordButton({sendDataFromChild}) {
                 </ReactRecord>
                 <div className="primary-button background"/>
             </div>
+            <Test audio={audio}/>
         </div>
     )
 }
