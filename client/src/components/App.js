@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect ,useState} from 'react';
 import { Route, Switch } from "react-router-dom";
 import io from 'socket.io-client';
 import Auth from "../hoc/auth";
@@ -35,7 +35,7 @@ function App(props) {
       },
       transports:['websocket','polling','flashsocket']
     });
-    
+
     socket.on('disconnect', () => {
       socket = null
       console.log("Socket Disconnected!")

@@ -33,7 +33,7 @@
 
 .submit-button {
     display: flex;
-    /*margin-top: 30px;*/
+    margin: 2rem;
     /*position: relative;*/
     /*display: flex;*/
     justify-content: center;
