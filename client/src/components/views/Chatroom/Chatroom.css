@@ -1,9 +1,54 @@
 .ant-popover-inner-content {
-  background-color: black;
-  /* width: 100px;
-  height: 100px; */
+    background-color: black;
+    /* width: 100px;
+    height: 100px; */
+}
+
+.chatroom {
+    background-image: linear-gradient(0deg, #fff 20%, #f3f2f1);
 }
 
 .ant-popover-arrow {
-  color: black;
+    color: black;
+}
+
+.primary-buttons {
+    margin-top: 2vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.canvas {
+    position: absolute;
+    width: 100% !important;
+    max-width: calc(1400px - 40px);
+    mask-image: linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0) 3%,
+            black,
+            rgba(0, 0, 0, 0) 97%
+    );
+}
+
+.submit-button {
+    display: flex;
+    margin: 2rem;
+    /*position: relative;*/
+    /*display: flex;*/
+    justify-content: center;
+    align-items: center;
+    /*background: white;*/
+}
+.buttons{
+    cursor: default;
+    border: none;
+    border-radius: 50px;
+    width: 178px;
+    height: 57px;
+    color: white;
+    background: #629ff4;
+    text-transform: uppercase;
+    font-family: Open Sans, sans-serif;
+    font-weight: 600;
 }
