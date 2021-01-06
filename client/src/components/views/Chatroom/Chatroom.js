@@ -3,11 +3,14 @@ import {useSelector} from 'react-redux';
 import {Row, Col, Steps,Collapse,Affix,Button} from 'antd';
 import {locations} from './Section/Data';
 import './Chatroom.css'
+
 import RecordButton from './Section/RecordButton'
 import Checkbox from './Section/Checkbox'
 import Checkbox2 from "./Section/Checkbox2";
 import useCanvas from "./Section/useCanvas";
-
+import SendButton from './Section/SendButton';
+import Scenario from './Section/Scenario';
+import AudioList from './Section/AudioList';
 
 const { Step } = Steps;
 const { Panel } = Collapse
@@ -21,11 +24,13 @@ export default function Chatroom(props) {
     const chatroomID = window.location.href.split("/")[4]
     const user = useSelector(state => state.user);
     let username = user.userData ? user.userData.name : ""
-    const [canvasRef] = useCanvas();
-    const [audioUrl,setAudioUrl] = useState(null);
+    const [ canvasRef ] = useCanvas();
+    const [ audioUrl, setAudioUrl ] = useState(null);
+    const [ audio, setAudio ] = useState(null);
 
-    const sendData=(e)=>{
-        setAudioUrl(e);
+    const sendData=(data)=>{
+        setAudio(data)
+        setAudioUrl(data.blobURL);
     }
     useEffect(() => {
         if (socket) {
@@ -60,7 +65,7 @@ export default function Chatroom(props) {
         // console.log(newFilters)
         setFilters(newFilters)
     }
-    const sendAudio = () => {
+    const sendAudioSignal = () => {
         if (socket) {
             let sender = user.userData.name
             socket.emit("chatroomAudio", {
@@ -85,7 +90,7 @@ export default function Chatroom(props) {
     return (
         <div className="chatroom">
             <Row>
-                <Col span={18} >
+                <Col span={20} >
                     <Row style={{textAlign:"center"}}>
                         <div className="primary-buttons">
                             <canvas className="primary-buttons canvas" ref={canvasRef}
@@ -94,23 +99,31 @@ export default function Chatroom(props) {
                         </div>
                     </Row>
                     <Row>
-                        <Col >
-                            <Checkbox
-                                list={locations}
-                                handleFilters={filters => handleFilters(filters, "locations")}
-                            />
-                        </Col>
+                        <Row>
+                            <Col >
+                                <Checkbox
+                                    list={locations}
+                                    handleFilters={filters => handleFilters(filters, "locations")}
+                                />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col offset={5} span={5} style={{float: 'left'}}>{renderAudio(audioUrl)}</Col>
+                            <Col offset={5} span={7} style={{float: 'right'}}><SendButton audio={audio} sendAudioSignal={sendAudioSignal}/></Col>
+                        </Row>
                     </Row>
-                    <Row>
+                    {/* <Row>
                         <div className="submit-button">
                             {renderAudio(audioUrl)}
                             <button className="submit-button buttons">
                                 Send
                             </button>
                         </div>
-                    </Row>
+                    </Row> */}
                 </Col>
-                <Col span={6}>
+                <Col span={4}>
+                    {/* Cho anh cái kịch bản hội thoại của em vào cái Scenario.js này nhé*/}
+                    <Scenario />
                     <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between",alignItems:"stretch"}}>
                         <Row style={{borderLeft:"1px solid",height:"100%"}}>
                             <h3 style={{fontWeight:'bold',fontSize:'18px'}}>Kịch bản hội thoại</h3>
@@ -123,10 +136,11 @@ export default function Chatroom(props) {
                                 />
                             </Col>
                         </Row>
-
                     </div>
                     <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between",height:"100%"}}
                          ref={setContainer}>
+                        {/* Cho anh cái lịch sử hội thoại vào cái AudioList này nhé*/}
+                        <AudioList />     
                         <Row style={{fontWeight:'bold',border:"1px solid black",flexGrow:'1'}}>
                             <Col span={24}>Lịch sử hội thoại</Col>
                             <Affix target={() => container}>
