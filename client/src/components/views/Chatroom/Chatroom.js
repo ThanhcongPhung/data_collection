@@ -32,6 +32,8 @@ export default function Chatroom(props) {
         setAudio(data)
         setAudioUrl(data.blobURL);
     }
+
+
     useEffect(() => {
         if (socket) {
             socket.emit("joinRoom", {
