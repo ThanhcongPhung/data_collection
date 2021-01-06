@@ -33,7 +33,8 @@ export default function Test(props) {
         formdata,
         requestConfig,
       ).then(res => {
-          console.log(res)
+        props.sendAudioSignal()
+        console.log(res)
       })
   } catch(error){
       alert(error)
@@ -42,7 +43,7 @@ export default function Test(props) {
   }
 
   const insertButton = data !== null ? (
-    <Button onClick={uploadAudio}>Sent</Button>
+    <Button type="primary" shape="round" size="large" onClick={uploadAudio}>Gửi</Button>
   ) : ""
 
   return (

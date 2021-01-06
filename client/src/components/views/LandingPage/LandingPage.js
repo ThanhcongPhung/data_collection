@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react'
 import RoomList from './Section/RoomList'
 import RandomRoomButton from './Section/RandomRoomButton'
 import {Button, Col, Modal, Row} from "antd";
-import RecordButton from "../Chatroom/Section/RecordButton";
+// import RecordButton from "../Chatroom/Section/RecordButton";
 import {useSelector} from "react-redux";
 
 function LandingPage(props) {
