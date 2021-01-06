@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const cors = require('cors')
-
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
@@ -24,14 +23,13 @@ const connect = mongoose.connect(config.mongoURI,
   .catch(err => console.log(err));
 
 
-
 require("./models/Message")
 
 app.use(cors())
 
 //to not get any deprecation warning or error
 //support parsing of application/x-www-form-urlencoded post data
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 //to get json data
 // support parsing of application/json type post data
 app.use(bodyParser.json());
@@ -39,10 +37,13 @@ app.use(cookieParser());
 
 app.use('/api/users', require('./routes/users'));
 app.use('/api/chatroom', require("./routes/chatroom"));
+app.use('/api/upload', require('./routes/upload'));
 
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
 app.use('/uploads', express.static('uploads'));
+
+app.use(express.static('./public'))
 
 // Serve static assets if in production
 if (process.env.NODE_ENV === "production") {
@@ -84,10 +85,38 @@ io.use(async (socket, next) => {
   }
 })
 // ^^^^^ server socket
-
+let sockets = {};
 // vvvvv client socket
 io.on('connection', (socket) => {
   console.log("Connected: " + socket.userId);
+  socket.emit('connection', {"id": socket.id});
+
+  socket.on('getUserInfo', data => {
+    // console.log(data);
+    sockets[socket.id] = {
+      username: data.userData.name,
+      email: data.userData.email,
+      is_joint: false,
+      room_id: null
+    };
+
+  });
+  console.log(sockets);
+  socket.on('getOpponents', data => {
+    let response = [];
+    for (let id in sockets) {
+      if (id !== socket.id && !sockets[id].is_joint) {
+        response.push({
+          id: id,
+          name: sockets[id].name,
+          email: sockets[id].email,
+        })
+      }
+    }
+  });
+  socket.on('startConversation', data => {
+    let roomId = uuidv4();
+  })
 
   socket.on('disconnect', () => {
     console.log("Disconnected: " + socket.userId)
@@ -113,3 +142,8 @@ io.on('connection', (socket) => {
     console.log("Receive audio in chatroom " + chatroomID + " from " + sender)
   });
 });
+
+// Generate Room ID
+function uuidv4() {
+  return mongoose.Types.ObjectId();
+}
