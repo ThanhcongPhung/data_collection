@@ -2,30 +2,28 @@ import React, {useState} from 'react';
 import './RecordButton.css';
 import ReactRecord from 'react-record';
 
-import Test from './Test';
-
 export default function RecordButton({sendDataFromChild}) {
     const id = 25;
 
     const [isRecording, setIsRecording] = useState(false)
-    const [audio, setAudio] = useState(null)
 
     return (
         <div style={{margin: '4rem auto'}}>
             <div className="primary-button">
                 <ReactRecord
                     record={isRecording}
-                    onData={recordedBlob => console.log('chunk of data is: ', recordedBlob)}
-                    onSave={blobObject => {
-                        console.log("Call onSave call back here, ", blobObject)
-                        // uploadAudio()
+                    onData={recordedBlob => {
+                        // console.log('chunk of data is: ', recordedBlob)
                     }}
-                    onStart={() => console.log("Call the onStart callback here")}
+                    onSave={blobObject => {
+                        // console.log("Call onSave call back here, ", blobObject)
+                    }}
+                    onStart={() => {
+                        // console.log("Call the onStart callback here")
+                    }}
                     onStop={blobObject => {
-                        console.log('blobObject is: ', blobObject);
-                        setAudio(blobObject)
                         // console.log('blobObject is: ', blobObject);
-                        sendDataFromChild(blobObject.blobURL);
+                        sendDataFromChild(blobObject);
                     }}>
                     {isRecording ?
                         <button onClick={() => setIsRecording(false)} className="primary-button button" type="button">
@@ -68,7 +66,6 @@ export default function RecordButton({sendDataFromChild}) {
                 </ReactRecord>
                 <div className="primary-button background"/>
             </div>
-            <Test audio={audio}/>
         </div>
     )
 }
