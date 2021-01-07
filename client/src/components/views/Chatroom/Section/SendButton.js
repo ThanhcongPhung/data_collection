@@ -1,5 +1,4 @@
 import React from 'react'
-import { Button } from 'antd'
 import axios from 'axios'
 
 import { BACKEND_URL } from '../../../Config'
@@ -43,7 +42,7 @@ export default function Test(props) {
   }
 
   const insertButton = data !== null ? (
-    <Button type="primary" shape="round" size="large" onClick={uploadAudio}>Gửi</Button>
+    <button className="buttons" onClick={uploadAudio}>Gửi</button>
   ) : ""
 
   return (
