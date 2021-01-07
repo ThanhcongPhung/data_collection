@@ -11,6 +11,7 @@ import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer"
 
 import { BACKEND_URL } from './Config'
+import Servant from "./views/Chatroom/Servant";
 
 // Second parameter for route:
 //null   Anyone Can go inside
@@ -55,6 +56,7 @@ function App(props) {
   const LandingPageWithSocket = () => (<LandingPage socket={socket} />)
   const LoginPageWithSocket = () => (<LoginPage setupSocket={setupSocket} />)
   const ChatroomWithSocket = () => (<Chatroom socket={socket} />)
+  const ServantWithSocket = ()=>(<Servant socket={socket}/>)
 
   return (
     <Suspense fallback={(<div>Loading...</div>)}>
@@ -65,6 +67,8 @@ function App(props) {
           <Route exact path="/login" component={Auth(LoginPageWithSocket, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           <Route exact path="/chatroom/:id" component={Auth(ChatroomWithSocket, true)} />
+          <Route exact path="/servant/:id" component={Auth(ServantWithSocket, true)} />
+
         </Switch>
       </div>
       <Footer />

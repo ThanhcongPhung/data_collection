@@ -1,17 +1,16 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 
 import RoomList from './Section/RoomList'
 import RandomRoomButton from './Section/RandomRoomButton'
 import {Button, Col, Modal, Row} from "antd";
-// import RecordButton from "../Chatroom/Section/RecordButton";
 import {useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
 
 function LandingPage(props) {
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
-  const showModal = () => {
-    setVisible(true);
-  };
+  let history = useHistory()
+
   let socket = props.socket;
 
 
@@ -27,40 +26,41 @@ function LandingPage(props) {
     setVisible(false);
   };
   const user = useSelector(state=>state.user)
-  let readyUser = [
-    {
-      "name":"test1",
-      "email":"test1@gmail.com"
-    },
-    {
-      "name":"test2",
-      "email":"test2@gmail.com"
-    }
-  ];
-  useEffect(() => {
-    if(socket){
-      socket.emit('getUserInfo',user);
-      socket.emit('getOpponents',{});
-      socket.emit('startConversation',readyUser);
-    }
-  })
-  console.log(user.userData)
+
+  const onReadyStatus = () => {
+    setVisible(true);
+  };
+
   function countDown() {
-    let secondsToGo = 5;
-    const modal = Modal.success({
-      title: 'Đang đợi đối phương bắt đầu',
-      content: `Màn hình sẽ tự động đóng trong ${secondsToGo} giây.`,
-    });
-    const timer = setInterval(() => {
-      secondsToGo -= 1;
-      modal.update({
-        content: `Màn hình sẽ tự động đóng trong ${secondsToGo} giây.`,
-      });
-    }, 1000);
-    setTimeout(() => {
-      clearInterval(timer);
-      modal.destroy();
-    }, secondsToGo * 1000);
+    socket.emit('pushUserInfo',user);
+    // socket.on('timer',data=>{
+    //   console.log(data);
+    //   let secondsToGo = data/1000;
+    //   const modal = Modal.success({
+    //     title: 'Đang đợi đối phương bắt đầu',
+    //     content: `Màn hình sẽ tự động đóng trong ${secondsToGo} giây.`,
+    //   });
+    //   const timer = setInterval(() => {
+    //     secondsToGo -= 1;
+    //     modal.update({
+    //       content: `Màn hình sẽ tự động đóng trong ${secondsToGo} giây.`,
+    //     });
+    //   }, 1000);
+    //   setTimeout(() => {
+    //     clearInterval(timer);
+    //     modal.destroy();
+    //   }, secondsToGo * 1000);
+    // })
+
+    socket.on('chat start',data=>{
+      console.log(data);
+      if(data.role===1){
+        history.push(`/chatroom/${data.room}`);
+      }else{
+        history.push(`/servant/${data.room}`);
+      }
+
+    })
   }
 
   return (
@@ -75,7 +75,7 @@ function LandingPage(props) {
           <Col span={8}>Client role guide</Col>
           <Col span={8} style={{textAlign: "center"}}>
             <div className="primary-buttons">
-              <button onClick={showModal} className="primary-button button-ready" type="button">
+              <button onClick={onReadyStatus} className="primary-button button-ready" type="button">
                 SẴN SÀNG
               </button>
               <Modal
