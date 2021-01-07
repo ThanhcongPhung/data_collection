@@ -15,12 +15,12 @@ const config = require("./config/key");
 
 const mongoose = require("mongoose");
 const connect = mongoose.connect(config.mongoURI,
-  {
-    useNewUrlParser: true, useUnifiedTopology: true,
-    useCreateIndex: true, useFindAndModify: false
-  })
-  .then(() => console.log('MongoDB Connected...'))
-  .catch(err => console.log(err));
+    {
+      useNewUrlParser: true, useUnifiedTopology: true,
+      useCreateIndex: true, useFindAndModify: false
+    })
+    .then(() => console.log('MongoDB Connected...'))
+    .catch(err => console.log(err));
 
 
 require("./models/Message")
@@ -64,16 +64,16 @@ const server = app.listen(port, () => {
   console.log(`Server Listening on ${port}`)
 });
 
-const io = require('socket.io')(server, { cors: { origin: "http://localhost:3000" } });
+const io = require('socket.io')(server, {cors: {origin: "http://localhost:3000"}});
 const jwt = require('jsonwebtoken');
 
 io.use(async (socket, next) => {
   try {
     // Must be matched with the frontend.
     const token = socket.handshake.query.token;
-    if(token !== "undefined") {
-      await jwt.verify(token,'secret', (err, decode) => {
-        if(err) console.log(err)
+    if (token !== "undefined") {
+      await jwt.verify(token, 'secret', (err, decode) => {
+        if (err) console.log(err)
         else {
           socket.userId = decode
           next()
@@ -84,42 +84,62 @@ io.use(async (socket, next) => {
     console.log(err)
   }
 })
+let queue = [];    // list of sockets waiting for peers
+let rooms = {};    // map socket.id => room
+let names = {};    // map socket.id => name
+let allUsers = {}; // map socket.id => socket
+let findPeer = function(socket) {
+  if (queue.length === 0) {
+    queue.push(socket)
+  } else {
+    let peer = queue.pop();
+    let room = socket.id+"#"+peer.id;
+    peer.join(room);
+    socket.join(room);
+    // register rooms to their names
+    rooms[peer.id] = room;
+    rooms[socket.id] = room;
+    // exchange names between the two of them and start the chat
+    peer.emit('chat start', {'name': names[socket.id], 'room':room,'role':1});
+    socket.emit('chat start', {'name': names[peer.id], 'room':room,'role':2});
+  }
+}
 // ^^^^^ server socket
-let sockets = {};
+
 // vvvvv client socket
 io.on('connection', (socket) => {
-  console.log("Connected: " + socket.userId);
-  socket.emit('connection', {"id": socket.id});
+  console.log("Connected: " + socket.id);
 
-  socket.on('getUserInfo', data => {
-    // console.log(data);
-    sockets[socket.id] = {
-      username: data.userData.name,
-      email: data.userData.email,
-      is_joint: false,
-      room_id: null
-    };
-
+  socket.on('pushUserInfo', data => {
+    console.log(data);
+    names[socket.id] = data.userData.name;
+    allUsers[socket.id] = socket;
+    // let countdown = 5000;
+    // let interval = setInterval(function() {
+    //   countdown--;
+    //   socket.emit('timer', { countdown: countdown });
+    //   clearInterval(interval);
+    // }, );
+    findPeer(socket);
   });
-  console.log(sockets);
-  socket.on('getOpponents', data => {
-    let response = [];
-    for (let id in sockets) {
-      if (id !== socket.id && !sockets[id].is_joint) {
-        response.push({
-          id: id,
-          name: sockets[id].name,
-          email: sockets[id].email,
-        })
-      }
-    }
+  socket.on('leave room', function () {
+    // let room = rooms[socket.id];
+    // socket.broadcast.to(room).emit('chat end');
+    // let peerID = room.split('#');
+    // peerID = peerID[0] === socket.id ? peerID[1] : peerID[0];
+    // // add both current and peer to the queue
+    // findPeer(allUsers[peerID]);
+    // findPeer(socket);
   });
-  socket.on('startConversation', data => {
-    let roomId = uuidv4();
-  })
 
   socket.on('disconnect', () => {
-    console.log("Disconnected: " + socket.userId)
+    // let room = rooms[socket.id];
+    // socket.broadcast.to(room).emit('chat end');
+    // let peerID = room.split('#');
+    // peerID = peerID[0] === socket.id ? peerID[1] : peerID[0];
+    // // current socket left, add the other one to the queue
+    // findPeer(allUsers[peerID]);
+    console.log("Disconnected: " + socket.id)
   });
 
   socket.on('joinRoom', ({ chatroomID, username }) => {
