@@ -3,6 +3,8 @@ const router = express.Router();
 const uploadService = require('../services/upload')
 const multer = require('multer')
 
+const DOMAIN_NAME = "http://localhost:5000/public/audio"
+
 router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err ) => {
 
   // the err ^^^^^^ there doesn't seem to be err but rather something else... But either way it works for now, the thing up there doesn't matter that much.
@@ -38,10 +40,13 @@ router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err ) 
     }
   } else if (err) {
     console.log(err)
+    console.log(err())
   }
   
   try {
-    return res.status(200).send({ success: true })
+    let path_components = req.file.path.split('\\')
+    let audio_link = `${DOMAIN_NAME}/${path_components[path_components.length-4]}/${path_components[path_components.length-3]}/${path_components[path_components.length-2]}/${path_components[path_components.length-1]}`
+    return res.status(200).send({ success: true, link: audio_link })
   } catch (error) {
     console.log("Dead")
     res.status(500).send({ success: false, error })
