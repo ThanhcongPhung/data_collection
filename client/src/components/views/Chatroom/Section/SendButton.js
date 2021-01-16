@@ -7,14 +7,8 @@ export default function Test(props) {
 
   const data = props ? props.audio : null
 
-  // const submit = (e) => {
-  //   e.preventDefault()
-  //   fetch('/')
-  //   console.log("Submit!")
-  // }
-
   const uploadAudio = async (e) => {
-    e.preventDefault()
+    // e.preventDefault()
 
     // create data
     let formdata = new FormData()
@@ -32,13 +26,12 @@ export default function Test(props) {
         formdata,
         requestConfig,
       ).then(res => {
-        props.sendAudioSignal()
-        console.log(res)
+        props.sendAudioSignal(res.data.link)
+        console.log(res.data.link)
       })
-  } catch(error){
-      alert(error)
-  }
-
+    } catch(error){
+        alert(error)
+    }
   }
 
   const insertButton = data !== null ? (

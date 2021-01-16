@@ -43,7 +43,7 @@ app.use('/api/upload', require('./routes/upload'));
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
 app.use('/uploads', express.static('uploads'));
 
-app.use(express.static('./public'))
+app.use(express.static(__dirname))
 
 // Serve static assets if in production
 if (process.env.NODE_ENV === "production") {
@@ -154,12 +154,13 @@ io.on('connection', (socket) => {
   });
 
   // Just receive a signal
-  socket.on('chatroomAudio', ({ chatroomID, sender }) => {
+  socket.on('chatroomAudio', ({ chatroomID, sender, link }) => {
     io.to(chatroomID).emit('newAudioURL', {
       userID: socket.userId,
-      sender: sender
+      sender: sender,
+      audioLink: link,
     });
-    console.log("Receive audio in chatroom " + chatroomID + " from " + sender)
+    console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
   });
 });
 

@@ -24,6 +24,7 @@ export default function Chatroom(props) {
   const [canvasRef] = useCanvas();
   const [audioUrl, setAudioUrl] = useState(null);
   const [audio, setAudio] = useState(null);
+  const [audioHistory, setAudioHistory] = useState([]);
 
   const sendData = (data) => {
     setAudio(data)
@@ -49,11 +50,16 @@ export default function Chatroom(props) {
     };
   }, [socket, chatroomID, username])
 
-
+  // let audioHistory = []
   useEffect(() => {
     if (socket) {
       socket.on('newAudioURL', (data) => {
-        console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}`)
+        console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
+        // audioHistory.push(data.audioLink)
+        // console.log(audioHistory)
+        let newHistory = [...audioHistory]
+        newHistory.push(data.audioLink)
+        setAudioHistory(newHistory)
       })
     }
   })
@@ -63,14 +69,19 @@ export default function Chatroom(props) {
     // console.log(newFilters)
     setFilters(newFilters)
   }
-  const sendAudioSignal = () => {
+  const sendAudioSignal = (link) => {
     if (socket) {
       let sender = user.userData.name
       socket.emit("chatroomAudio", {
         chatroomID,
         sender,
+        link,
       })
     }
+
+    // Xóa cái audio to trên màn hình để đưa vào history
+    setAudio(null)
+    setAudioUrl(null)
   }
   const renderAudio = (audioURL) => {
     if (audioURL !== null) {
@@ -83,7 +94,7 @@ export default function Chatroom(props) {
             </audio>
           </div>
       );
-    }
+    } else return ""
   }
   return (
       <div className="chatroom">
@@ -116,8 +127,7 @@ export default function Chatroom(props) {
           </Col>
           <Col span={4}>
             <Scenario/>
-            <AudioList/>
-
+            <AudioList audioList={audioHistory}/>
           </Col>
         </Row>
       </div>

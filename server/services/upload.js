@@ -6,7 +6,7 @@ const { request } = require('express');
 // const FileType = require('file-type');
 
 const DESTINATION = 'public';
-const AUDIO_FOLDER = 'audios';
+const AUDIO_FOLDER = 'audio';
 const FAIL_FOLDER = 'trash';
 const OTHER_FOLDER = 'others';
 
@@ -39,8 +39,10 @@ const storage = multer.diskStorage({
       }
     }
 
-    mkDirByPathSync(destination);
-    return cb(null, destination);
+    // mkDirByPathSync(destination);
+    // return cb(null, destination);
+    
+    return cb(null, path.join(__dirname, '../', destination))
   },
   filename: (req, file, cb) => {
     const filename = `${generateRandomString(16)}${path.extname(
@@ -83,8 +85,12 @@ const mkDirByPathSync = (targetDir) => {
       throw err;
     }
 
+    console.log("curDir: " + curDir)
+
     return curDir;
   }, initDir);
+
+  console.log("Final link: " + targetDir)
 }
 
 const generateRandomString = (length, allowedChars) => {

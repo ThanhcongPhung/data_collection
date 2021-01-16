@@ -1,9 +1,25 @@
 import React, {useState} from 'react'
 import {Affix, Col, Row} from "antd";
 
-export default function AudioList() {
+export default function AudioList(props) {
 
   const [container, setContainer] = useState(10);
+
+  // props.audioList
+  // console.log(props.audioList)
+
+  const showAudio = props.audioList.map(audio => {
+    console.log(typeof audio)
+    return (
+      <div key={audio}>
+        <audio
+          controls="controls"
+          src={audio}>
+        <track kind="captions"/>
+        </audio>
+      </div>
+    )
+  })
 
   return (
       <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%"}}
@@ -13,6 +29,7 @@ export default function AudioList() {
           <Affix target={() => container}>
 
           </Affix>
+          {showAudio}
         </Row>
       </div>
   )
