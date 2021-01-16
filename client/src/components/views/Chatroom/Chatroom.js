@@ -47,7 +47,6 @@ export default function Chatroom(props) {
         });
       }
     };
-    // Sua het <a> thanh <Link>
   }, [socket, chatroomID, username])
 
 
@@ -116,7 +115,6 @@ export default function Chatroom(props) {
 
           </Col>
           <Col span={4}>
-            {/* Cho anh cái kịch bản hội thoại của em vào cái Scenario.js này nhé*/}
             <Scenario/>
             <AudioList/>
 
