@@ -39,9 +39,7 @@ const storage = multer.diskStorage({
       }
     }
 
-    // mkDirByPathSync(destination);
-    // return cb(null, destination);
-    
+    mkDirByPathSync(destination);
     return cb(null, path.join(__dirname, '../', destination))
   },
   filename: (req, file, cb) => {
@@ -73,7 +71,7 @@ const upload = multer({
 
 const mkDirByPathSync = (targetDir) => {
   const { sep } = path;
-  targetDir = `../../${targetDir}`  // this targetDir is hard code
+  targetDir = `../${targetDir}`  // this targetDir is hard code
   const initDir = path.isAbsolute(targetDir) ? sep : '';
   const baseDir = __dirname;
 
