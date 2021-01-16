@@ -8,7 +8,7 @@ export default function AudioList(props) {
   // props.audioList
   // console.log(props.audioList)
 
-  const showAudio = props.audioList.map(audio => {
+  const showAudio = props.audioList ? props.audioList.map(audio => {
     console.log(typeof audio)
     return (
       <div key={audio}>
@@ -19,7 +19,7 @@ export default function AudioList(props) {
         </audio>
       </div>
     )
-  })
+  }) : ""
 
   return (
       <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%"}}
