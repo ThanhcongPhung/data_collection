@@ -1,24 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Row, Col, Affix, Input, Menu} from 'antd';
+import {Row, Col, Input, Button} from 'antd';
 import {dropdowns} from './Section/Data';
 import './Chatroom.css'
 
 import RecordButton from './Section/RecordButton'
-import Checkbox from './Section/Checkbox'
-import Checkbox2 from "./Section/Checkbox2";
+
 import useCanvas from "./Section/useCanvas";
 import SendButton from './Section/SendButton';
-import Scenario from './Section/Scenario';
+
 import AudioList from './Section/AudioList';
 import Dropdown from './Section/Dropdown';
+import {useHistory} from "react-router-dom";
 
 const {TextArea} = Input;
 
 export default function Servant(props) {
 
   let socket = props.socket
-  const chatroomID = window.location.href.split("/")[4]
+  let chatroomID = window.location.href.split("/")[4]
   const user = useSelector(state => state.user);
   let username = user.userData ? user.userData.name : ""
   const [canvasRef] = useCanvas();
@@ -57,7 +57,18 @@ export default function Servant(props) {
       })
     }
   })
+  useEffect(()=>{
+    if(socket){
+      socket.on('chat end', function(data) {
+        console.log(data);
+        console.log(chatroomID);
+        socket.leave(chatroomID);
+        history.push('/');// it's possible to leave from both server and client, hoever it is better to be done by the client in this case
+        // room = '';
+      });
+    }
 
+  })
   const sendAudioSignal = () => {
     if (socket) {
       let sender = user.userData.name
@@ -70,7 +81,7 @@ export default function Servant(props) {
   const renderAudio = (audioURL) => {
     if (audioURL !== null) {
       return (
-          <div>
+          <div className="contents">
             <audio
                 controls="controls"
                 src={audioURL}>
@@ -80,8 +91,19 @@ export default function Servant(props) {
       );
     }
   }
+  let history = useHistory()
+  function leaveRoom() {
+    if(socket){
+      socket.emit('leave room');
+
+      // chatroomID = '';
+      // history.push('/');
+    }
+
+  }
   return (
       <div className="chatroom">
+        <Button onClick={leaveRoom}>Leave</Button>
         <Row>
           <Col span={20}>
             <Row style={{textAlign: "center"}}>

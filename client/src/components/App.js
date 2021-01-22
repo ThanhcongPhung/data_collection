@@ -27,6 +27,8 @@ function App(props) {
     document.cookie.split(";").map(info => {
       if (info.slice(0,8) === " w_auth=") {
         return w_auth = info.substring(8)
+      }else{
+        return null;
       }
     })
 

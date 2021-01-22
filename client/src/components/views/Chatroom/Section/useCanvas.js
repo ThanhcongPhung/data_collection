@@ -1,4 +1,4 @@
-import React, {useRef,useEffect} from 'react';
+import {useRef,useEffect} from 'react';
 // wave
 const RATIO = window.devicePixelRatio;
 const WIDTH = RATIO * 320;
