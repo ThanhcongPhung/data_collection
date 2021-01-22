@@ -123,13 +123,19 @@ io.on('connection', (socket) => {
     findPeer(socket);
   });
   socket.on('leave room', function () {
-    // let room = rooms[socket.id];
-    // socket.broadcast.to(room).emit('chat end');
-    // let peerID = room.split('#');
-    // peerID = peerID[0] === socket.id ? peerID[1] : peerID[0];
-    // // add both current and peer to the queue
-    // findPeer(allUsers[peerID]);
-    // findPeer(socket);
+    let room = rooms[socket.id];
+    console.log(room);
+    socket.broadcast.to(room).emit('chat end');
+    try {
+      let peerID = room.split('#');
+      peerID = peerID[0] === socket.id ? peerID[1] : peerID[0];
+      // add both current and peer to the queue
+      findPeer(allUsers[peerID]);
+      findPeer(socket);
+    }catch (e){
+      console.log(e);
+    }
+
   });
 
   socket.on('disconnect', () => {
