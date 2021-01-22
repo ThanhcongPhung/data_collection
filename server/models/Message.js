@@ -2,18 +2,19 @@ const mongoose = require('mongoose');
 
 
 const messageSchema = new mongoose.Schema({
-  chatroom: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: "Chatroom is required",
-    ref: 'Chatroom',
-  },
+  // Sẽ upload lên màn hình của chatroom qua socket nên có khi không cần cái này nữa
+  // chatroom: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   required: "Chatroom is required",
+  //   ref: 'Chatroom',
+  // },
 
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',      
   },
 
-  message:{
+  message: {
     type: String,
     required: "Message is required",
   }, 
