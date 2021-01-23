@@ -20,6 +20,13 @@ const chatroomSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',      
   },
+  // content_type decides the input type that users will provide 0 - audio, 1 - message
+  content_type: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 1,
+  },
   // need to design some stuff for intent.
   // intent goes here
 })

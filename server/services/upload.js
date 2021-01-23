@@ -83,12 +83,8 @@ const mkDirByPathSync = (targetDir) => {
       throw err;
     }
 
-    console.log("curDir: " + curDir)
-
     return curDir;
   }, initDir);
-
-  console.log("Final link: " + targetDir)
 }
 
 const generateRandomString = (length, allowedChars) => {

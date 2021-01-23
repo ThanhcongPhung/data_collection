@@ -66,7 +66,8 @@ function App(props) {
           <Route exact path="/" component={Auth(LandingPageWithSocket, null)} />
           <Route exact path="/login" component={Auth(LoginPageWithSocket, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
-          <Route exact path="/chatroom/:id" component={Auth(ChatroomWithSocket, true)} />
+          {/* content-type: 0 - audio, 1 - text message */}
+          <Route exact path="/chatroom/:content_type/:id" component={Auth(ChatroomWithSocket, true)} />
           <Route exact path="/servant/:id" component={Auth(ServantWithSocket, true)} />
 
         </Switch>
