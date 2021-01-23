@@ -66,7 +66,7 @@ class Curve {
 let lastFPSCheckAt = 0;
 let lowFPSCount = 0;
 let framesInLastSecond = [];
-class Wave {
+export default class Wave {
     constructor(canvas) {
         this.amplitude = IDLE_AMPLITUDE;
         this.colors = [
@@ -138,15 +138,15 @@ class Wave {
     }
 }
 
-export default function useCanvas(){
-    const canvasRef = useRef(null);
-
-    useEffect(()=>{
-        const canvasObj = canvasRef.current;
-        let wave = new Wave(canvasObj)
-        wave.idle();
-
-    });
-
-    return [ canvasRef];
-}
+// export default function useCanvas(){
+//     const canvasRef = useRef(null);
+//
+//     useEffect(()=>{
+//         const canvasObj = canvasRef.current;
+//         let wave = new Wave(canvasObj)
+//         wave.idle();
+//
+//     });
+//
+//     return [ canvasRef];
+// }
