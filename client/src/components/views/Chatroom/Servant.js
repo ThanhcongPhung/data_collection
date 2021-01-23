@@ -6,7 +6,7 @@ import './Chatroom.css'
 
 import RecordButton from './Section/RecordButton'
 
-import useCanvas from "./Section/useCanvas";
+// import useCanvas from "./Section/useCanvas";
 import SendButton from './Section/SendButton';
 
 import AudioList from './Section/AudioList';
@@ -21,10 +21,10 @@ export default function Servant(props) {
   let chatroomID = window.location.href.split("/")[4]
   const user = useSelector(state => state.user);
   let username = user.userData ? user.userData.name : ""
-  const [canvasRef] = useCanvas();
+  // const [canvasRef] = useCanvas();
   const [audioUrl, setAudioUrl] = useState(null);
   const [audio, setAudio] = useState(null);
-
+  
   const sendData = (data) => {
     setAudio(data)
     setAudioUrl(data.blobURL);
@@ -103,13 +103,13 @@ export default function Servant(props) {
   }
   return (
       <div className="chatroom">
-        <Button onClick={leaveRoom}>Leave</Button>
+        {/*<Button onClick={leaveRoom}>Leave</Button>*/}
         <Row>
           <Col span={20}>
             <Row style={{textAlign: "center"}}>
               <div className="primary-buttons">
-                <canvas className="primary-buttons canvas" ref={canvasRef}
-                        style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
+                {/*<canvas className="primary-buttons canvas" ref={canvasRef}*/}
+                {/*        style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>*/}
                 <RecordButton sendDataFromChild={sendData}/>
               </div>
             </Row>
