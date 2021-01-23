@@ -11,14 +11,15 @@ import useCanvas from "./Section/useCanvas";
 import SendButton from './Section/SendButton';
 import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
-
+import AudioRecordingScreen from './Section/AudioRecordingScreen'
 
 export default function Chatroom(props) {
   const [Filters, setFilters] = useState({
     locations: [],
   })
   let socket = props.socket
-  const chatroomID = window.location.href.split("/")[4]
+  const room_content_type = window.location.href.split("/")[4]
+  const chatroomID = window.location.href.split("/")[5]
   const user = useSelector(state => state.user);
   let username = user.userData ? user.userData.name : ""
   const [canvasRef] = useCanvas();
@@ -61,6 +62,14 @@ export default function Chatroom(props) {
         newHistory.push(data.audioLink)
         setAudioHistory(newHistory)
       })
+
+      socket.on('joinRoom announce', (data) => {
+        console.log(`User ${data.username} has joined the room`)
+      })
+
+      socket.on('leaveRoom announce', (data) => {
+        console.log(`User ${data.username} has left the room`)
+      })
     }
   })
   const handleFilters = (filters, category) => {
@@ -96,9 +105,20 @@ export default function Chatroom(props) {
       );
     } else return ""
   }
+
+  // const audioScreen = (
+    
+  // )
+
   return (
       <div className="chatroom">
         <Row>
+          {/* {
+            room_content_type === '0' ? audioScreen :
+            <Col span={20}></Col>
+          } */}
+          <AudioRecordingScreen />
+          {/* Cần nhét cái bên dưới vào file AudioRecordingScreen.js */}
           <Col span={20}>
             <Row style={{textAlign: "center"}}>
               <div className="primary-buttons">
@@ -123,11 +143,12 @@ export default function Chatroom(props) {
                 </div>
               </Row>
             </Row>
-
           </Col>
+          {/*  */}
+
           <Col span={4}>
             <Scenario/>
-            <AudioList audioList={audioHistory}/>
+            {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
           </Col>
         </Row>
       </div>
