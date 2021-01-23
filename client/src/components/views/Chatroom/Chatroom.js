@@ -1,16 +1,17 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useSelector} from 'react-redux';
-import ReactRecord from 'react-record';
-import './Section/RecordButton.css';
 import {Row, Col, Button, Tooltip} from 'antd';
 import {locations} from './Section/Data';
-import './Chatroom.css';
+import ReactRecord from 'react-record';
+import './Section/RecordButton.css';
+import './Chatroom.css'
 import {ShareIcon, RedoIcon, PlayOutlineIcon, StopIcon, MicIcon} from '../../ui/icons';
 import RecordButton from './Section/RecordButton'
 import Checkbox from './Section/Checkbox'
 import SendButton from './Section/SendButton';
 import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
+import AudioRecordingScreen from './Section/AudioRecordingScreen'
 import Wave from './Section/Wave';
 
 export default function Chatroom(props) {
@@ -18,9 +19,11 @@ export default function Chatroom(props) {
     locations: [],
   })
   let socket = props.socket
-  const chatroomID = window.location.href.split("/")[4]
+  const room_content_type = window.location.href.split("/")[4]
+  const chatroomID = window.location.href.split("/")[5]
   const user = useSelector(state => state.user);
   let username = user.userData ? user.userData.name : ""
+  // const [canvasRef] = useCanvas();
   const [audioUrl, setAudioUrl] = useState(null);
   const [audio, setAudio] = useState(null);
   const [audioHistory, setAudioHistory] = useState([]);
@@ -31,8 +34,7 @@ export default function Chatroom(props) {
 
   useEffect(() => {
     const canvasObj = canvasRef.current;
-    let wave = new Wave(canvasObj)
-
+    let wave = new Wave(canvasObj);
     if (wave) {
       isRecording ? wave.play() : wave.idle();
     }
@@ -78,6 +80,14 @@ export default function Chatroom(props) {
         newHistory.push(data.audioLink)
         setAudioHistory(newHistory)
       })
+
+      socket.on('joinRoom announce', (data) => {
+        console.log(`User ${data.username} has joined the room`)
+      })
+
+      socket.on('leaveRoom announce', (data) => {
+        console.log(`User ${data.username} has left the room`)
+      })
     }
   })
   const handleFilters = (filters, category) => {
@@ -100,7 +110,6 @@ export default function Chatroom(props) {
     setAudio(null)
     setAudioUrl(null)
   }
-
   const toggleIsPlaying = () => {
     const {current: audio} = audioRef;
 
@@ -132,7 +141,6 @@ export default function Chatroom(props) {
   function onShare() {
     console.log("Shared");
   }
-
   const renderAudio = (audioURL) => {
     if (audioURL !== null) {
       return (
@@ -182,13 +190,23 @@ export default function Chatroom(props) {
 
             {/*<div className="pill num">1</div>*/}
           </div>
-
       );
     } else return ""
   }
+
+  // const audioScreen = (
+
+  // )
+
   return (
       <div className="chatroom">
         <Row>
+          {/* {
+            room_content_type === '0' ? audioScreen :
+            <Col span={20}></Col>
+          } */}
+          <AudioRecordingScreen />
+          {/* Cần nhét cái bên dưới vào file AudioRecordingScreen.js */}
           <Col span={20}>
             <Row style={{textAlign: "center"}}>
               <div className="primary-buttons">
@@ -238,13 +256,14 @@ export default function Chatroom(props) {
                 </div>
               </Row>
             </Row>
+          </Col>
+          {/*  */}
 
-        </Col>
-        <Col span={4}>
-          <Scenario/>
-          <AudioList audioList={audioHistory}/>
-        </Col>
-      </Row>
-    </div>
+          <Col span={4}>
+            <Scenario/>
+            {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
+          </Col>
+        </Row>
+      </div>
   )
 }
