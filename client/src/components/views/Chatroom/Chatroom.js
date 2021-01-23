@@ -62,6 +62,14 @@ export default function Chatroom(props) {
         newHistory.push(data.audioLink)
         setAudioHistory(newHistory)
       })
+
+      socket.on('joinRoom announce', (data) => {
+        console.log(`User ${data.username} has joined the room`)
+      })
+
+      socket.on('leaveRoom announce', (data) => {
+        console.log(`User ${data.username} has left the room`)
+      })
     }
   })
   const handleFilters = (filters, category) => {
