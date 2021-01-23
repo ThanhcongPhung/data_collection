@@ -143,18 +143,25 @@ io.on('connection', (socket) => {
   });
 
   socket.on('joinRoom', ({ chatroomID, username }) => {
-      socket.join(chatroomID);
-      console.log(`The user ${username} has joined chatroom: ${chatroomID}`)
+    socket.join(chatroomID);
+    console.log(`The user ${username} has joined chatroom: ${chatroomID}`);
+    // sending to individual socketid (private message)
+    io.to(chatroomID).emit('joinRoom announce', {
+      username: username,
+    });
   });
 
   socket.on('leaveRoom', ({ chatroomID, username }) => {
     socket.leave(chatroomID);
     console.log(`The user ${username} has left chatroom: ${chatroomID}`)
-    
+    io.to(chatroomID).emit('leaveRoom announce', {
+      username: username,
+    });
   });
 
   // Just receive a signal
   socket.on('chatroomAudio', ({ chatroomID, sender, link }) => {
+    // sending to individual socketid (private message)
     io.to(chatroomID).emit('newAudioURL', {
       userID: socket.userId,
       sender: sender,
@@ -163,6 +170,9 @@ io.on('connection', (socket) => {
     console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
   });
 });
+
+// var sockets = require('./socket')
+// sockets.init(server)
 
 // Generate Room ID
 function uuidv4() {
