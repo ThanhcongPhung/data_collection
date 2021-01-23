@@ -20,6 +20,11 @@ function RoomList(props) {
         response.payload.roomFound.map(room => {
           return room.key = room._id
         })
+        response.payload.roomFound.sort((a, b) => {
+          if (a.name < b.name) return -1
+          else if (a.name > b.name) return 1
+          else return 0
+         })
         setRoomList(response.payload.roomFound)
       } else {
         alert("Something's wrong with the server. We are very sorry for the inconvenience!")
@@ -29,7 +34,9 @@ function RoomList(props) {
 
   let lastIndex = 0
   const updateIndex = () => {
-    return roomList[lastIndex++]._id
+    let index = `${roomList[lastIndex].content_type}/${roomList[lastIndex]._id}`;
+    lastIndex++;
+    return index
   }
 
   const columns = [

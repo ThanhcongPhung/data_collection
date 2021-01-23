@@ -41,16 +41,17 @@ router.get("/random", (req, res) => {
 
 router.post("/", async (req, res) => {
 
-  const { name, task } = req.body;
+  const { name, task, content_type } = req.body;
 
   const chatroom = new Chatroom({
     name,
     task,
+    content_type,
   })
 
   chatroom.save((err, roomCreated) => {
     if (err) return res.json({ success: false, err});
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       roomCreated
     });
