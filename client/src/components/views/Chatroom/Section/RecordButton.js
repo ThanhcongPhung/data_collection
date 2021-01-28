@@ -12,15 +12,9 @@ export default function RecordButton({sendDataFromChild}) {
             <div className="primary-button">
                 <ReactRecord
                     record={isRecording}
-                    onData={recordedBlob => {
-                        // console.log('chunk of data is: ', recordedBlob)
-                    }}
-                    onSave={blobObject => {
-                        // console.log("Call onSave call back here, ", blobObject)
-                    }}
-                    onStart={() => {
-                        // console.log("Call the onStart callback here")
-                    }}
+                    onData={() => {}}
+                    onSave={() => {}}
+                    onStart={() => {}}
                     onStop={blobObject => {
                         // console.log('blobObject is: ', blobObject);
                         sendDataFromChild(blobObject);
