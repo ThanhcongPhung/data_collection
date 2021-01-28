@@ -10,7 +10,7 @@ import RecordButton from './Section/RecordButton'
 import SendButton from './Section/SendButton';
 
 import AudioList from './Section/AudioList';
-import Dropdown from './Section/Dropdown';
+import Dropdown from './Section/Servant/Dropdown';
 import {useHistory} from "react-router-dom";
 
 const {TextArea} = Input;

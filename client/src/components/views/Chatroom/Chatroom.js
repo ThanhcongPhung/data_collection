@@ -7,11 +7,11 @@ import './Section/RecordButton.css';
 import './Chatroom.css'
 import {ShareIcon, RedoIcon, PlayOutlineIcon, StopIcon, MicIcon} from '../../ui/icons';
 import RecordButton from './Section/RecordButton'
-import Checkbox from './Section/Checkbox'
+import Checkbox from './Section/Client/Checkbox'
 import SendButton from './Section/SendButton';
 import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
-import AudioRecordingScreen from './Section/AudioRecordingScreen'
+import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import Wave from './Section/Wave';
 
 export default function Chatroom(props) {
@@ -205,7 +205,12 @@ export default function Chatroom(props) {
             room_content_type === '0' ? audioScreen :
             <Col span={20}></Col>
           } */}
-          <AudioRecordingScreen />
+          {/* <AudioRecordingScreen 
+            isRecording={isRecording}
+            setAudio={setAudio}
+            setAudioUrl={setAudioUrl}
+            setIsRecording={setIsRecording}
+            /> */}
           {/* Cần nhét cái bên dưới vào file AudioRecordingScreen.js */}
           <Col span={20}>
             <Row style={{textAlign: "center"}}>
