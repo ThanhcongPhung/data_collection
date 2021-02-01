@@ -4,7 +4,12 @@
     justify-content: center;
     align-items: center;
     /*margin: 0 18px;*/
+    outline: none;
     background-image: linear-gradient(0deg, #fff 20%, #f3f2f1);
+}
+.primary-button:hover{
+    /*background-color: #ff4f5e;*/
+    /*color: #ff4f5e;*/
 }
 
 .background {
@@ -18,6 +23,9 @@
     opacity: 0.7;
     background: linear-gradient(90deg,#f89096,#b1b4e5);
 }
+/*.background:hover{*/
+/*    background: linear-gradient(90deg,#ff4f5e,#b1b4e5);*/
+/*}*/
 
 .button {
     display: flex;
@@ -48,8 +56,5 @@
     opacity: 1;
     cursor: pointer;
     margin-top: 3em;
-}
-button:hover{
-
 }
 
