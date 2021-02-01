@@ -1,3 +1,5 @@
+const { text } = require('body-parser');
+
 var sockets = {}
 
 sockets.init = function(server) {
@@ -23,7 +25,8 @@ sockets.init = function(server) {
       console.log(err)
     }
   })
-  let queue = [];    // list of sockets waiting for peers
+  let audioQueue = [];
+  let textQueue = [];
 
   // let rooms = {};    // map socket.id => room
   // let names = {};    // map socket.id => name
@@ -55,13 +58,36 @@ sockets.init = function(server) {
     });
 
     socket.on('ready', ({userID, username, inputType}) => {
-      addToQueue(queue, userID)
+      if (inputType === "audio") {
+        addToQueue(audioQueue, userID)
+      } else if (inputType === "text") {
+        addToQueue(textQueue, userID)
+      } else {
+        addToQueue(audioQueue, userID)
+        addToQueue(textQueue, userID)
+      }
+
       console.log(`The user ${username} whose ID is ${userID} is ready to send ${inputType}`);
+      let result = matching(audioQueue, textQueue ,userID)
+      if (result !== null) {
+        console.log(`Partner: ${result.partner}, Room type: ${result.roomType}`)
+      } else console.log(`Waiting in queue...`)
+
+
+      // check if there's someone in the queue
+      // if there's, create a room, then remove those two mofo out of the queue
+      // decide who's the client, who's the servant
+      // send back the information of the room to the users
+
     })
 
     socket.on('cancel ready', ({userID, username}) => {
-      removeFromQueue(queue, userID)
+      // audioQueue = removeFromQueue(audioQueue, userID)
+      // textQueue = removeFromQueue(textQueue, userID)
+      removeFromQueue(audioQueue, userID);
+      removeFromQueue(textQueue, userID);
       console.log(`The user ${username} whose ID is ${userID} has cancelled their ready status`);
+      console.log(audioQueue)
     })
 
     socket.on('joinRoom', ({ chatroomID, username }) => {
@@ -92,9 +118,62 @@ const addToQueue = (queue, userID) => {
 }
 
 const removeFromQueue = (queue, userID) => {
-  queue = queue.filter((id) => {
-    return id !== userID
+  var index = queue.indexOf(userID);
+  if (index !== -1) {
+    queue.splice(index, 1);
+  }
+  return queue;
+}
+
+const matching = (audioQueue, textQueue, userID) => {
+  let matchingPartner;
+  if (audioQueue.length >= 2 && audioQueue.includes(userID)) {
+    removeFromQueue(audioQueue, userID)
+    removeFromQueue(textQueue, userID)
+    
+    matchingPartner = audioQueue.shift()
+    console.log(`matchingPartner: ${matchingPartner}`)
+    removeFromQueue(textQueue, matchingPartner)
+
+    return {partner: matchingPartner, roomType: "audio"}
+  } else if (textQueue.length >= 2 && textQueue.includes(userID)) {
+    removeFromQueue(audioQueue, userID)
+    removeFromQueue(textQueue, userID)
+
+    matchingPartner = textQueue.shift()
+    console.log(`matchingPartner: ${matchingPartner}`)
+    removeFromQueue(audioQueue, matchingPartner)
+
+    return {partner: matchingPartner, roomType: "text"}
+  } else return null
+}
+
+const { Chatroom } = require("./models/Chatroom");
+
+const createRoom = (userID1, userID2, roomType) => {
+  let content_type = roomType === "audio" ? 0 : 1
+  const chatroom = new Chatroom({
+    name: generateName(),
+    task: generateTask(),
+    content_type: content_type,
+    user1: userID1,
+    user2: userID2,
   })
+
+  chatroom.save((err, roomCreated) => {
+    if (err) console.log("CAN'T CREATE AUDIO ROOM!" + err );
+    console.log(`Room created. Room info: ${roomCreated}`)
+  })
+}
+
+const generateName = () => {
+  // IMPLEMENT!!!
+  return "A random room name."
+}
+
+const generateTask = () => {
+  // IMPLEMENT!!!
+  return "A sample task"
 }
 
 module.exports = sockets;
