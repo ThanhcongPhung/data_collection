@@ -23,6 +23,7 @@ function LandingPage(props) {
 
   const readySignal = () => {
     if (socket) {
+      setReadyStatus(true)
       let userID = user.userData ? user.userData._id : "";
       let username = user.userData ? user.userData.name : "";
       socket.emit("ready", {
@@ -30,19 +31,18 @@ function LandingPage(props) {
         username,
         inputType,
       })
-      setReadyStatus(true)
     }
   }
 
   const cancelReadySignal = () => {
     if (socket) {
+      setReadyStatus(false)
       let userID = user.userData ? user.userData._id : "";
       let username = user.userData ? user.userData.name : "";
       socket.emit("cancel ready", {
         userID,
         username,
       })
-      setReadyStatus(false)
     }
   }
 
@@ -118,6 +118,11 @@ function LandingPage(props) {
               readyStatus={readyStatus}
               readySignal={readySignal}
               cancelReadySignal={cancelReadySignal}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{textAlign: "center"}}>
+            {readyStatus}
           </Col>
         </Row>
         <Row>
