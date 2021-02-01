@@ -1,35 +1,50 @@
-import React, {useState} from 'react'
-
-import RoomList from './Section/RoomList'
-import RandomRoomButton from './Section/RandomRoomButton'
-import {Button, Col, Modal, Row} from "antd";
+import React, {useState, useEffect} from 'react'
 import {useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
 
+import {Button, Col, Modal, Row} from "antd";
+
+import RoomList from './Section/RoomList';
+import RandomRoomButton from './Section/RandomRoomButton';
+import ReadyButton from './Section/ReadyButton';
+import ContentSelection from './Section/ContentSelection';
+
 function LandingPage(props) {
-  const [loading, setLoading] = useState(false)
-  const [visible, setVisible] = useState(false)
-  let history = useHistory()
-
-  let socket = props.socket;
-
-
-  const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setVisible(false);
-      setLoading(false);
-    }, 3000);
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
-  };
+  const [ inputType, setInputType ] = useState("audio")
+  const [ readyStatus, setReadyStatus ] = useState(false)
+  let history = useHistory()  
   const user = useSelector(state=>state.user)
 
-  const onReadyStatus = () => {
-    setVisible(true);
-  };
+  let socket = props.socket;
+ 
+  useEffect(() => {
+
+  })
+
+  const readySignal = () => {
+    if (socket) {
+      let userID = user.userData ? user.userData._id : "";
+      let username = user.userData ? user.userData.name : "";
+      socket.emit("ready", {
+        userID,
+        username,
+        inputType,
+      })
+      setReadyStatus(true)
+    }
+  }
+
+  const cancelReadySignal = () => {
+    if (socket) {
+      let userID = user.userData ? user.userData._id : "";
+      let username = user.userData ? user.userData.name : "";
+      socket.emit("cancel ready", {
+        userID,
+        username,
+      })
+      setReadyStatus(false)
+    }
+  }
 
   function countDown() {
     socket.emit('pushUserInfo',user);
@@ -65,15 +80,10 @@ function LandingPage(props) {
 
   return (
     <>
-      {/* <div className="app">
-        <FaCode style={{ fontSize: '4rem' }} /><br />
-        <span style={{ fontSize: '2rem' }}>Let's Start Coding!</span>
-      </div>
-      <div style={{ float: 'right' }}>Thanks For Using This Boiler Plate by John Ahn</div> */}
       <div>
         <Row>
           <Col span={8}>Client role guide</Col>
-          <Col span={8} style={{textAlign: "center"}}>
+          {/* <Col span={8} style={{textAlign: "center"}}>
             <div className="primary-buttons">
               <button onClick={onReadyStatus} className="primary-button button-ready" type="button">
                 SẴN SÀNG
@@ -92,9 +102,23 @@ function LandingPage(props) {
                 <Button type="primary" onClick={countDown}>Bắt đầu ngay</Button>
               </Modal>
             </div>
-
+          </Col> */}
+          <Col offset={8} span={8}>Servant role guide</Col>
+        </Row>
+        <Row style={{marginBottom: "10px", marginTop: "10px"}}>
+          <Col style={{textAlign: "center"}}>
+            <ContentSelection 
+              disabled={readyStatus}
+              setInputType={setInputType}/>
           </Col>
-          <Col span={8}>Servant role guide</Col>
+        </Row>
+        <Row style={{marginBottom: "10px", marginTop: "10px"}}>
+          <Col style={{textAlign: "center"}}>
+            <ReadyButton 
+              readyStatus={readyStatus}
+              readySignal={readySignal}
+              cancelReadySignal={cancelReadySignal}/>
+          </Col>
         </Row>
         <Row>
           <div className="app">
