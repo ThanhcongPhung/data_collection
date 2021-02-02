@@ -49,11 +49,16 @@ export default function ReadyButton(props) {
         </Col>
       </Row>
       
-      <Row>
-        <Col>
-          Đang tìm bạn: {timeConverter(timer)}
-        </Col>
-      </Row>    
+      {
+        props.readyStatus ? (
+          <Row>
+            <Col>
+              Đang tìm bạn: {timeConverter(timer)}
+            </Col>
+          </Row>    
+        ) : ""
+      }
+      
     </>
   )
 }

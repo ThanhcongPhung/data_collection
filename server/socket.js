@@ -57,23 +57,40 @@ sockets.init = function(server) {
       console.log("Disconnected: " + socket.id)
     });
 
-    socket.on('ready', ({userID, username, inputType}) => {
-      if (inputType === "audio") {
-        addToQueue(audioQueue, userID)
-      } else if (inputType === "text") {
-        addToQueue(textQueue, userID)
-      } else {
-        addToQueue(audioQueue, userID)
-        addToQueue(textQueue, userID)
+    // when receive ready signal from user
+    socket.on('ready', ({socketID, userID, username, inputType}) => {
+      let userInfo = {
+        socketID: socketID,
+        userID: userID,
+        username: username,
       }
 
-      console.log(`The user ${username} whose ID is ${userID} is ready to send ${inputType}`);
-      let result = matching(audioQueue, textQueue ,userID)
+      // put the user into the respective queue, "all" will put the user into both queues.
+      if (inputType === "audio") {
+        addToQueue(audioQueue, userInfo)
+      } else if (inputType === "text") {
+        addToQueue(textQueue, userInfo)
+      } else {
+        addToQueue(audioQueue, userInfo)
+        addToQueue(textQueue, userInfo)
+      }
+
+      console.log(`At socket ${socketID} the user ${username} whose ID is ${userID} is ready to send ${inputType}`);
+
+      // finding a partner
+      let result = matching(audioQueue, textQueue, userInfo)
+
+      // if found a matching partner
       if (result !== null) {
-        console.log(`Client: ${result.client}, Servant: ${result.servant}, Room type: ${result.roomType}`)
+        console.log(`Client: ${result.client.username}, Servant: ${result.servant.username}, Room type: ${result.roomType}`)
         
-        // send prompt for confirm ready.
-        socket.emit('match', {
+        // send prompt to both users for confirm ready.
+        io.to(result.client.socketID).emit('match', {
+          client: result.client,
+          servant: result.servant,
+          roomType: result.roomType,
+        })
+        io.to(result.servant.socketID).emit('match', {
           client: result.client,
           servant: result.servant,
           roomType: result.roomType,
@@ -83,6 +100,7 @@ sockets.init = function(server) {
 
     // socket.on('ready 2', ())
 
+    // cancel ready status before the second confirmation (before "match" signal).
     socket.on('cancel ready', ({userID, username}) => {
       removeFromQueue(audioQueue, userID);
       removeFromQueue(textQueue, userID);
@@ -124,29 +142,29 @@ const removeFromQueue = (queue, userID) => {
   return queue;
 }
 
-const matching = (audioQueue, textQueue, userID) => {
+const matching = (audioQueue, textQueue, userInfo) => {
   let matchingPartner;
   // check if there's someone in the queue
-  if (audioQueue.length >= 2 && audioQueue.includes(userID)) {
+  if (audioQueue.length >= 2 && audioQueue.includes(userInfo)) {
     // if there's, create a room, then remove those two mofo out of the queue
-    removeFromQueue(audioQueue, userID)
-    removeFromQueue(textQueue, userID)
+    removeFromQueue(audioQueue, userInfo)
+    removeFromQueue(textQueue, userInfo)
     
     matchingPartner = audioQueue.shift()
     removeFromQueue(textQueue, matchingPartner)
 
     // decide who's the client, who's the servant
-    return {client: userID, servant: matchingPartner, roomType: "audio"}
-  } else if (textQueue.length >= 2 && textQueue.includes(userID)) {
+    return {client: userInfo, servant: matchingPartner, roomType: "audio"}
+  } else if (textQueue.length >= 2 && textQueue.includes(userInfo)) {
     // if there's, create a room, then remove those two mofo out of the queue
-    removeFromQueue(audioQueue, userID)
-    removeFromQueue(textQueue, userID)
+    removeFromQueue(audioQueue, userInfo)
+    removeFromQueue(textQueue, userInfo)
 
     matchingPartner = textQueue.shift()
     removeFromQueue(audioQueue, matchingPartner)
 
     // decide who's the client, who's the servant
-    return {client: userID, servant: matchingPartner, roomType: "text"}
+    return {client: userInfo, servant: matchingPartner, roomType: "text"}
   } else return null
 }
 

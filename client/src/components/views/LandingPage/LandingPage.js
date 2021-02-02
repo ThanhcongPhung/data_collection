@@ -38,7 +38,9 @@ function LandingPage(props) {
       setReadyStatus(true)
       let userID = user.userData ? user.userData._id : "";
       let username = user.userData ? user.userData.name : "";
+      let socketID = socket.id
       socket.emit("ready", {
+        socketID,
         userID,
         username,
         inputType,
@@ -94,6 +96,8 @@ function LandingPage(props) {
 
   //   })
   // }
+
+  // console.log(user.userData.isAuth)
 
   return (
     <>
