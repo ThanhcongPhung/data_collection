@@ -1,29 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from "react-redux";
-// import { useHistory } from "react-router-dom";
 import { Redirect } from 'react-router-dom';
 
 import { Col, Row } from "antd";
 
-import RoomList from './Section/RoomList';
-import RandomRoomButton from './Section/RandomRoomButton';
+// import RoomList from './Section/RoomList';
+// import RandomRoomButton from './Section/RandomRoomButton';
 import ReadyButton from './Section/ReadyButton';
 import ContentSelection from './Section/ContentSelection';
 import ConfirmModal from './Section/ConfirmModal';
 
 function LandingPage(props) {
-  let role = ""
-  let content_type = ""
+  const role = useRef("")
+  const content_type = useRef("")
+  // let role = ""
+  // let content_type = ""
 
   const [ inputType, setInputType ] = useState("audio")
   const [ readyStatus, setReadyStatus ] = useState(false)
 
-  // const [ role, setRole ] = useState(null)
-  // const [ roomType, setRoomType ] = useState(null)
   const [ matchFound, setMatchFound ] = useState(false)
   const [ redirect, setRedirect ] = useState(false) // redirect is the substitute of history.
   const [ roomLink, setRoomLink ] = useState('')
-  // let history = useHistory()  
   const user = useSelector(state=>state.user)
 
   let socket = props.socket;
@@ -35,10 +33,9 @@ function LandingPage(props) {
         if (user.userData && client.userID === user.userData._id) yourRole = "client"
         if (user.userData && servant.userID === user.userData._id) yourRole = "servant"
         console.log(`Found match! You are ${yourRole}. Your room type is ${roomType}`)
-        role = yourRole
+        role.current = yourRole
+        content_type.current = roomType
         setMatchFound(true)
-        // setRoomType(roomType)
-        content_type = roomType
       })
     }
   })
@@ -46,7 +43,7 @@ function LandingPage(props) {
   useEffect(() => {
     if (socket) {
       socket.on('prompt successful', ({ roomID }) => {
-        let link = `/chatroom/${content_type === "audio" ? 0 : 1}/${roomID}`
+        let link = `/chatroom/${content_type.current === "audio" ? 0 : 1}/${roomID}`
         setMatchFound(false)
         setReadyStatus(false)
         setRoomLink(link)
@@ -83,9 +80,6 @@ function LandingPage(props) {
   }
 
   const handleConfirmPromptModal = () => {
-    // setMatchFound(false)
-    // setReadyStatus(false)
-
     // socket logic goes here
     let userID = user.userData ? user.userData._id : "";
     let username = user.userData ? user.userData.name : "";
@@ -108,7 +102,7 @@ function LandingPage(props) {
   return (
     <>
       {
-        redirect ? (<Redirect to={roomLink} userRole={role} />) : ""
+        redirect ? (<Redirect to={roomLink} userRole={role.current} />) : ""
       }
       <div>
         <Row>
@@ -117,7 +111,7 @@ function LandingPage(props) {
             <ConfirmModal 
               socket={socket}
               visible={matchFound}
-              roomType={content_type}
+              roomType={content_type.current}
               handleOk={handleConfirmPromptModal}
               handleCancel={handleDenyPromptModal}/>
           </Col>
@@ -146,8 +140,8 @@ function LandingPage(props) {
         <Row>
           <div className="app">
 
-            <RoomList pageSize="3"/>
-            <RandomRoomButton/>
+            {/* <RoomList pageSize="3"/>
+            <RandomRoomButton/> */}
           </div>
         </Row>
 

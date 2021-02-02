@@ -9,24 +9,11 @@ export default function ConfirmModal(props) {
 
   useEffect(() => {
     if (socket) {
-      socket.on('wait for other prompt', ({}) => {
+      socket.on('wait for other prompt', () => {
         setPromptStatus(1)
       })
     }  
   })
-
-  // const handleOk = () => {
-  //   props.handleVisible();
-  //   // socket ok goes here
-  //   props.socket.emit('confirm', {
-      
-  //   })
-  // };
-
-  // const handleCancel = () => {
-  //   props.handleVisible();
-  //   // socket cancel ready go here
-  // };
 
   // const countDown = () => {
   //   // May change later
