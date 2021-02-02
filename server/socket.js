@@ -25,28 +25,9 @@ sockets.init = function(server) {
       console.log(err)
     }
   })
-  let audioQueue = [];
-  let textQueue = [];
-
-  // let rooms = {};    // map socket.id => room
-  // let names = {};    // map socket.id => name
-  // let allUsers = {}; // map socket.id => socket
-  // let findPeer = function(socket) {
-  //   if (queue.length === 0) {
-  //     queue.push(socket)
-  //   } else {
-  //     let peer = queue.pop();
-  //     let room = socket.id+"#"+peer.id;
-  //     peer.join(room);
-  //     socket.join(room);
-  //     // register rooms to their names
-  //     rooms[peer.id] = room;
-  //     rooms[socket.id] = room;
-  //     // exchange names between the two of them and start the chat
-  //     peer.emit('chat start', {'name': names[socket.id], 'room':room,'role':1});
-  //     socket.emit('chat start', {'name': names[peer.id], 'room':room,'role':2});
-  //   }
-  // }
+  let audioQueue = [];    // ready for audio room
+  let textQueue = [];     // ready for text room
+  let promptQueue = [];   // ready to join room
   // ^^^^^ server socket
 
   // vvvvv client socket
@@ -63,6 +44,7 @@ sockets.init = function(server) {
         socketID: socketID,
         userID: userID,
         username: username,
+        inputType: inputType,
       }
 
       // put the user into the respective queue, "all" will put the user into both queues.
@@ -83,6 +65,10 @@ sockets.init = function(server) {
       // if found a matching partner
       if (result !== null) {
         console.log(`Client: ${result.client.username}, Servant: ${result.servant.username}, Room type: ${result.roomType}`)
+
+        // result = { client: , servant: , roomType: , accepted: 0 }
+        result.accepted = 0
+        promptQueue.push(result)
         
         // send prompt to both users for confirm ready.
         io.to(result.client.socketID).emit('match', {
@@ -98,7 +84,42 @@ sockets.init = function(server) {
       } 
     })
 
-    // socket.on('ready 2', ())
+    // when both users confirm the second prompt, create a room and send them the information of the room.
+    socket.on('confirm prompt', ({socketID, userID, username, inputType}) => {
+      let userInfo = {
+        socketID: socketID,
+        userID: userID,
+        username: username,
+        inputType: inputType,
+      }
+
+      let promptQueueIndex = checkExist(promptQueue, userInfo)
+      if (promptQueueIndex !== -1) {
+        let pair = promptQueue[promptQueueIndex]
+        if (pair.accepted === 0) {
+          pair.accepted++
+          // tell one of the user that need the other user's prompt to continue.
+          io.to(socketID).emit('wait for other prompt', ({}))
+        } else {
+          // create a room for two, send them id.
+          createRoom(pair.client.userID, pair.servant.userID, pair.roomType)
+          .then(roomID => {
+            // tell both users that the room is ready
+            io.to(pair.client.socketID).emit('prompt successful', ({
+              roomID: roomID,
+            }))
+            io.to(pair.servant.socketID).emit('prompt successful', ({
+              roomID: roomID,
+            }))
+          })
+        }
+      }
+    })
+
+    // when the user deny or miss the second ready prompt
+    // socket.on('cancel prompt', ({}) => {
+
+    // })
 
     // cancel ready status before the second confirmation (before "match" signal).
     socket.on('cancel ready', ({userID, username}) => {
@@ -168,29 +189,39 @@ const matching = (audioQueue, textQueue, userInfo) => {
   } else return null
 }
 
+const checkExist = (queue, userInfo) => {
+  let result = -1
+  queue.map((pair, index) => {
+    if(compareObject(pair.client, userInfo) || compareObject(pair.servant, userInfo)) {
+      result = index
+      // PROBLEM!!! how to break from this (map) loop?
+    } 
+  })
+
+  return result
+}
+
+const compareObject = (obj1, obj2) => {
+  // This is the lazy way. 
+  return JSON.stringify(obj1) === JSON.stringify(obj2)
+}
+
 const { Chatroom } = require("./models/Chatroom");
 
-// const createRoom = (userID1, userID2, roomType) => {
+const createRoom = async (userID1, userID2, roomType) => {
 // user1 - client, user2 - servant
-const createRoom = (roomType) => {
   let content_type = roomType === "audio" ? 0 : 1
   const randomValue = randomGenerator()
-  const chatroom = new Chatroom({
+
+  const chatroom = await Chatroom.create({
     name: generateName() + randomValue,
     task: generateTask() + randomValue,
     content_type: content_type,
-    // user1: userID1,
-    // user2: userID2,
+    user1: userID1,
+    user2: userID2,
   })
 
-  chatroom.save((err, roomCreated) => {
-    if (err) {
-      console.log("CAN'T CREATE AUDIO ROOM!" + err );
-      return null
-    }
-    console.log(`Room created. Room info: ${roomCreated}`)
-    return roomCreated._id
-  })
+  return chatroom._id
 }
 
 const randomGenerator = () => {
