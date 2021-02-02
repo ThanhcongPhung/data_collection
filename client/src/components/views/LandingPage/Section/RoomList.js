@@ -34,7 +34,7 @@ function RoomList(props) {
 
   let lastIndex = 0
   const updateIndex = () => {
-    let index = `${roomList[lastIndex].content_type}/${roomList[lastIndex]._id}`;
+    let index = roomList[lastIndex] ? `${roomList[lastIndex].content_type}/${roomList[lastIndex]._id}` : "";
     lastIndex++;
     return index
   }

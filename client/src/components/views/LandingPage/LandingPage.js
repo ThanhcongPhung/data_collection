@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from "react-redux";
 // import { useHistory } from "react-router-dom";
+import { Redirect } from 'react-router-dom';
 
 import { Col, Row } from "antd";
 
@@ -11,11 +12,17 @@ import ContentSelection from './Section/ContentSelection';
 import ConfirmModal from './Section/ConfirmModal';
 
 function LandingPage(props) {
+  let role = ""
+  let content_type = ""
+
   const [ inputType, setInputType ] = useState("audio")
   const [ readyStatus, setReadyStatus ] = useState(false)
-  const [ role, setRole ] = useState(null)
-  const [ roomType, setRoomType ] = useState(null)
+
+  // const [ role, setRole ] = useState(null)
+  // const [ roomType, setRoomType ] = useState(null)
   const [ matchFound, setMatchFound ] = useState(false)
+  const [ redirect, setRedirect ] = useState(false) // redirect is the substitute of history.
+  const [ roomLink, setRoomLink ] = useState('')
   // let history = useHistory()  
   const user = useSelector(state=>state.user)
 
@@ -23,12 +30,27 @@ function LandingPage(props) {
  
   useEffect(() => {
     if (socket) {
-      socket.on('match', (data) => {
-        let yourRole = data.client === user.userData._id ? "client" : "servant"
-        console.log(`Found match! You are ${yourRole}. Your room type is ${data.roomType}`)
-        setRole(yourRole)
+      socket.on('match', ({ client, servant, roomType }) => {
+        let yourRole = ""
+        if (user.userData && client.userID === user.userData._id) yourRole = "client"
+        if (user.userData && servant.userID === user.userData._id) yourRole = "servant"
+        console.log(`Found match! You are ${yourRole}. Your room type is ${roomType}`)
+        role = yourRole
         setMatchFound(true)
-        setRoomType(data.roomType)
+        // setRoomType(roomType)
+        content_type = roomType
+      })
+    }
+  })
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('prompt successful', ({ roomID }) => {
+        let link = `/chatroom/${content_type === "audio" ? 0 : 1}/${roomID}`
+        setMatchFound(false)
+        setReadyStatus(false)
+        setRoomLink(link)
+        setRedirect(true)
       })
     }
   })
@@ -60,55 +82,44 @@ function LandingPage(props) {
     }
   }
 
-  const handleConfirmModalVisibility = () => {
-    setMatchFound(false)
-    setReadyStatus(false)
+  const handleConfirmPromptModal = () => {
+    // setMatchFound(false)
+    // setReadyStatus(false)
+
+    // socket logic goes here
+    let userID = user.userData ? user.userData._id : "";
+    let username = user.userData ? user.userData.name : "";
+    let socketID = socket.id
+    socket.emit("confirm prompt", {
+      socketID,
+      userID,
+      username,
+      inputType,
+    })
   }
 
-  // function countDown() {
-  //   socket.emit('pushUserInfo',user);
-  //   // socket.on('timer',data=>{
-  //   //   console.log(data);
-  //   //   let secondsToGo = data/1000;
-  //   //   const modal = Modal.success({
-  //   //     title: 'Đang đợi đối phương bắt đầu',
-  //   //     content: `Màn hình sẽ tự động đóng trong ${secondsToGo} giây.`,
-  //   //   });
-  //   //   const timer = setInterval(() => {
-  //   //     secondsToGo -= 1;
-  //   //     modal.update({
-  //   //       content: `Màn hình sẽ tự động đóng trong ${secondsToGo} giây.`,
-  //   //     });
-  //   //   }, 1000);
-  //   //   setTimeout(() => {
-  //   //     clearInterval(timer);
-  //   //     modal.destroy();
-  //   //   }, secondsToGo * 1000);
-  //   // })
+  const handleDenyPromptModal = () => {
+    setMatchFound(false)
+    setReadyStatus(false)
 
-  //   socket.on('chat start',data=>{
-  //     console.log(data);
-  //     if(data.role===1){
-  //       history.push(`/chatroom/${data.room}`);
-  //     }else{
-  //       history.push(`/servant/${data.room}`);
-  //     }
-
-  //   })
-  // }
-
-  // console.log(user.userData.isAuth)
+    // socket logic goes here
+  }
 
   return (
     <>
+      {
+        redirect ? (<Redirect to={roomLink} userRole={role} />) : ""
+      }
       <div>
         <Row>
           <Col span={8}>Client role guide</Col>
           <Col span={8} style={{textAlign: "center"}}>
             <ConfirmModal 
+              socket={socket}
               visible={matchFound}
-              roomType={roomType}
-              handleVisible={handleConfirmModalVisibility}/>
+              roomType={content_type}
+              handleOk={handleConfirmPromptModal}
+              handleCancel={handleDenyPromptModal}/>
           </Col>
           <Col span={8}>Servant role guide</Col>
         </Row>
@@ -135,7 +146,7 @@ function LandingPage(props) {
         <Row>
           <div className="app">
 
-            <RoomList pageSize="10"/>
+            <RoomList pageSize="3"/>
             <RandomRoomButton/>
           </div>
         </Row>
