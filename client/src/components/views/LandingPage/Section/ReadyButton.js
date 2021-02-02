@@ -1,10 +1,18 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Button, Row, Col } from 'antd'
 
 export default function ReadyButton(props) {
   
   const [ timer, setTimer ] = useState(0)
   const increment = useRef(null)
+
+  useEffect(() => {
+    // seems redundant but need it. So when the user denies their second queue confirmation, we'll reset the timer.
+    if (!props.readyStatus) {
+      clearInterval(increment.current);
+      setTimer(0);
+    }
+  }, [ props.readyStatus ])
 
   const ready = () => {
     props.readySignal()
@@ -17,8 +25,8 @@ export default function ReadyButton(props) {
   const cancelReady = () => {
     props.cancelReadySignal()
     // stop counting
-    clearInterval(increment.current)
-    setTimer(0)
+    clearInterval(increment.current);
+    setTimer(0);
   }
 
   const timeConverter = (seconds) => {

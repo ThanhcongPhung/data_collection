@@ -70,24 +70,23 @@ sockets.init = function(server) {
       console.log(`The user ${username} whose ID is ${userID} is ready to send ${inputType}`);
       let result = matching(audioQueue, textQueue ,userID)
       if (result !== null) {
-        console.log(`Partner: ${result.partner}, Room type: ${result.roomType}`)
-      } else console.log(`Waiting in queue...`)
-
-
-      // check if there's someone in the queue
-      // if there's, create a room, then remove those two mofo out of the queue
-      // decide who's the client, who's the servant
-      // send back the information of the room to the users
-
+        console.log(`Client: ${result.client}, Servant: ${result.servant}, Room type: ${result.roomType}`)
+        
+        // send prompt for confirm ready.
+        socket.emit('match', {
+          client: result.client,
+          servant: result.servant,
+          roomType: result.roomType,
+        })
+      } 
     })
 
+    // socket.on('ready 2', ())
+
     socket.on('cancel ready', ({userID, username}) => {
-      // audioQueue = removeFromQueue(audioQueue, userID)
-      // textQueue = removeFromQueue(textQueue, userID)
       removeFromQueue(audioQueue, userID);
       removeFromQueue(textQueue, userID);
       console.log(`The user ${username} whose ID is ${userID} has cancelled their ready status`);
-      console.log(audioQueue)
     })
 
     socket.on('joinRoom', ({ chatroomID, username }) => {
@@ -127,53 +126,67 @@ const removeFromQueue = (queue, userID) => {
 
 const matching = (audioQueue, textQueue, userID) => {
   let matchingPartner;
+  // check if there's someone in the queue
   if (audioQueue.length >= 2 && audioQueue.includes(userID)) {
+    // if there's, create a room, then remove those two mofo out of the queue
     removeFromQueue(audioQueue, userID)
     removeFromQueue(textQueue, userID)
     
     matchingPartner = audioQueue.shift()
-    console.log(`matchingPartner: ${matchingPartner}`)
     removeFromQueue(textQueue, matchingPartner)
 
-    return {partner: matchingPartner, roomType: "audio"}
+    // decide who's the client, who's the servant
+    return {client: userID, servant: matchingPartner, roomType: "audio"}
   } else if (textQueue.length >= 2 && textQueue.includes(userID)) {
+    // if there's, create a room, then remove those two mofo out of the queue
     removeFromQueue(audioQueue, userID)
     removeFromQueue(textQueue, userID)
 
     matchingPartner = textQueue.shift()
-    console.log(`matchingPartner: ${matchingPartner}`)
     removeFromQueue(audioQueue, matchingPartner)
 
-    return {partner: matchingPartner, roomType: "text"}
+    // decide who's the client, who's the servant
+    return {client: userID, servant: matchingPartner, roomType: "text"}
   } else return null
 }
 
 const { Chatroom } = require("./models/Chatroom");
 
-const createRoom = (userID1, userID2, roomType) => {
+// const createRoom = (userID1, userID2, roomType) => {
+// user1 - client, user2 - servant
+const createRoom = (roomType) => {
   let content_type = roomType === "audio" ? 0 : 1
+  const randomValue = randomGenerator()
   const chatroom = new Chatroom({
-    name: generateName(),
-    task: generateTask(),
+    name: generateName() + randomValue,
+    task: generateTask() + randomValue,
     content_type: content_type,
-    user1: userID1,
-    user2: userID2,
+    // user1: userID1,
+    // user2: userID2,
   })
 
   chatroom.save((err, roomCreated) => {
-    if (err) console.log("CAN'T CREATE AUDIO ROOM!" + err );
+    if (err) {
+      console.log("CAN'T CREATE AUDIO ROOM!" + err );
+      return null
+    }
     console.log(`Room created. Room info: ${roomCreated}`)
+    return roomCreated._id
   })
+}
+
+const randomGenerator = () => {
+  return Math.floor(Math.random() * 1000);
 }
 
 const generateName = () => {
   // IMPLEMENT!!!
-  return "A random room name."
+  return "A random room name "
 }
 
 const generateTask = () => {
   // IMPLEMENT!!!
-  return "A sample task"
+  return "A sample task " 
 }
 
 module.exports = sockets;
