@@ -6,9 +6,9 @@ import {
 } from './types';
 import { ROOM_SERVER } from '../components/Config.js';
 
-export function getRoom(dataToSubmit) {
+export function getRoom(roomID) {
   const request = 
-    axios.get(`${ROOM_SERVER}/${dataToSubmit}`)
+    axios.get(`${ROOM_SERVER}/${roomID}`)
       .then(response => response.data);
 
   return {

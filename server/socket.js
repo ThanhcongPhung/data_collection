@@ -1,3 +1,5 @@
+const { text } = require('body-parser');
+
 var sockets = {}
 
 sockets.init = function(server) {
@@ -23,79 +25,117 @@ sockets.init = function(server) {
       console.log(err)
     }
   })
-  let queue = [];    // list of sockets waiting for peers
-  let rooms = {};    // map socket.id => room
-  let names = {};    // map socket.id => name
-  let allUsers = {}; // map socket.id => socket
-  let findPeer = function(socket) {
-    if (queue.length === 0) {
-      queue.push(socket)
-    } else {
-      let peer = queue.pop();
-      let room = socket.id+"#"+peer.id;
-      peer.join(room);
-      socket.join(room);
-      // register rooms to their names
-      rooms[peer.id] = room;
-      rooms[socket.id] = room;
-      // exchange names between the two of them and start the chat
-      peer.emit('chat start', {'name': names[socket.id], 'room':room,'role':1});
-      socket.emit('chat start', {'name': names[peer.id], 'room':room,'role':2});
-    }
-  }
+  let audioQueue = [];    // ready for audio room
+  let textQueue = [];     // ready for text room
+  let promptQueue = [];   // ready to join room
   // ^^^^^ server socket
 
   // vvvvv client socket
   io.on('connection', (socket) => {
     console.log("Connected: " + socket.id);
 
-    socket.on('pushUserInfo', data => {
-      console.log(data);
-      names[socket.id] = data.userData.name;
-      allUsers[socket.id] = socket;
-      // let countdown = 5000;
-      // let interval = setInterval(function() {
-      //   countdown--;
-      //   socket.emit('timer', { countdown: countdown });
-      //   clearInterval(interval);
-      // }, );
-      findPeer(socket);
-    });
-    socket.on('leave room', function () {
-      // let room = rooms[socket.id];
-      // socket.broadcast.to(room).emit('chat end');
-      // let peerID = room.split('#');
-      // peerID = peerID[0] === socket.id ? peerID[1] : peerID[0];
-      // // add both current and peer to the queue
-      // findPeer(allUsers[peerID]);
-      // findPeer(socket);
-    });
-
     socket.on('disconnect', () => {
-      // let room = rooms[socket.id];
-      // socket.broadcast.to(room).emit('chat end');
-      // let peerID = room.split('#');
-      // peerID = peerID[0] === socket.id ? peerID[1] : peerID[0];
-      // // current socket left, add the other one to the queue
-      // findPeer(allUsers[peerID]);
       console.log("Disconnected: " + socket.id)
     });
+
+    // when receive ready signal from user
+    socket.on('ready', ({socketID, userID, username, inputType}) => {
+      let userInfo = {
+        socketID: socketID,
+        userID: userID,
+        username: username,
+        inputType: inputType,
+      }
+
+      // put the user into the respective queue, "all" will put the user into both queues.
+      if (inputType === "audio") {
+        addToQueue(audioQueue, userInfo)
+      } else if (inputType === "text") {
+        addToQueue(textQueue, userInfo)
+      } else {
+        addToQueue(audioQueue, userInfo)
+        addToQueue(textQueue, userInfo)
+      }
+
+      console.log(`At socket ${socketID} the user ${username} whose ID is ${userID} is ready to send ${inputType}`);
+
+      // finding a partner
+      let result = matching(audioQueue, textQueue, userInfo)
+
+      // if found a matching partner
+      if (result !== null) {
+        console.log(`Client: ${result.client.username}, Servant: ${result.servant.username}, Room type: ${result.roomType}`)
+
+        // result = { client: , servant: , roomType: , accepted: 0 }
+        result.accepted = 0
+        promptQueue.push(result)
+        
+        // send prompt to both users for confirm ready.
+        io.to(result.client.socketID).emit('match', {
+          client: result.client,
+          servant: result.servant,
+          roomType: result.roomType,
+        })
+        io.to(result.servant.socketID).emit('match', {
+          client: result.client,
+          servant: result.servant,
+          roomType: result.roomType,
+        })
+      } 
+    })
+
+    // when both users confirm the second prompt, create a room and send them the information of the room.
+    socket.on('confirm prompt', ({socketID, userID, username, inputType}) => {
+      let userInfo = {
+        socketID: socketID,
+        userID: userID,
+        username: username,
+        inputType: inputType,
+      }
+
+      let promptQueueIndex = checkExist(promptQueue, userInfo)
+      if (promptQueueIndex !== -1) {
+        let pair = promptQueue[promptQueueIndex]
+        if (pair.accepted === 0) {
+          pair.accepted++
+          // tell one of the user that need the other user's prompt to continue.
+          io.to(socketID).emit('wait for other prompt', ({}))
+        } else {
+          // create a room for two, send them id.
+          createRoom(pair.client.userID, pair.servant.userID, pair.roomType)
+          .then(roomID => {
+            // tell both users that the room is ready
+            io.to(pair.client.socketID).emit('prompt successful', ({
+              roomID: roomID,
+            }))
+            io.to(pair.servant.socketID).emit('prompt successful', ({
+              roomID: roomID,
+            }))
+          })
+        }
+      }
+    })
+
+    // when the user deny or miss the second ready prompt
+    // socket.on('cancel prompt', ({}) => {
+
+    // })
+
+    // cancel ready status before the second confirmation (before "match" signal).
+    socket.on('cancel ready', ({userID, username}) => {
+      removeFromQueue(audioQueue, userID);
+      removeFromQueue(textQueue, userID);
+      console.log(`The user ${username} whose ID is ${userID} has cancelled their ready status`);
+    })
 
     socket.on('joinRoom', ({ chatroomID, username }) => {
       socket.join(chatroomID);
       console.log(`The user ${username} has joined chatroom: ${chatroomID}`);
-      // sending to individual socketid (private message)
-      io.to(chatroomID).emit('joinRoom announce', {
-        username: username,
-      });
     });
 
     socket.on('leaveRoom', ({ chatroomID, username }) => {
       socket.leave(chatroomID);
       console.log(`The user ${username} has left chatroom: ${chatroomID}`)
-      io.to(chatroomID).emit('leaveRoom announce', {
-        username: username,
-      });
     });
 
     // Just receive a signal
@@ -109,6 +149,93 @@ sockets.init = function(server) {
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
     });
   });
+}
+
+const addToQueue = (queue, userID) => {
+  queue.push(userID)
+}
+
+const removeFromQueue = (queue, userID) => {
+  var index = queue.indexOf(userID);
+  if (index !== -1) {
+    queue.splice(index, 1);
+  }
+  return queue;
+}
+
+const matching = (audioQueue, textQueue, userInfo) => {
+  let matchingPartner;
+  // check if there's someone in the queue
+  if (audioQueue.length >= 2 && audioQueue.includes(userInfo)) {
+    // if there's, create a room, then remove those two mofo out of the queue
+    removeFromQueue(audioQueue, userInfo)
+    removeFromQueue(textQueue, userInfo)
+    
+    matchingPartner = audioQueue.shift()
+    removeFromQueue(textQueue, matchingPartner)
+
+    // decide who's the client, who's the servant
+    return {client: userInfo, servant: matchingPartner, roomType: "audio"}
+  } else if (textQueue.length >= 2 && textQueue.includes(userInfo)) {
+    // if there's, create a room, then remove those two mofo out of the queue
+    removeFromQueue(audioQueue, userInfo)
+    removeFromQueue(textQueue, userInfo)
+
+    matchingPartner = textQueue.shift()
+    removeFromQueue(audioQueue, matchingPartner)
+
+    // decide who's the client, who's the servant
+    return {client: userInfo, servant: matchingPartner, roomType: "text"}
+  } else return null
+}
+
+const checkExist = (queue, userInfo) => {
+  let result = -1
+  queue.map((pair, index) => {
+    if(compareObject(pair.client, userInfo) || compareObject(pair.servant, userInfo)) {
+      result = index
+      // PROBLEM!!! how to break from this (map) loop?
+    } 
+  })
+
+  return result
+}
+
+const compareObject = (obj1, obj2) => {
+  // This is the lazy way. 
+  return JSON.stringify(obj1) === JSON.stringify(obj2)
+}
+
+const { Chatroom } = require("./models/Chatroom");
+
+const createRoom = async (userID1, userID2, roomType) => {
+// user1 - client, user2 - servant
+  let content_type = roomType === "audio" ? 0 : 1
+  const randomValue = randomGenerator()
+
+  const chatroom = await Chatroom.create({
+    name: generateName() + randomValue,
+    task: generateTask() + randomValue,
+    content_type: content_type,
+    user1: userID1,
+    user2: userID2,
+  })
+
+  return chatroom._id
+}
+
+const randomGenerator = () => {
+  return Math.floor(Math.random() * 1000);
+}
+
+const generateName = () => {
+  // IMPLEMENT!!!
+  return "A random room name "
+}
+
+const generateTask = () => {
+  // IMPLEMENT!!!
+  return "A sample task " 
 }
 
 module.exports = sockets;
