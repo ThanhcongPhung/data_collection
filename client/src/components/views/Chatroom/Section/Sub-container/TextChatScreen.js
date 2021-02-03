@@ -1,21 +1,27 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Col, Row, Button, Form, Input, Icon} from 'antd';
 import {locations} from '../Data'
 import Checkbox from '../Client/Checkbox';
 import moment from 'moment';
+import {getMessages, afterPostMessage} from '../../../../../_actions/message_actions'
+import ChatCard from './ChatCard';
+
 export default function TextChatScreen(props) {
   let [message, setMessage] = useState('');
   const user = props.user;
   const chatroomID = props.chatroomID;
   let socket = props.socket;
+  let chatMessage = props.message;
+
   const [Filters, setFilters] = useState({
     locations: [],
   })
 
-  useEffect(()=>{
-    if(socket){
-      socket.on("Output Chat Message",data=>{
-        console.log(data)
+  props.dispatch(getMessages());
+  useEffect(() => {
+    if (socket) {
+      socket.on("Output Chat Message", data => {
+        props.dispatch(afterPostMessage(data))
       })
     }
   })
@@ -35,7 +41,7 @@ export default function TextChatScreen(props) {
     let nowTime = moment();
     let chatMes = message;
     let intent = Filters.locations;
-    socket.emit("Input Chat message",{
+    socket.emit("Input Chat message", {
       chatroomID,
       intent,
       chatMes,
@@ -53,10 +59,14 @@ export default function TextChatScreen(props) {
             <p style={{fontSize: '2rem', textAlign: 'center'}}>Realtime Chat</p>
           </div>
           <div style={{maxWidth: '80%', margin: '0 auto'}}>
-            <div className="infinite-container">
+            <div className="infinite-container" style={{height: '300px', overflowY: 'scroll'}}>
+              {chatMessage.messages && chatMessage.messages.map((chat) => (
+                  <ChatCard key={chat._id} {...chat} />
+              ))}
+
               <div
                   // ref={el => {
-                  //   setMessage(el);
+                  //   messagesEnd=el;
                   // }}
                   style={{float: "left", clear: "both"}}/>
             </div>

@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const { Message } = require("../models/Message");
+// const { auth } = require("../middleware/auth");
 
 // GET ALL
-router.get("/", (req, res) => {
-  Message.find({})
-  .exec((err, messagesFound) => {
-    if (err) res.status(500).send({ success: false, err })
-    return res.status(200).send({
-      success: true,
-      messagesFound,
-    })
-  })
-})
+router.get("/getMessages",(req, res) => {
+  Message.find()
+      .populate("sender")
+      .exec((err,messages)=>{
+        if(err) return res.status(400).send(err);
+        res.status(200).send(messages)
+      })
+});
 
 // GET ONE
 router.get("/:messageID", (req, res) => {

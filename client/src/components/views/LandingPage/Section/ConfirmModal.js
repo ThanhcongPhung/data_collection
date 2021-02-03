@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 import { Modal } from 'antd';
-
+import './CountdownTimer/CountdownTimer.css'
 import CountdownTimer from './CountdownTimer/CountdownTimer'
 
 export default function ConfirmModal(props) {
@@ -36,7 +36,7 @@ export default function ConfirmModal(props) {
               key={props.visible}
               isPlaying={props.visible}
               duration={props.promptDuration}/>
-            <p>Đã tìm được người phù hợp!</p>
+            <p className="textP">Đã tìm được người phù hợp!</p>
           </Modal>
         ) : (
           <Modal 
