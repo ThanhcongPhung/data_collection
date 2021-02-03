@@ -16,6 +16,7 @@ export default function Chatroom(props) {
   const room_content_type = window.location.href.split("/")[4]
   const chatroomID = window.location.href.split("/")[5]
   const user = useSelector(state => state.user);
+  const message = useSelector(state=>state.message);
   let userID = user.userData ? user.userData._id : "";
   let username = user.userData ? user.userData.name : "";
   const [ userRole, setUserRole ] = useState("");
@@ -74,14 +75,15 @@ export default function Chatroom(props) {
           </Col>
         </Row>
         <Row>
-          {room_content_type === '0' ? <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}/>:
+          {room_content_type === '0' ? <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}
+                                                       dispatch={dispatch} message={message}/>:
               <AudioRecordingScreen
                   canvasRef={canvasRef}
                   socket={socket}
                   user={user}
                   roomContentType={room_content_type}
                   chatroomID={chatroomID}/>}
-          <Col span={4}>
+          <Col  span={4}>
             <Scenario/>
             {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
           </Col>

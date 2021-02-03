@@ -30,4 +30,14 @@ h1 {
   text-align: center;
   font-size: 16px;
 }
-  
+.countdown{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.textP{
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

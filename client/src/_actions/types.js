@@ -7,3 +7,7 @@ export const LOGOUT_USER = 'logout_user';
 export const GET_ONE = 'get_one_room';
 export const GET_ALL = 'get_all_rooms';
 export const GET_RANDOM = 'get_random_room';
+
+//for message
+export const GET_MESSAGES = 'get_message';
+export const AFTER_POST_MESSAGE = 'after_post_message';
