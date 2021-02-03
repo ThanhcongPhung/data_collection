@@ -1,6 +1,7 @@
 const { text } = require('body-parser');
 
 var sockets = {}
+const { Message } = require("./models/Message");
 
 sockets.init = function(server) {
   // socket.io setup
@@ -147,6 +148,24 @@ sockets.init = function(server) {
         audioLink: link,
       });
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
+    });
+    socket.on("Input Chat message", msg => {
+      try {
+        var message = new Message({ message: msg.chatMes, sender:msg.userId,intent: msg.intent });
+        message.save(function (err,doc) {
+          if(err) return console.error(doc)
+          Message.find({"_id": doc._id})
+              .populate("sender")
+              .exec((err,doc)=>{
+                return io.emit("Output Chat Message", doc);
+              })
+          console.log(doc)
+        })
+      } catch (error) {
+        console.error(error);
+      }
+
+
     });
   });
 }

@@ -1,50 +1,48 @@
-import React, { useState } from 'react'
-import { Checkbox, Collapse } from 'antd';
+import React, {useState} from 'react'
+import {Checkbox, Collapse} from 'antd';
 
-const { Panel } = Collapse
+const {Panel} = Collapse
 
 
 function CheckBox(props) {
 
-    const [Checked, setChecked] = useState([])
+  const [Checked, setChecked] = useState([])
 
-    const handleToggle = (value) => {
+  const handleToggle = (value) => {
 
-        const currentIndex = Checked.indexOf(value);
-        const newChecked = [...Checked];
+    const currentIndex = Checked.indexOf(value);
+    const newChecked = [...Checked];
 
-        if (currentIndex === -1) {
-            newChecked.push(value)
-        } else {
-            newChecked.splice(currentIndex, 1)
-        }
-
-        setChecked(newChecked)
-        props.handleFilters(newChecked)
-        //update this checked information into Parent Component
-
+    if (currentIndex === -1) {
+      newChecked.push(value)
+    } else {
+      newChecked.splice(currentIndex, 1)
     }
 
-    const renderCheckboxLists = () => props.list && props.list.map((value, index) => (
-        <React.Fragment key={index}>
-            <Checkbox
-                onChange={() => handleToggle(value.name)}
-                type="checkbox"
-                checked={Checked.indexOf(value.name) === -1 ? false : true}
-            />&nbsp;&nbsp;
-            <span>{value.name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </React.Fragment>
-    ))
+    setChecked(newChecked)
+    props.handleFilters(newChecked)
+    //update this checked information into Parent Component
 
-    return (
-        <div style={{width: '60%', margin: '1rem auto'}}>
-            <Collapse defaultActiveKey={['1']} >
-                <Panel header="Xác nhận câu lệnh: " key="1">
-                    {renderCheckboxLists()}
-                </Panel>
-            </Collapse>
-        </div>
-    )
+  }
+
+  const renderCheckboxLists = () => props.list && props.list.map((value, index) => (
+      <React.Fragment key={index}>
+        <Checkbox
+            onChange={() => handleToggle(value.name)}
+            type="checkbox"
+            checked={Checked.indexOf(value.name) === -1 ? false : true}
+        />&nbsp;&nbsp;
+        <span>{value.name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </React.Fragment>
+  ))
+
+  return (
+      <Collapse defaultActiveKey={['1']}>
+        <Panel header="Xác nhận câu lệnh: " key="1">
+          {renderCheckboxLists()}
+        </Panel>
+      </Collapse>
+  )
 }
 
 export default CheckBox

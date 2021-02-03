@@ -8,17 +8,18 @@ const messageSchema = new mongoose.Schema({
   //   required: "Chatroom is required",
   //   ref: 'Chatroom',
   // },
-
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',      
-  },
-
   message: {
     type: String,
     required: "Message is required",
-  }, 
-})
+  },
+  sender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  intent:{
+    type: [String],
+  },
+},{timestamps:true});
 
 
 const Message = mongoose.model('Message', messageSchema);
