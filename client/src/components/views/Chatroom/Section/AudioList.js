@@ -5,9 +5,6 @@ export default function AudioList(props) {
 
   const [container, setContainer] = useState(10);
 
-  // props.audioList
-  // console.log(props.audioList)
-
   const showAudio = props.audioList ? props.audioList.map(audio => {
     console.log(typeof audio)
     return (

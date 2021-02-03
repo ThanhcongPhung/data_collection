@@ -51,8 +51,6 @@ export default function Chatroom(props) {
     if (socket) {
       socket.on('newAudioURL', (data) => {
         console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
-        // audioHistory.push(data.audioLink)
-        // console.log(audioHistory)
         let newHistory = [...audioHistory]
         newHistory.push(data.audioLink)
         setAudioHistory(newHistory)
