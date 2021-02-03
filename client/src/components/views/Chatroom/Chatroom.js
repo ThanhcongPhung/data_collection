@@ -1,11 +1,14 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {useSelector} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
 import {Row, Col} from 'antd';
-import './Section/RecordButton.css';
-import './Chatroom.css'
+
 import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
+import { getRoom } from '../../../_actions/chatroom_actions'
+import './Section/RecordButton.css';
+import './Chatroom.css';
 
 export default function Chatroom(props) {
   const canvasRef = useRef(null);
@@ -13,8 +16,18 @@ export default function Chatroom(props) {
   const room_content_type = window.location.href.split("/")[4]
   const chatroomID = window.location.href.split("/")[5]
   const user = useSelector(state => state.user);
+  let userID = user.userData ? user.userData._id : "";
   let username = user.userData ? user.userData.name : "";
+  const [ userRole, setUserRole ] = useState("");
   const [audioHistory, setAudioHistory] = useState([]);
+
+  const dispatch = useDispatch();
+
+  dispatch(getRoom(chatroomID))
+  .then(async (response) => {
+    if (userID === response.payload.roomFound.user1) setUserRole("client");
+    if (userID === response.payload.roomFound.user2) setUserRole("servant");
+  })
 
   useEffect(() => {
     if (socket) {
@@ -38,8 +51,6 @@ export default function Chatroom(props) {
     if (socket) {
       socket.on('newAudioURL', (data) => {
         console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
-        // audioHistory.push(data.audioLink)
-        // console.log(audioHistory)
         let newHistory = [...audioHistory]
         newHistory.push(data.audioLink)
         setAudioHistory(newHistory)
@@ -57,6 +68,11 @@ export default function Chatroom(props) {
 
   return (
       <div className="chatroom">
+        <Row>
+          <Col style={{textAlign: "center"}}>
+            <p>You are the {userRole}</p>
+          </Col>
+        </Row>
         <Row>
           <AudioRecordingScreen
               canvasRef={canvasRef}
