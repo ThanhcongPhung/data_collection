@@ -13,8 +13,6 @@ import ConfirmModal from './Section/ConfirmModal';
 function LandingPage(props) {
   const role = useRef("")
   const content_type = useRef("")
-  // let role = ""
-  // let content_type = ""
 
   const [ inputType, setInputType ] = useState("audio")
   const [ readyStatus, setReadyStatus ] = useState(false)
@@ -52,12 +50,20 @@ function LandingPage(props) {
     }
   })
 
+  useEffect(() => {
+    if (socket) {
+      socket.on('requeue', () => {
+        // DO IT NOW!!!
+      })
+    }
+  })
+
   const readySignal = () => {
     if (socket) {
       setReadyStatus(true)
       let userID = user.userData ? user.userData._id : "";
       let username = user.userData ? user.userData.name : "";
-      let socketID = socket.id
+      let socketID = socket.id;
       socket.emit("ready", {
         socketID,
         userID,
@@ -92,11 +98,21 @@ function LandingPage(props) {
     })
   }
 
+  // when the user denies the prompt or misses the prompt because time runs out.
   const handleDenyPromptModal = () => {
     setMatchFound(false)
     setReadyStatus(false)
 
+    let userID = user.userData ? user.userData._id : "";
+    let username = user.userData ? user.userData.name : "";
+    let socketID = socket.id;
     // socket logic goes here
+    socket.emit('cancel prompt', ({
+      socketID,
+      userID,
+      username,
+      inputType,
+    }))
   }
 
   return (

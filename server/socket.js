@@ -40,7 +40,7 @@ sockets.init = function(server) {
     });
 
     // when receive ready signal from user
-    socket.on('ready', ({socketID, userID, username, inputType}) => {
+    socket.on('ready', ({ socketID, userID, username, inputType }) => {
       let userInfo = {
         socketID: socketID,
         userID: userID,
@@ -86,7 +86,7 @@ sockets.init = function(server) {
     })
 
     // when both users confirm the second prompt, create a room and send them the information of the room.
-    socket.on('confirm prompt', ({socketID, userID, username, inputType}) => {
+    socket.on('confirm prompt', ({ socketID, userID, username, inputType }) => {
       let userInfo = {
         socketID: socketID,
         userID: userID,
@@ -114,16 +114,47 @@ sockets.init = function(server) {
             }))
           })
         }
+      } else {
+        // return error here!!! Need to handle error!!!
+        console.log("Fail confirming prompt due to some shenanigan... can't find pair brrrrrrr");
       }
     })
 
     // when the user deny or miss the second ready prompt
-    // socket.on('cancel prompt', ({}) => {
+    socket.on('cancel prompt', ({ socketID, userID, username, inputType }) => {
+      let userInfo = {
+        socketID: socketID,
+        userID: userID,
+        username: username,
+        inputType: inputType,
+      }
 
-    // })
+      let promptQueueIndex = checkExist(promptQueue, userInfo)
+      if (promptQueueIndex !== -1) {
+        let pair = promptQueue[promptQueueIndex]
+        removeFromQueue(promptQueue, pair)
+
+        // add the other user back to the HEAD of the queue
+        let theOtherUser = pair.client.userID === userInfo.userID ? pair.client : pair.servant;
+        if (theOtherUser.inputType === "audio") {
+          addToQueue(audioQueue, userInfo)
+        } else if (theOtherUser.inputType === "text") {
+          addToQueue(textQueue, userInfo)
+        } else {
+          addToQueue(audioQueue, userInfo)
+          addToQueue(textQueue, userInfo)
+        }
+        
+        // tell that other user that the prompt has been cancelled and they are brought back to the queue.
+        io.to(theOtherUser.socketID).emit('requeue', ({}))
+      } else {
+        // return error here!!! Need to handle error!!!
+        console.log("Fail cancelling prompt due to some shenanigan... can't find pair brrrrrrr");
+      }
+    })
 
     // cancel ready status before the second confirmation (before "match" signal).
-    socket.on('cancel ready', ({userID, username}) => {
+    socket.on('cancel ready', ({ userID, username }) => {
       removeFromQueue(audioQueue, userID);
       removeFromQueue(textQueue, userID);
       console.log(`The user ${username} whose ID is ${userID} has cancelled their ready status`);
@@ -174,12 +205,12 @@ const addToQueue = (queue, userID) => {
   queue.push(userID)
 }
 
-const removeFromQueue = (queue, userID) => {
-  var index = queue.indexOf(userID);
+const removeFromQueue = (queue, target) => {
+  var index = queue.indexOf(target);
   if (index !== -1) {
-    queue.splice(index, 1);
+    return queue.splice(index, 1);
   }
-  return queue;
+  return null;
 }
 
 const matching = (audioQueue, textQueue, userInfo) => {
