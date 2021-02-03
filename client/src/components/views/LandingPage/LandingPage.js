@@ -16,10 +16,14 @@ function LandingPage(props) {
 
   const [ inputType, setInputType ] = useState("audio")
   const [ readyStatus, setReadyStatus ] = useState(false)
+  // 0 - nothing, 1 - waiting for the other person to accept
+  const [ promptStatus, setPromptStatus ] = useState(0)
+  const [ promptDuration, setPromptDuration ] = useState(10)
 
   const [ matchFound, setMatchFound ] = useState(false)
   const [ redirect, setRedirect ] = useState(false) // redirect is the substitute of history.
   const [ roomLink, setRoomLink ] = useState('')
+  
   const user = useSelector(state=>state.user)
 
   let socket = props.socket;
@@ -52,8 +56,11 @@ function LandingPage(props) {
 
   useEffect(() => {
     if (socket) {
+      // when the other user miss or doesn't accept the second prompt, get back to queueing
       socket.on('requeue', () => {
-        // DO IT NOW!!!
+        setMatchFound(false)
+        setPromptStatus(0)
+        setPromptDuration(10)
       })
     }
   })
@@ -78,9 +85,12 @@ function LandingPage(props) {
       setReadyStatus(false)
       let userID = user.userData ? user.userData._id : "";
       let username = user.userData ? user.userData.name : "";
+      let socketID = socket.id;
       socket.emit("cancel ready", {
+        socketID,
         userID,
         username,
+        inputType,
       })
     }
   }
@@ -128,6 +138,9 @@ function LandingPage(props) {
               socket={socket}
               visible={matchFound}
               roomType={content_type.current}
+              promptStatus={promptStatus}
+              promptDuration={promptDuration}
+              setPromptStatus={setPromptStatus}
               handleOk={handleConfirmPromptModal}
               handleCancel={handleDenyPromptModal}/>
           </Col>
