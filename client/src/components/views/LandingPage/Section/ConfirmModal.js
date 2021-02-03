@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import { Modal } from 'antd';
 
@@ -6,14 +6,12 @@ import CountdownTimer from './CountdownTimer/CountdownTimer'
 
 export default function ConfirmModal(props) {
 
-  // 0 - nothing, 1 - waiting for the other person to accept
-  const [ promptStatus, setPromptStatus ] = useState(0)
   let socket = props.socket;
 
   useEffect(() => {
     if (socket) {
       socket.on('wait for other prompt', () => {
-        setPromptStatus(1)
+        props.setPromptStatus(1)
       })
     }  
   })
@@ -21,7 +19,7 @@ export default function ConfirmModal(props) {
   return (
     <>
       {
-        promptStatus === 0 ? (
+        props.promptStatus === 0 ? (
           <Modal 
             title={`Phòng ${props.roomType}`}
             visible={props.visible}
@@ -33,7 +31,14 @@ export default function ConfirmModal(props) {
             keyboard={false}
             maskClosable={false}>
             {/* Cần căn giữa */}
-            <CountdownTimer duration={10}/>
+            <CountdownTimer 
+              onComplete={() => {
+                props.handleCancel()
+                return [false, 1000] // repeat animation in 0.1 seconds
+              }}
+              key={props.visible}
+              isPlaying={props.visible}
+              duration={props.promptDuration}/>
             <p>Đã tìm được người phù hợp!</p>
           </Modal>
         ) : (

@@ -129,23 +129,24 @@ sockets.init = function(server) {
         inputType: inputType,
       }
 
+      // check if the pair exists in the prompt queue
       let promptQueueIndex = checkExist(promptQueue, userInfo)
       if (promptQueueIndex !== -1) {
+        // remove those two mofo off the prompt queue
         let pair = promptQueue[promptQueueIndex]
         removeFromQueue(promptQueue, pair)
 
         // add the other user back to the HEAD of the queue
-        let theOtherUser = pair.client.userID === userInfo.userID ? pair.client : pair.servant;
+        let theOtherUser = pair.client.userID === userInfo.userID ? pair.servant : pair.client;
         if (theOtherUser.inputType === "audio") {
-          addToQueue(audioQueue, userInfo)
+          addToQueue(audioQueue, theOtherUser)
         } else if (theOtherUser.inputType === "text") {
-          addToQueue(textQueue, userInfo)
+          addToQueue(textQueue, theOtherUser)
         } else {
-          addToQueue(audioQueue, userInfo)
-          addToQueue(textQueue, userInfo)
+          addToQueue(audioQueue, theOtherUser)
+          addToQueue(textQueue, theOtherUser)
         }
         
-        // tell that other user that the prompt has been cancelled and they are brought back to the queue.
         io.to(theOtherUser.socketID).emit('requeue', ({}))
       } else {
         // return error here!!! Need to handle error!!!
@@ -154,9 +155,15 @@ sockets.init = function(server) {
     })
 
     // cancel ready status before the second confirmation (before "match" signal).
-    socket.on('cancel ready', ({ userID, username }) => {
-      removeFromQueue(audioQueue, userID);
-      removeFromQueue(textQueue, userID);
+    socket.on('cancel ready', ({ socketID, userID, username, inputType }) => {
+      let userInfo = {
+        socketID: socketID,
+        userID: userID,
+        username: username,
+        inputType: inputType,
+      }
+      removeFromQueue(audioQueue, userInfo);
+      removeFromQueue(textQueue, userInfo);
       console.log(`The user ${username} whose ID is ${userID} has cancelled their ready status`);
     })
 
@@ -206,7 +213,8 @@ const addToQueue = (queue, userID) => {
 }
 
 const removeFromQueue = (queue, target) => {
-  var index = queue.indexOf(target);
+  // var index = queue.indexOf(target);
+  var index = queue.findIndex(item => compareObject(item, target))
   if (index !== -1) {
     return queue.splice(index, 1);
   }

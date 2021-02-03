@@ -22,7 +22,7 @@ export default function CountdownTimer(props) {
 
   return (
     <CountdownCircleTimer 
-      isPlaying
+      isPlaying={props.isPlaying}
       duration={props.duration}
       children={renderTime}
       colors={[
