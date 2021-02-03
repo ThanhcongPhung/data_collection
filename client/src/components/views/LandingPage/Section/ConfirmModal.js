@@ -32,10 +32,7 @@ export default function ConfirmModal(props) {
             maskClosable={false}>
             {/* Cần căn giữa */}
             <CountdownTimer 
-              onComplete={() => {
-                props.handleCancel()
-                return [false, 1000] // repeat animation in 0.1 seconds
-              }}
+              handleTimeout={props.handleCancel}
               key={props.visible}
               isPlaying={props.visible}
               duration={props.promptDuration}/>

@@ -10,7 +10,6 @@ export default function Scenario() {
   const handleFilters = (filters, category) => {
     const newFilters = {...Filters}
     newFilters[category] = filters
-    // console.log(newFilters)
     setFilters(newFilters)
   }
   return (

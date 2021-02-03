@@ -95,6 +95,7 @@ function LandingPage(props) {
     }
   }
 
+  // when the user confirm the second prompt, be ready for the conversation to start.
   const handleConfirmPromptModal = () => {
     // socket logic goes here
     let userID = user.userData ? user.userData._id : "";
@@ -110,6 +111,7 @@ function LandingPage(props) {
 
   // when the user denies the prompt or misses the prompt because time runs out.
   const handleDenyPromptModal = () => {
+    console.log("Got here!")
     setMatchFound(false)
     setReadyStatus(false)
 

@@ -22,6 +22,9 @@ export default function CountdownTimer(props) {
 
   return (
     <CountdownCircleTimer 
+      onComplete={() => {
+        props.handleTimeout()
+      }}
       isPlaying={props.isPlaying}
       duration={props.duration}
       children={renderTime}
