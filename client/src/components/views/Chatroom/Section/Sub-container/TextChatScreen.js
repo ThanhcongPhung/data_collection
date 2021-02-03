@@ -1,0 +1,96 @@
+import React, {useState,useEffect} from 'react';
+import {Col, Row, Button, Form, Input, Icon} from 'antd';
+import {locations} from '../Data'
+import Checkbox from '../Client/Checkbox';
+import moment from 'moment';
+export default function TextChatScreen(props) {
+  let [message, setMessage] = useState('');
+  const user = props.user;
+  const chatroomID = props.chatroomID;
+  let socket = props.socket;
+  const [Filters, setFilters] = useState({
+    locations: [],
+  })
+
+  useEffect(()=>{
+    if(socket){
+      socket.on("Output Chat Message",data=>{
+        console.log(data)
+      })
+    }
+  })
+
+  const handleFilters = (filters, category) => {
+    const newFilters = {...Filters}
+    // console.log(newFilters);
+    newFilters[category] = filters
+    setFilters(newFilters)
+  }
+
+  const submitChatmessage = (e) => {
+    e.preventDefault();
+
+    let userId = user.userData._id;
+    let userName = user.userData.name;
+    let nowTime = moment();
+    let chatMes = message;
+    let intent = Filters.locations;
+    socket.emit("Input Chat message",{
+      chatroomID,
+      intent,
+      chatMes,
+      userId,
+      userName,
+      nowTime
+    })
+    setMessage('');
+    setFilters(null);
+  }
+  return (
+      <Col span={20}>
+        <React.Fragment>
+          <div>
+            <p style={{fontSize: '2rem', textAlign: 'center'}}>Realtime Chat</p>
+          </div>
+          <div style={{maxWidth: '80%', margin: '0 auto'}}>
+            <div className="infinite-container">
+              <div
+                  // ref={el => {
+                  //   setMessage(el);
+                  // }}
+                  style={{float: "left", clear: "both"}}/>
+            </div>
+            <Row>
+              <Form layout="inline" onSubmit={submitChatmessage}>
+                <Col span={18}>
+                  <Checkbox
+                      list={locations}
+                      handleFilters={filters => handleFilters(filters, "locations")}
+                  />
+                  <Input
+                      id="message"
+                      prefix={<Icon type="message" stylle={{color: 'rgba(0,0,0,.025)'}}/>}
+                      placeholder={"Let's start talking"}
+                      type="text"
+                      value={message}
+                      onChange={e => {
+                        setMessage(e.target.value)
+                      }}
+                  />
+                </Col>
+                <Col span={2}>
+
+                </Col>
+                <Col span={4}>
+                  <Button type="primary" style={{width: '100%'}} onClick={submitChatmessage}
+                          disabled={!(message && Filters.locations)}>
+                    <Icon type="enter"/>
+                  </Button>
+                </Col>
+              </Form>
+            </Row>
+          </div>
+        </React.Fragment>
+      </Col>
+  );
+}

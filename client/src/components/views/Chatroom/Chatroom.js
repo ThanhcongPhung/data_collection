@@ -2,13 +2,13 @@ import React, {useState, useEffect, useRef} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {Row, Col} from 'antd';
-
+import './Section/RecordButton.css';
+import './Chatroom.css'
 import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import { getRoom } from '../../../_actions/chatroom_actions'
-import './Section/RecordButton.css';
-import './Chatroom.css';
+import TextChatScreen from './Section/Sub-container/TextChatScreen';
 
 export default function Chatroom(props) {
   const canvasRef = useRef(null);
@@ -51,6 +51,8 @@ export default function Chatroom(props) {
     if (socket) {
       socket.on('newAudioURL', (data) => {
         console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
+        // audioHistory.push(data.audioLink)
+        // console.log(audioHistory)
         let newHistory = [...audioHistory]
         newHistory.push(data.audioLink)
         setAudioHistory(newHistory)
@@ -74,12 +76,13 @@ export default function Chatroom(props) {
           </Col>
         </Row>
         <Row>
-          <AudioRecordingScreen
-              canvasRef={canvasRef}
-              socket={socket}
-              user={user}
-              roomContentType={room_content_type}
-              chatroomID={chatroomID}/>
+          {room_content_type === '0' ? <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}/>:
+              <AudioRecordingScreen
+                  canvasRef={canvasRef}
+                  socket={socket}
+                  user={user}
+                  roomContentType={room_content_type}
+                  chatroomID={chatroomID}/>}
           <Col span={4}>
             <Scenario/>
             {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}

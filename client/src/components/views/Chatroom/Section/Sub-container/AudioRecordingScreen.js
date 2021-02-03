@@ -17,7 +17,6 @@ export default function AudioRecordingScreen(props) {
   let socket = props.socket;
   const chatroomID = props.chatroomID;
   const user = props.user;
-  let username = user.userData ? user.userData.name : ""
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -155,10 +154,13 @@ export default function AudioRecordingScreen(props) {
         <Row>
           <Row>
             <Col>
-              <Checkbox
-                  list={locations}
-                  handleFilters={filters => handleFilters(filters, "locations")}
-              />
+              <div style={{width: '60%', margin: '1rem auto'}} >
+                <Checkbox
+                    list={locations}
+                    handleFilters={filters => handleFilters(filters, "locations")}
+                />
+              </div>
+
             </Col>
           </Row>
           <Row>
