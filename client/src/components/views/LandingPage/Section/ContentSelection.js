@@ -4,7 +4,6 @@ import { Radio } from 'antd';
 export default function ContentSelection(props) {
   
   const updateRadio = (e) => {
-    // console.log(e.target.value)
     props.setInputType(e.target.value)
   }
 

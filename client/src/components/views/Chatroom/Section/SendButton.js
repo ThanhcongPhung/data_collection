@@ -8,7 +8,6 @@ export default function Test(props) {
   const data = props ? props.audio : null
 
   const uploadAudio = async (e) => {
-    // e.preventDefault()
 
     // create data
     let formdata = new FormData()
