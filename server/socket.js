@@ -1,5 +1,3 @@
-const { text } = require('body-parser');
-
 var sockets = {}
 const { Message } = require("./models/Message");
 
@@ -37,6 +35,15 @@ sockets.init = function(server) {
 
     socket.on('disconnect', () => {
       console.log("Disconnected: " + socket.id)
+      var index = audioQueue.findIndex(item => item.socketID === socket.id)
+      if (index !== -1) {
+        audioQueue.splice(index, 1);
+      } else {
+        index = textQueue.findIndex(item => item.socketID === socket.id)
+        if (index !== -1) {
+          textQueue.splice(index, 1);
+        }
+      }
     });
 
     // when receive ready signal from user
@@ -170,11 +177,21 @@ sockets.init = function(server) {
     socket.on('joinRoom', ({ chatroomID, username }) => {
       socket.join(chatroomID);
       console.log(`The user ${username} has joined chatroom: ${chatroomID}`);
+      
+      // sending to individual socketid (private message)	
+      io.to(chatroomID).emit('joinRoom announce', {	
+        username: username,	
+      });
     });
 
     socket.on('leaveRoom', ({ chatroomID, username }) => {
       socket.leave(chatroomID);
       console.log(`The user ${username} has left chatroom: ${chatroomID}`)
+
+      // sending to individual socketid (private message)
+      io.to(chatroomID).emit('leaveRoom announce', {	
+        username: username,	
+      });
     });
 
     // Just receive a signal
@@ -202,8 +219,6 @@ sockets.init = function(server) {
       } catch (error) {
         console.error(error);
       }
-
-
     });
   });
 }
