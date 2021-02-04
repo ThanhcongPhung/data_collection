@@ -189,7 +189,7 @@ sockets.init = function(server) {
     });
     socket.on("Input Chat message", msg => {
       try {
-        var message = new Message({ message: msg.chatMes, sender:msg.userId,intent: msg.intent });
+        var message = new Message({ message: msg.chatMes, sender:msg.userId,intent: msg.intent, chatroomID:msg.chatroomID });
         message.save(function (err,doc) {
           if(err) return console.error(doc)
           Message.find({"_id": doc._id})

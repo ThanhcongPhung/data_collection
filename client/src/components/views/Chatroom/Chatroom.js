@@ -1,13 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
+import {useSelector, useDispatch} from 'react-redux';
 import {Row, Col} from 'antd';
 import './Section/RecordButton.css';
 import './Chatroom.css'
 import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
-import { getRoom } from '../../../_actions/chatroom_actions'
+import {getRoom} from '../../../_actions/chatroom_actions'
 import TextChatScreen from './Section/Sub-container/TextChatScreen';
 
 export default function Chatroom(props) {
@@ -16,19 +15,19 @@ export default function Chatroom(props) {
   const room_content_type = window.location.href.split("/")[4]
   const chatroomID = window.location.href.split("/")[5]
   const user = useSelector(state => state.user);
-  const message = useSelector(state=>state.message);
+  const message = useSelector(state => state.message);
   let userID = user.userData ? user.userData._id : "";
   let username = user.userData ? user.userData.name : "";
-  const [ userRole, setUserRole ] = useState("");
+  const [userRole, setUserRole] = useState("");
   const [audioHistory, setAudioHistory] = useState([]);
 
   const dispatch = useDispatch();
 
   dispatch(getRoom(chatroomID))
-  .then(async (response) => {
-    if (userID === response.payload.roomFound.user1) setUserRole("client");
-    if (userID === response.payload.roomFound.user2) setUserRole("servant");
-  })
+      .then(async (response) => {
+        if (userID === response.payload.roomFound.user1) setUserRole("client");
+        if (userID === response.payload.roomFound.user2) setUserRole("servant");
+      })
 
   useEffect(() => {
     if (socket) {
@@ -75,15 +74,16 @@ export default function Chatroom(props) {
           </Col>
         </Row>
         <Row>
-          {room_content_type === '0' ? <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}
-                                                       dispatch={dispatch} message={message}/>:
+          {room_content_type === '0' ?
               <AudioRecordingScreen
                   canvasRef={canvasRef}
                   socket={socket}
                   user={user}
                   roomContentType={room_content_type}
-                  chatroomID={chatroomID}/>}
-          <Col  span={4}>
+                  chatroomID={chatroomID}/> :
+              <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}
+                              dispatch={dispatch} message={message}/>}
+          <Col span={4}>
             <Scenario/>
             {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
           </Col>
