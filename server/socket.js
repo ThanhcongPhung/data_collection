@@ -1,5 +1,3 @@
-const { text } = require('body-parser');
-
 var sockets = {}
 const { Message } = require("./models/Message");
 
@@ -37,6 +35,15 @@ sockets.init = function(server) {
 
     socket.on('disconnect', () => {
       console.log("Disconnected: " + socket.id)
+      var index = audioQueue.findIndex(item => item.socketID === socket.id)
+      if (index !== -1) {
+        audioQueue.splice(index, 1);
+      } else {
+        index = textQueue.findIndex(item => item.socketID === socket.id)
+        if (index !== -1) {
+          textQueue.splice(index, 1);
+        }
+      }
     });
 
     // when receive ready signal from user
@@ -212,8 +219,6 @@ sockets.init = function(server) {
       } catch (error) {
         console.error(error);
       }
-
-
     });
   });
 }

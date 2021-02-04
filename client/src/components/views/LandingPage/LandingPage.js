@@ -4,8 +4,8 @@ import { Redirect } from 'react-router-dom';
 
 import { Col, Row } from "antd";
 
-import RoomList from './Section/RoomList';
-import RandomRoomButton from './Section/RandomRoomButton';
+// import RoomList from './Section/RoomList';
+// import RandomRoomButton from './Section/RandomRoomButton';
 import ReadyButton from './Section/ReadyButton';
 import ContentSelection from './Section/ContentSelection';
 import ConfirmModal from './Section/ConfirmModal';
@@ -171,8 +171,8 @@ function LandingPage(props) {
         <Row>
           <div className="app">
 
-            <RoomList pageSize="3"/>
-            <RandomRoomButton/>
+            {/* <RoomList pageSize="3"/>
+            <RandomRoomButton/> */}
           </div>
         </Row>
 
