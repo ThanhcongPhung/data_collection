@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Col, Row, Button, Form, Input, Icon} from 'antd';
 import {locations} from '../Data'
 import Checkbox from '../Client/Checkbox';
@@ -8,6 +8,8 @@ import ChatCard from './ChatCard';
 
 export default function TextChatScreen(props) {
   let [message, setMessage] = useState('');
+  const [uncheck,setUncheck] = useState(false);
+  const divRef = useRef(null);
   const user = props.user;
   const chatroomID = props.chatroomID;
   let socket = props.socket;
@@ -21,10 +23,15 @@ export default function TextChatScreen(props) {
   useEffect(() => {
     if (socket) {
       socket.on("Output Chat Message", data => {
-        props.dispatch(afterPostMessage(data))
+        // console.log(data)
+        // props.dispatch(afterPostMessage(data))
       })
     }
   })
+
+  useEffect(() => {
+    divRef.current.scrollIntoView({ behavior: 'smooth' });
+  });
 
   const handleFilters = (filters, category) => {
     const newFilters = {...Filters}
@@ -51,6 +58,7 @@ export default function TextChatScreen(props) {
     })
     setMessage('');
     setFilters(null);
+    setUncheck(true);
   }
   return (
       <Col span={20}>
@@ -65,9 +73,7 @@ export default function TextChatScreen(props) {
               ))}
 
               <div
-                  // ref={el => {
-                  //   messagesEnd=el;
-                  // }}
+                  ref={divRef}
                   style={{float: "left", clear: "both"}}/>
             </div>
             <Row>
@@ -76,6 +82,7 @@ export default function TextChatScreen(props) {
                   <Checkbox
                       list={locations}
                       handleFilters={filters => handleFilters(filters, "locations")}
+                      uncheck={uncheck}
                   />
                   <Input
                       id="message"
@@ -93,7 +100,7 @@ export default function TextChatScreen(props) {
                 </Col>
                 <Col span={4}>
                   <Button type="primary" style={{width: '100%'}} onClick={submitChatmessage}
-                          disabled={!(message && Filters.locations)}>
+                          disabled={!(message)}>
                     <Icon type="enter"/>
                   </Button>
                 </Col>
