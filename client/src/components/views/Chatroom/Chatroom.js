@@ -80,9 +80,11 @@ export default function Chatroom(props) {
                   socket={socket}
                   user={user}
                   roomContentType={room_content_type}
-                  chatroomID={chatroomID}/> :
+                  chatroomID={chatroomID}
+                  userRole={userRole}
+              /> :
               <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}
-                              dispatch={dispatch} message={message}/>}
+                              dispatch={dispatch} message={message} userRole={userRole}/>}
           <Col span={4}>
             <Scenario/>
             {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
