@@ -16,6 +16,9 @@ const messageSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  chatroomID:{
+    type:String,
+  },
   intent:{
     type: [String],
   },
