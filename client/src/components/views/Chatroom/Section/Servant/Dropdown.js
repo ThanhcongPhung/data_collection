@@ -18,13 +18,11 @@ function Dropdown(props) {
       </React.Fragment>
   ))
   return (
-      <div style={{width: '60%', margin: '1rem auto'}}>
         <Collapse defaultActiveKey={['1']}>
           <Panel header="Thông tin nghe được trong câu nói của Client: " key="1">
             {renderDropdownList()}
           </Panel>
         </Collapse>
-      </div>
   )
 }
 

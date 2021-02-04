@@ -5,6 +5,8 @@ import Wave from '../Wave';
 import RecordButton from '../RecordButton';
 import SendButton from '../SendButton';
 import Checkbox from '../Client/Checkbox';
+import Dropdown from '../Servant/Dropdown';
+import {dropdowns} from '../Data';
 import {locations} from '../Data'
 
 export default function AudioRecordingScreen(props) {
@@ -154,11 +156,14 @@ export default function AudioRecordingScreen(props) {
         <Row>
           <Row>
             <Col>
-              <div style={{width: '60%', margin: '1rem auto'}} >
-                <Checkbox
-                    list={locations}
-                    handleFilters={filters => handleFilters(filters, "locations")}
-                />
+              <div style={{width: '60%', margin: '1rem auto'}}>
+                {props.userRole === "client" ?
+                    <Checkbox
+                        list={locations}
+                        handleFilters={filters => handleFilters(filters, "locations")}
+                    /> :
+                    <Dropdown list={dropdowns}/>
+                }
               </div>
 
             </Col>
