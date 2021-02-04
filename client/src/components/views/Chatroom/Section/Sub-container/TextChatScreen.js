@@ -5,10 +5,12 @@ import Checkbox from '../Client/Checkbox';
 import moment from 'moment';
 import {getMessages, afterPostMessage} from '../../../../../_actions/message_actions'
 import ChatCard from './ChatCard';
+import Dropdown from '../Servant/Dropdown';
+import {dropdowns} from '../Data';
 
 export default function TextChatScreen(props) {
   let [message, setMessage] = useState('');
-  const [uncheck,setUncheck] = useState(false);
+  const [uncheck, setUncheck] = useState(false);
   const divRef = useRef(null);
   const user = props.user;
   const chatroomID = props.chatroomID;
@@ -30,7 +32,7 @@ export default function TextChatScreen(props) {
   })
 
   useEffect(() => {
-    divRef.current.scrollIntoView({ behavior: 'smooth' });
+    divRef.current.scrollIntoView({behavior: 'smooth'});
   });
 
   const handleFilters = (filters, category) => {
@@ -79,11 +81,15 @@ export default function TextChatScreen(props) {
             <Row>
               <Form layout="inline" onSubmit={submitChatmessage}>
                 <Col span={18}>
-                  <Checkbox
-                      list={locations}
-                      handleFilters={filters => handleFilters(filters, "locations")}
-                      uncheck={uncheck}
-                  />
+                  {props.userRole === "client" ?
+                      <Checkbox
+                          list={locations}
+                          handleFilters={filters => handleFilters(filters, "locations")}
+                          uncheck={uncheck}
+                      /> :
+                      <Dropdown list={dropdowns}/>
+                  }
+
                   <Input
                       id="message"
                       prefix={<Icon type="message" stylle={{color: 'rgba(0,0,0,.025)'}}/>}
