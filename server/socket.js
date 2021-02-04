@@ -170,11 +170,21 @@ sockets.init = function(server) {
     socket.on('joinRoom', ({ chatroomID, username }) => {
       socket.join(chatroomID);
       console.log(`The user ${username} has joined chatroom: ${chatroomID}`);
+      
+      // sending to individual socketid (private message)	
+      io.to(chatroomID).emit('joinRoom announce', {	
+        username: username,	
+      });
     });
 
     socket.on('leaveRoom', ({ chatroomID, username }) => {
       socket.leave(chatroomID);
       console.log(`The user ${username} has left chatroom: ${chatroomID}`)
+
+      // sending to individual socketid (private message)
+      io.to(chatroomID).emit('leaveRoom announce', {	
+        username: username,	
+      });
     });
 
     // Just receive a signal
