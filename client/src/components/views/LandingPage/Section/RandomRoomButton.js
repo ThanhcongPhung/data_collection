@@ -11,6 +11,7 @@ import ErrorNotFound from '../../Error/ErrorNotFound'
 export default function RandomRoomButton() {
 
   const [ randomRoomID, setRandomRoomID ] = useState("")
+  const [ roomType, setRoomType ] = useState("")
   const [ alert, setAlert ] = useState(0)
   const dispatch = useDispatch();
 
@@ -23,6 +24,7 @@ export default function RandomRoomButton() {
         } else {
           setAlert(0)
           setRandomRoomID(response.payload.roomFound._id)
+          setRoomType(response.payload.roomFound.content_type)
         }
         
       } else {
@@ -50,7 +52,8 @@ export default function RandomRoomButton() {
   } else {
     return (
       <>
-        <Link to={`/chatroom/${randomRoomID}`}><Button>Join a random room</Button></Link></>
+        <Link to={`/chatroom/${roomType}/${randomRoomID}`}><Button>Chọn phòng ngẫu nhiên</Button></Link>
+      </>
     )
   }
   

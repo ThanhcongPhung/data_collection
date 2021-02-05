@@ -4,17 +4,18 @@ import { Redirect } from 'react-router-dom';
 
 import { Col, Row } from "antd";
 
-// import RoomList from './Section/RoomList';
-// import RandomRoomButton from './Section/RandomRoomButton';
+import RoomList from './Section/RoomList';
+import RandomRoomButton from './Section/RandomRoomButton';
 import ReadyButton from './Section/ReadyButton';
-import ContentSelection from './Section/ContentSelection';
+// import ContentSelection from './Section/ContentSelection';
 import ConfirmModal from './Section/ConfirmModal';
 
 function LandingPage(props) {
   const role = useRef("")
   const content_type = useRef("")
 
-  const [ inputType, setInputType ] = useState("audio")
+  // const [ inputType, setInputType ] = useState("audio")
+  let inputType = "audio"
   const [ readyStatus, setReadyStatus ] = useState(false)
   // 0 - nothing, 1 - waiting for the other person to accept
   const [ promptStatus, setPromptStatus ] = useState(0)
@@ -148,13 +149,13 @@ function LandingPage(props) {
           </Col>
           <Col span={8}>Servant role guide</Col>
         </Row>
-        <Row style={{marginBottom: "10px", marginTop: "10px"}}>
+        {/* <Row style={{marginBottom: "10px", marginTop: "10px"}}>
           <Col style={{textAlign: "center"}}>
             <ContentSelection 
               disabled={readyStatus}
               setInputType={setInputType}/>
           </Col>
-        </Row>
+        </Row> */}
         <Row style={{marginBottom: "10px", marginTop: "10px"}}>
           <Col style={{textAlign: "center"}}>
             <ReadyButton 
@@ -171,8 +172,8 @@ function LandingPage(props) {
         <Row>
           <div className="app">
 
-            {/* <RoomList pageSize="3"/>
-            <RandomRoomButton/> */}
+            <RoomList pageSize="4"/>
+            <RandomRoomButton/>
           </div>
         </Row>
 

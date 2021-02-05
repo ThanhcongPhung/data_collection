@@ -303,7 +303,7 @@ const randomGenerator = () => {
 
 const generateName = () => {
   // IMPLEMENT!!!
-  return "A random room name "
+  return "Room R"
 }
 
 const generateTask = () => {

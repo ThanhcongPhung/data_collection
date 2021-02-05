@@ -3,7 +3,7 @@ import {Col, Row, Button, Form, Input, Icon} from 'antd';
 import {locations} from '../Data'
 import Checkbox from '../Client/Checkbox';
 import moment from 'moment';
-import {getMessages, afterPostMessage} from '../../../../../_actions/message_actions'
+import { getMessages } from '../../../../../_actions/message_actions'
 import ChatCard from './ChatCard';
 import Dropdown from '../Servant/Dropdown';
 import {dropdowns} from '../Data';
