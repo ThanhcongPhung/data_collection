@@ -48,6 +48,16 @@ router.get("/:roomID", (req, res) => {
   })
 })
 
+// GET ALL AUDIOS OF ONE ROOM
+router.get("/:roomID/history", (req, res) => {
+  Chatroom.findById(req.params.roomID, (err, roomFound) => {
+    let history = roomFound.audioList;
+    if (err) res.status(500).send({ success: false, err })
+    else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
+    else res.status(200).send({ success: true, history })
+  })
+})
+
 router.post("/", async (req, res) => {
 
   const { name, task, content_type } = req.body;

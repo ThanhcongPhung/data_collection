@@ -45,7 +45,7 @@ router.post('/', upload, (req, res) => {
 
   s3.upload(params, (err, data) => {
     if (err) throw err
-    console.log(`File uploaded successfully at ${data.Location}`)
+    // console.log(`File uploaded successfully at ${data.Location}`)
 
     // save the audio information 
     saveAudioMongo(userID, data.Location)
