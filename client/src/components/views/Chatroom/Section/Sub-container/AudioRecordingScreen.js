@@ -174,7 +174,11 @@ export default function AudioRecordingScreen(props) {
         <Row>
           <div className="submit-button">
             {renderAudio(audio)}
-            <SendButton audio={audio} sendAudioSignal={sendAudioSignal}/>
+            <SendButton 
+              audio={audio} 
+              userID={user.userData ? user.userData._id : ""}
+              roomID={chatroomID}
+              sendAudioSignal={sendAudioSignal}/>
           </div>
         </Row>
       </Row>

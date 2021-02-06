@@ -8,6 +8,10 @@ const DOMAIN_NAME = "http://localhost:5000/public/audio"
 router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err ) => {
 
   // the err ^^^^^^ there doesn't seem to be err but rather something else... But either way it works for now, the thing up there doesn't matter that much.
+  
+  const userID = req.body.userID;
+  const roomID = req.body.roomID;
+
   if (err instanceof multer.MulterError) {
     console.log(`err: ${err}`)
     switch (err.code) {
@@ -46,11 +50,55 @@ router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err ) 
   try {
     let path_components = req.file.path.split('\\')
     let audio_link = `${DOMAIN_NAME}/${path_components[path_components.length-4]}/${path_components[path_components.length-3]}/${path_components[path_components.length-2]}/${path_components[path_components.length-1]}`
+
+    // save the audio information 
+    saveAudioMongo(userID, audio_link)
+    .then(audioID => {
+      // update audio history in room
+      err = updateRoomInfo(roomID, audioID)
+      if (err) throw err
+    })
+
     return res.status(200).send({ success: true, link: audio_link })
   } catch (error) {
     console.log("Dead")
     res.status(500).send({ success: false, error })
   }
 })
+
+const { Audio } = require("./../models/Audio");
+const { Chatroom } = require("./../models/Chatroom");
+
+const saveAudioMongo = async (userID, link) => {
+
+  const audio = await Audio.create({
+    user: userID,
+    link: link,
+  })
+
+  return audio._id
+}
+
+const updateRoomInfo = (roomID, audioID) => {
+  
+  Chatroom.findById(roomID)
+  .then(roomFound => {
+    if(!roomFound) {
+      return "Room not found!"
+    } else {
+      roomFound.audioList.push(audioID);
+      return roomFound.save();
+    }
+  })
+  .then(roomUpdated => {
+    // console.log(`Room ${roomUpdated.name} updated audio information successfully!`)
+    return null
+  })
+  .catch(err => {
+    console.log("Unable to update audio information to room")
+    console.log(err)
+    return err
+  });
+}
 
 module.exports = router;

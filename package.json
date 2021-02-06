@@ -36,7 +36,8 @@
     "saslprep": "^1.0.3",
     "socket.io": "^3.0.4",
     "socket.io-client": "^3.0.4",
-    "supports-color": "^7.1.0"
+    "supports-color": "^7.1.0",
+    "web-push": "^3.4.4"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.0.0-rc.0",

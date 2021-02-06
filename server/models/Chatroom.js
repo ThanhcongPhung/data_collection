@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const chatroomSchema = new mongoose.Schema({
   name: {
     type:String,
@@ -27,6 +26,10 @@ const chatroomSchema = new mongoose.Schema({
     min: 0,
     max: 1,
   },
+  audioList: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Audio'
+  }]
   // need to design some stuff for intent.
   // intent goes here
 })
