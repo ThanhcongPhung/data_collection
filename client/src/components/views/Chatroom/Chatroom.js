@@ -52,7 +52,7 @@ export default function Chatroom(props) {
   useEffect(() => {
     if (socket) {
       socket.on('newAudioURL', (data) => {
-        console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
+        // console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
         let newHistory = [...audioHistory]
         newHistory.push(data.audioLink)
         setAudioHistory(newHistory)
@@ -76,7 +76,8 @@ export default function Chatroom(props) {
           </Col>
         </Row>
         <Row>
-          {room_content_type === '0' ?
+          <Col span={20}>
+            {room_content_type === '0' ?
               <AudioRecordingScreen
                 canvasRef={canvasRef}
                 socket={socket}
@@ -92,17 +93,29 @@ export default function Chatroom(props) {
                 dispatch={dispatch} 
                 message={message} 
                 userRole={userRole}/>}
+          </Col>
           <Col span={4}>
-            {
-              userRole === "client" ? <Scenario/> : (
-                <>
-                  <h3 style={{textAlign: "center"}}>Ghi chú công việc đã làm được</h3>
-                  <TextArea style={{height: "200px"}} maxLength={100}/>
-                </>
-              )
-            }
+            <Row>
+              <Col>
+                {
+                  userRole === "client" ? <Scenario/> : (
+                    <>
+                      <h3 style={{textAlign: "center"}}>Ghi chú công việc đã làm được</h3>
+                      <TextArea style={{height: "200px"}} maxLength={100}/>
+                    </>
+                  )
+                }
+              </Col> 
+            </Row>
+
+            <Row>
+              <Col>
+                {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
+              </Col> 
+            </Row>
             
-            {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
+            
+            
           </Col>
         </Row>
       </div>

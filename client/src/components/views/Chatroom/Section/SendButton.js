@@ -7,7 +7,33 @@ export default function Test(props) {
 
   const data = props ? props.audio : null
 
-  const uploadAudio = async (e) => {
+  // const uploadAudio = async (e) => {
+
+  //   // create data
+  //   let formdata = new FormData()
+  //   formdata.append('soundBlob', data.blob, 'test.wav')
+     
+  //   const requestConfig = {     
+  //     headers: new Headers({
+  //       enctype: "multipart/form-data"
+  //     })
+  //   }
+    
+  //   try {
+  //     await axios.post(
+  //       `${BACKEND_URL}/api/upload/file`,
+  //       formdata,
+  //       requestConfig,
+  //     ).then(res => {
+  //       props.sendAudioSignal(res.data.link)
+  //       console.log(res.data.link)
+  //     })
+  //   } catch(error){
+  //       alert(error)
+  //   }
+  // }
+
+  const uploadAudioAWS = async (e) => {
 
     // create data
     let formdata = new FormData()
@@ -21,12 +47,12 @@ export default function Test(props) {
     
     try {
       await axios.post(
-        `${BACKEND_URL}/api/upload/file`,
+        `${BACKEND_URL}/api/aws/upload`,
         formdata,
         requestConfig,
       ).then(res => {
-        props.sendAudioSignal(res.data.link)
-        console.log(res.data.link)
+        props.sendAudioSignal(res.data.Location)
+        // console.log(res.data)
       })
     } catch(error){
         alert(error)
@@ -34,7 +60,8 @@ export default function Test(props) {
   }
 
   const insertButton = data !== null ? (
-    <button className="buttons" onClick={uploadAudio}>Gửi</button>
+    // <button className="buttons" onClick={uploadAudio}>Gửi</button>
+    <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>
   ) : ""
 
   return (

@@ -13,7 +13,6 @@ export default function RecordButton(props) {
                     onSave={() => {}}
                     onStart={() => {}}
                     onStop={blobObject => {
-                        console.log('blobObject is: ', blobObject);
                         props.setAudio(blobObject);
                     }}>
                     {props.isRecording ?

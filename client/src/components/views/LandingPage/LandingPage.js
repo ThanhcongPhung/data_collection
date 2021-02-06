@@ -112,7 +112,6 @@ function LandingPage(props) {
 
   // when the user denies the prompt or misses the prompt because time runs out.
   const handleDenyPromptModal = () => {
-    console.log("Got here!")
     setMatchFound(false)
     setReadyStatus(false)
 

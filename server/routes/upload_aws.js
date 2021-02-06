@@ -1,6 +1,3 @@
-// const fs = require('fs');
-
-
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -35,7 +32,7 @@ router.post('/', upload, (req, res) => {
 
   let myFile = req.file.originalname.split(".")
   const fileType = myFile[myFile.length - 1]
-  
+
   const params = {
     Bucket: awsBucketName, 
     Key: `${uuidv4()}.${fileType}`,
