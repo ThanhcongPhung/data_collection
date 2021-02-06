@@ -70,7 +70,10 @@ function RoomList(props) {
     return (
       <>
         <Table
-          pagination={{ pageSize: parseInt(props.pageSize) }} 
+          pagination={{ 
+            pageSize: parseInt(props.pageSize),
+            // position: ['bottomLeft']
+          }} 
           columns={columns} 
           dataSource={roomList}/>
       </>

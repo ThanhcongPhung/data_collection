@@ -34,7 +34,7 @@ function RightMenu(props) {
     return (
       <Menu mode={props.mode}>
         <Menu.Item>
-          <a>Hello, {user.userData && user.userData.name}</a>
+          <a>Xin chào {user.userData && user.userData.name}</a>
         </Menu.Item>
         <Menu.Item key="logout">
           <a onClick={logoutHandler}>Logout</a>

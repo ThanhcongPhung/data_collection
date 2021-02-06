@@ -9,20 +9,24 @@ function Dropdown(props) {
     console.log(`selected ${value}`);
   }
 
+  props.list.map(section => {
+    return section.content.map((item, index) => item.key = `${item.value}.${index}`)
+  })
+
   const renderDropdownList = () => props.list && props.list.map((value, index) => (
-      <React.Fragment key={index}>
-        <Select defaultValue={value.name} style={{width: 120}} onChange={handleChange}>
-          {value.content && value.content.map((item) =>
-              <Option value={item.value}>{item.value}</Option>)}
-        </Select>&nbsp;&nbsp;&nbsp;&nbsp;
-      </React.Fragment>
+    <React.Fragment key={index}>
+      <Select defaultValue={value.name} style={{width: 120}} onChange={handleChange}>
+        {value.content && value.content.map((item) =>
+            <Option value={item.value} key={item.key}>{item.value}</Option>)}
+      </Select>&nbsp;&nbsp;&nbsp;&nbsp;
+    </React.Fragment>
   ))
   return (
-        <Collapse defaultActiveKey={['1']}>
-          <Panel header="Thông tin nghe được trong câu nói của Client: " key="1">
-            {renderDropdownList()}
-          </Panel>
-        </Collapse>
+    <Collapse defaultActiveKey={['1']}>
+      <Panel header="Thông tin nghe được trong câu nói của Client: " key="1">
+        {renderDropdownList()}
+      </Panel>
+    </Collapse>
   )
 }
 

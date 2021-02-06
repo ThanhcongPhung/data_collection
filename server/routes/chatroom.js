@@ -21,6 +21,24 @@ router.get("/", (req, res) => {
     
 })
 
+// GET RANDOM
+router.get("/random", (req, res) => {
+
+  // Get the count of all records
+  Chatroom.estimatedDocumentCount().exec((err, count) => {
+    if (err) res.status(500).send({ success: false, message: "Can't estimate document count", err })
+    // Get a random entry 
+    var random = Math.floor(Math.random() * count)
+    Chatroom.findOne().skip(random).exec((err, roomFound) => {
+      if (err) res.status(500).send({ success: false, message: "Can't proceed to find any room", err })
+      return res.status(200).send({
+        success: true,
+        roomFound
+      })
+    })
+  })
+})
+
 // GET ONE
 router.get("/:roomID", (req, res) => {
   Chatroom.findById(req.params.roomID, (err, roomFound) => {
@@ -30,21 +48,13 @@ router.get("/:roomID", (req, res) => {
   })
 })
 
-// GET RANDOM
-router.get("/random", (req, res) => {
-
-  // Get the count of all records
-  Chatroom.estimatedDocumentCount().exec((err, count) => {
+// GET ALL AUDIOS OF ONE ROOM
+router.get("/:roomID/history", (req, res) => {
+  Chatroom.findById(req.params.roomID, (err, roomFound) => {
+    let history = roomFound.audioList;
     if (err) res.status(500).send({ success: false, err })
-    // Get a random entry 
-    var random = Math.floor(Math.random() * count)
-    Chatroom.findOne().skip(random).exec((err, roomFound) => {
-      if (err) res.status(500).send({ success: false, err })
-      return res.status(200).send({
-        success: true,
-        roomFound
-      })
-    })
+    else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
+    else res.status(200).send({ success: true, history })
   })
 })
 

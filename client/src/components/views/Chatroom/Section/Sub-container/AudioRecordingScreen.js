@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {ShareIcon, RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui/icons';
+import {/*ShareIcon,*/ RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui/icons';
 import {Row, Col, Tooltip} from 'antd';
 import Wave from '../Wave';
 import RecordButton from '../RecordButton';
@@ -69,20 +69,24 @@ export default function AudioRecordingScreen(props) {
     const format = audio.canPlayType(preferredFormat)
         ? preferredFormat
         : 'audio/wav';
-    return function getAudioFormat() {
-      return format;
-    };
+    // return function getAudioFormat() {
+    //   return format;
+    // };
+    return format;
   })
 
-  const text = <span>prompt text</span>;
+  const tooltipPlay = <span>Play</span>;
+  const tooltipRerecord = <span>Re-record</span>;
+  // const text = <span>prompt text</span>;
+
 
   function onRerecord() {
     setAudio(null);
   }
 
-  function onShare() {
-    console.log("Shared");
-  }
+  // function onShare() {
+  //   console.log("Shared");
+  // }
 
   const handleFilters = (filters, category) => {
     const newFilters = {...Filters}
@@ -100,7 +104,7 @@ export default function AudioRecordingScreen(props) {
                   <source src={audio.blobURL} type={getAudioFormat()}/>
                 </audio>
                 <Tooltip
-                    title={text}
+                    title={tooltipPlay}
                     arrow
                     open={isPlaying}
                     theme="grey-tooltip">
@@ -118,20 +122,20 @@ export default function AudioRecordingScreen(props) {
                     <div className="placeholder"/>
                 ) : (
                     <>
-                      <Tooltip arrow title={text}>
+                      <Tooltip arrow title={tooltipRerecord}>
                         <button className="redo" type="button" onClick={onRerecord}>
                           <span className="padder">
                             <RedoIcon/>
                           </span>
                         </button>
                       </Tooltip>
-                      <Tooltip arrow title={text}>
+                      {/* <Tooltip arrow title={text}>
                         <button className="share" type="button" onClick={onShare}>
                           <span className="padder">
                             <ShareIcon/>
                           </span>
                         </button>
-                      </Tooltip>
+                      </Tooltip> */}
                     </>
                 )}
               </div>
@@ -142,39 +146,42 @@ export default function AudioRecordingScreen(props) {
   }
 
   return (
-      <Col span={20}>
+      <>
         <Row style={{textAlign: "center"}}>
           <div className="primary-buttons">
             <canvas className="primary-buttons canvas" ref={canvasRef}
                     style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
             <RecordButton
-                isRecording={isRecording}
-                setAudio={setAudio}
-                setIsRecording={setIsRecording}/>
+              isRecording={isRecording}
+              setAudio={setAudio}
+              setIsRecording={setIsRecording}/>
           </div>
         </Row>
         <Row>
-          <Row>
-            <Col>
-              <div style={{width: '60%', margin: '1rem auto'}}>
-                {props.userRole === "client" ?
-                    <Checkbox
-                        list={locations}
-                        handleFilters={filters => handleFilters(filters, "locations")}
-                    /> :
-                    <Dropdown list={dropdowns}/>
-                }
-              </div>
-
-            </Col>
-          </Row>
-          <Row>
-            <div className="submit-button">
-              {renderAudio(audio)}
-              <SendButton audio={audio} sendAudioSignal={sendAudioSignal}/>
+        <Row>
+          <Col>
+            <div style={{width: '60%', margin: '1rem auto'}}>
+              {props.userRole === "client" ?
+                <Checkbox
+                  list={locations}
+                  handleFilters={filters => handleFilters(filters, "locations")}
+                /> :
+                <Dropdown list={dropdowns}/>
+              }
             </div>
-          </Row>
+          </Col>
         </Row>
-      </Col>
+        <Row>
+          <div className="submit-button">
+            {renderAudio(audio)}
+            <SendButton 
+              audio={audio} 
+              userID={user.userData ? user.userData._id : ""}
+              roomID={chatroomID}
+              sendAudioSignal={sendAudioSignal}/>
+          </div>
+        </Row>
+      </Row>
+    </>
   )
 }

@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "antd": "^4.9.2",
+    "aws-sdk": "^2.838.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
@@ -35,7 +36,8 @@
     "saslprep": "^1.0.3",
     "socket.io": "^3.0.4",
     "socket.io-client": "^3.0.4",
-    "supports-color": "^7.1.0"
+    "supports-color": "^7.1.0",
+    "web-push": "^3.4.4"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.0.0-rc.0",

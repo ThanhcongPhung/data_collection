@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.3.0",
-    "antd": "^3.24.1",
+    "antd": "^3.26.20",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "formik": "^1.5.8",
