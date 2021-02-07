@@ -8,6 +8,7 @@ const { Chatroom } = require("../models/Chatroom");
 router.get("/", (req, res) => {
 
   Chatroom.find({})
+    .populate('intent')
     // .populate('user1') //not use this yet... populate will bring every information of 'user1' to the table, instead of just the id.
     .exec((err, roomFound) => {
       // .send() lets the browser automatically assign Content-Type 

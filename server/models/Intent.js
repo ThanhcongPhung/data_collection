@@ -18,8 +18,12 @@ const intentSchema = new mongoose.Schema({
     type: String,
   },
 
-  level: {
+  scale: {
     type: String,
+  },
+
+  level: {
+    type: Number,
   },
 });
 
