@@ -29,7 +29,9 @@ router.get("/random", (req, res) => {
     if (err) res.status(500).send({ success: false, message: "Can't estimate document count", err })
     // Get a random entry 
     var random = Math.floor(Math.random() * count)
-    Chatroom.findOne().skip(random).exec((err, roomFound) => {
+    Chatroom.findOne().skip(random)
+    .populate('intent')
+    .exec((err, roomFound) => {
       if (err) res.status(500).send({ success: false, message: "Can't proceed to find any room", err })
       return res.status(200).send({
         success: true,
@@ -41,7 +43,9 @@ router.get("/random", (req, res) => {
 
 // GET ONE
 router.get("/:roomID", (req, res) => {
-  Chatroom.findById(req.params.roomID, (err, roomFound) => {
+  Chatroom.findById(req.params.roomID)
+  .populate('intent')
+  .exec((err, roomFound) => {
     if (err) res.status(500).send({ success: false, err })
     else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
     else res.status(200).send({ success: true, roomFound })

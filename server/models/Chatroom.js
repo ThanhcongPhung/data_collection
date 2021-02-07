@@ -29,9 +29,13 @@ const chatroomSchema = new mongoose.Schema({
   audioList: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Audio'
-  }]
+  }],
   // need to design some stuff for intent.
   // intent goes here
+  intent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Intent',
+  }
 })
 
 

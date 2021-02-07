@@ -282,16 +282,18 @@ const compareObject = (obj1, obj2) => {
 const { Chatroom } = require("./models/Chatroom");
 
 const createRoom = async (userID1, userID2, roomType) => {
-// user1 - client, user2 - servant
+  // user1 - client, user2 - servant
   let content_type = roomType === "audio" ? 0 : 1
   const randomValue = randomGenerator()
 
+  let intent = await createRandomIntent()
   const chatroom = await Chatroom.create({
     name: generateName() + randomValue,
-    task: generateTask() + randomValue,
+    task: generateTask(intent.action, intent.device),
     content_type: content_type,
     user1: userID1,
     user2: userID2,
+    intent: intent._id,
   })
 
   return chatroom._id
@@ -306,9 +308,48 @@ const generateName = () => {
   return "Room R"
 }
 
-const generateTask = () => {
+const generateTask = (action, device) => {
   // IMPLEMENT!!!
-  return "A sample task " 
+  return `${action} ${device.toLowerCase()}`
+}
+
+const { Intent } = require("./models/Intent");
+const { ACTION, DEVICE, SCALE, ROOM, ACTION_NO_SCALE, DEVICE_NO_SCALE } = require("./config/intent");
+
+const createRandomIntent = () => {
+  // gen action
+  let action = getRandomFromArray(ACTION);
+  // gen device
+  let device = getRandomFromArray(DEVICE);
+  // gen scale based on action and device
+  let scale = null
+  if (!ACTION_NO_SCALE.includes(action) && !DEVICE_NO_SCALE.includes(device)) {
+    scale = getRandomFromArray(SCALE);
+  }  
+  // gen level based on device and scale
+  let level = Math.floor(Math.random() * 100);
+
+  // gen room based on device
+  let room = getRandomFromArray(ROOM);
+
+  // gen floor
+  let floor = Math.floor(Math.random()*3 + 1);
+
+  const intent = Intent.create({
+    action: action,
+    device: device,
+    floor: floor,
+    room: room,
+    level: level,
+    scale: scale,
+  })
+
+  return intent
+}
+
+const getRandomFromArray = (arr) => {
+  var item = arr[Math.floor(Math.random() * arr.length)]
+  return item
 }
 
 module.exports = sockets;
