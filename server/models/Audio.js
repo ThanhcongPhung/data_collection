@@ -19,6 +19,11 @@ const audioSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+
+  intent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Intent',
   }
 })
 

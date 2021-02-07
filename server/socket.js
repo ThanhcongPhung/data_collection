@@ -311,4 +311,22 @@ const generateTask = () => {
   return "A sample task " 
 }
 
+const { Intent } = require("./models/Audio")
+
+const randomIntent = () => {
+  // gen action
+
+  // gen device
+
+  // gen scale based on action and device
+
+  // gen level based on device and scale
+
+  // gen room based on device
+
+  // gen floor
+
+  // return
+}
+
 module.exports = sockets;
