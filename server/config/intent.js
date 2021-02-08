@@ -2,6 +2,8 @@
 
 // ]
 
+const COLOR = ['Trắng', 'Vàng', 'Trong suốt']
+
 const DEVICE = [
   {
     name: 'Quạt',
@@ -437,7 +439,7 @@ const DEVICE = [
   },
   {
     name: 'Cổng',
-    room: ['Vườn, Garage'],
+    room: ['Vườn', 'Garage'],
     action: [
       {
         name: 'Mở',
@@ -608,7 +610,6 @@ const DEVICE = [
   }
 ]
 
-const COLOR = ['Trắng', 'Vàng', 'Trong suốt']
 // Kiểm tra = check status
 const ACTION = ['Bật', 'Tắt', 'Đặt', "Tăng", "Giảm", "Kiểm tra"]
 const ACTION_NO_SCALE = ['Tắt', "Kiểm tra"]
