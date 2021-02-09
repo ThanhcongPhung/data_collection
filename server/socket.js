@@ -309,39 +309,48 @@ const generateName = () => {
 }
 
 const generateTask = (action, device) => {
-  // IMPLEMENT!!!
   return `${action} ${device.toLowerCase()}`
 }
 
 const { Intent } = require("./models/Intent");
-const { ACTION, DEVICE, SCALE, ROOM, ACTION_NO_SCALE, DEVICE_NO_SCALE } = require("./config/intent");
+const { DEVICE, COLOR } = require("./config/intent");
 
 const createRandomIntent = () => {
-  // gen action
-  let action = getRandomFromArray(ACTION);
   // gen device
-  let device = getRandomFromArray(DEVICE);
-  // gen scale based on action and device
-  let scale = null
-  if (!ACTION_NO_SCALE.includes(action) && !DEVICE_NO_SCALE.includes(device)) {
-    scale = getRandomFromArray(SCALE);
-  }  
-  // gen level based on device and scale
-  let level = Math.floor(Math.random() * 100);
-
-  // gen room based on device
-  let room = getRandomFromArray(ROOM);
-
+  let target = getRandomFromArray(DEVICE);
+  let device = target.name 
   // gen floor
   let floor = Math.floor(Math.random()*3 + 1);
+  // gen room
+  let room = getRandomFromArray(target.room);
+  // gen action
+  let targetAction = getRandomFromArray(target.action);
+  let action = targetAction.name;
+  // gen scale and level
+  let targetScale = null;
+  let scale = null;
+  let level = null;
+  if (targetAction.scale != null) {
+    if (targetAction.requireScale === 1 || Math.floor(Math.random() * 2) === 1) {
+      targetScale = getRandomFromArray(targetAction.scale);
+    } 
+  }
+  if (targetScale != null) {
+    scale = targetScale.name;
+    if (scale === 'Màu') {
+      level = COLOR[Math.floor(Math.random() * 2)];
+    } else {
+      level = genRandomInt(targetScale.min, targetScale.max);
+    }
+  }
 
   const intent = Intent.create({
     action: action,
     device: device,
     floor: floor,
     room: room,
-    level: level,
     scale: scale,
+    level: level,
   })
 
   return intent
@@ -350,6 +359,12 @@ const createRandomIntent = () => {
 const getRandomFromArray = (arr) => {
   var item = arr[Math.floor(Math.random() * arr.length)]
   return item
+}
+
+const genRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 module.exports = sockets;

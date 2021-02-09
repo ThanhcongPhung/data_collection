@@ -4,17 +4,13 @@ import {Row, Col, Tooltip} from 'antd';
 import Wave from '../Wave';
 import RecordButton from '../RecordButton';
 import SendButton from '../SendButton';
-import Checkbox from '../Client/Checkbox';
+import ClientCheckbox from '../Client/ClientCheckbox';
 import Dropdown from '../Servant/Dropdown';
 import {dropdowns} from '../Data';
-import {locations} from '../Data'
 
 export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
   const audioRef = useRef(null);
-  const [Filters, setFilters] = useState({
-    locations: [],
-  })
 
   let socket = props.socket;
   const chatroomID = props.chatroomID;
@@ -67,17 +63,13 @@ export default function AudioRecordingScreen(props) {
     const preferredFormat = 'audio/ogg; codecs=opus';
     const audio = document.createElement('audio');
     const format = audio.canPlayType(preferredFormat)
-        ? preferredFormat
-        : 'audio/wav';
-    // return function getAudioFormat() {
-    //   return format;
-    // };
+      ? preferredFormat
+      : 'audio/wav';
     return format;
   })
 
   const tooltipPlay = <span>Play</span>;
   const tooltipRerecord = <span>Re-record</span>;
-  // const text = <span>prompt text</span>;
 
 
   function onRerecord() {
@@ -87,12 +79,6 @@ export default function AudioRecordingScreen(props) {
   // function onShare() {
   //   console.log("Shared");
   // }
-
-  const handleFilters = (filters, category) => {
-    const newFilters = {...Filters}
-    newFilters[category] = filters
-    setFilters(newFilters)
-  }
 
   const renderAudio = (audio) => {
     if (audio !== null) {
@@ -104,39 +90,39 @@ export default function AudioRecordingScreen(props) {
                   <source src={audio.blobURL} type={getAudioFormat()}/>
                 </audio>
                 <Tooltip
-                    title={tooltipPlay}
-                    arrow
-                    open={isPlaying}
-                    theme="grey-tooltip">
+                  title={tooltipPlay}
+                  arrow
+                  open={isPlaying}
+                  theme="grey-tooltip">
                   <button
                       className="play"
                       type="button"
                       onClick={toggleIsPlaying}
                   >
                     <span className="padder">
-                        {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
+                      {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
                     </span>
                   </button>
                 </Tooltip>
                 {isPlaying ? (
-                    <div className="placeholder"/>
+                  <div className="placeholder"/>
                 ) : (
-                    <>
-                      <Tooltip arrow title={tooltipRerecord}>
-                        <button className="redo" type="button" onClick={onRerecord}>
-                          <span className="padder">
-                            <RedoIcon/>
-                          </span>
-                        </button>
-                      </Tooltip>
-                      {/* <Tooltip arrow title={text}>
-                        <button className="share" type="button" onClick={onShare}>
-                          <span className="padder">
-                            <ShareIcon/>
-                          </span>
-                        </button>
-                      </Tooltip> */}
-                    </>
+                  <>
+                    <Tooltip arrow title={tooltipRerecord}>
+                      <button className="redo" type="button" onClick={onRerecord}>
+                        <span className="padder">
+                          <RedoIcon/>
+                        </span>
+                      </button>
+                    </Tooltip>
+                    {/* <Tooltip arrow title={text}>
+                      <button className="share" type="button" onClick={onShare}>
+                        <span className="padder">
+                          <ShareIcon/>
+                        </span>
+                      </button>
+                    </Tooltip> */}
+                  </>
                 )}
               </div>
             </div>
@@ -162,9 +148,8 @@ export default function AudioRecordingScreen(props) {
           <Col>
             <div style={{width: '60%', margin: '1rem auto'}}>
               {props.userRole === "client" ?
-                <Checkbox
-                  list={locations}
-                  handleFilters={filters => handleFilters(filters, "locations")}
+                <ClientCheckbox
+                  list={props.scenario}  
                 /> :
                 <Dropdown list={dropdowns}/>
               }

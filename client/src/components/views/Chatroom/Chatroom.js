@@ -22,14 +22,31 @@ export default function Chatroom(props) {
   let username = user.userData ? user.userData.name : "";
   const [userRole, setUserRole] = useState("");
   const [audioHistory, setAudioHistory] = useState([]);
+  const [ scenario, setScenario ] = useState([]);
 
   const dispatch = useDispatch();
 
   dispatch(getRoom(chatroomID))
-      .then(async (response) => {
-        if (userID === response.payload.roomFound.user1) setUserRole("client");
-        if (userID === response.payload.roomFound.user2) setUserRole("servant");
-      })
+    .then(async (response) => {
+      if (userID === response.payload.roomFound.user1) setUserRole("client");
+      if (userID === response.payload.roomFound.user2) setUserRole("servant");
+      const intent = response.payload.roomFound.intent
+      let temp = []
+      for (const property in intent) {
+        if (property !== '_id' && property !== '__v' && intent[property] !== null) {
+          temp.push([
+            property,
+            (property === 'floor' ? 'Tầng ' + intent[property] : intent[property]),
+            intent[property],
+            // key: property,
+            // label: intent[property],
+            // value: intent[property],
+          ])
+        }
+      }
+
+      setScenario(temp);
+    })
 
   useEffect(() => {
     if (socket) {
@@ -82,6 +99,7 @@ export default function Chatroom(props) {
                 canvasRef={canvasRef}
                 socket={socket}
                 user={user}
+                scenario={scenario}
                 roomContentType={room_content_type}
                 chatroomID={chatroomID}
                 userRole={userRole}
@@ -98,7 +116,8 @@ export default function Chatroom(props) {
             <Row>
               <Col>
                 {
-                  userRole === "client" ? <Scenario/> : (
+                  // Got to update this scenario={scenario} to scenario={progress}
+                  userRole === "client" ? <Scenario scenario={scenario}/> : (
                     <>
                       <h3 style={{textAlign: "center"}}>Ghi chú công việc đã làm được</h3>
                       <TextArea style={{height: "200px"}} maxLength={100}/>

@@ -1,16 +1,16 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Col, Row, Button, Form, Input, Icon} from 'antd';
-import {locations} from '../Data'
-import Checkbox from '../Client/Checkbox';
+// import {locations} from '../Data'
+// import Checkbox from '../Client/Checkbox';
 import moment from 'moment';
 import { getMessages } from '../../../../../_actions/message_actions'
 import ChatCard from './ChatCard';
-import Dropdown from '../Servant/Dropdown';
-import {dropdowns} from '../Data';
+// import Dropdown from '../Servant/Dropdown';
+// import {dropdowns} from '../Data';
 
 export default function TextChatScreen(props) {
   let [message, setMessage] = useState('');
-  const [uncheck, setUncheck] = useState(false);
+  // const [uncheck, setUncheck] = useState(false);
   const divRef = useRef(null);
   const user = props.user;
   const chatroomID = props.chatroomID;
@@ -35,12 +35,12 @@ export default function TextChatScreen(props) {
     divRef.current.scrollIntoView({behavior: 'smooth'});
   });
 
-  const handleFilters = (filters, category) => {
-    const newFilters = {...Filters}
-    // console.log(newFilters);
-    newFilters[category] = filters
-    setFilters(newFilters)
-  }
+  // const handleFilters = (filters, category) => {
+  //   const newFilters = {...Filters}
+  //   // console.log(newFilters);
+  //   newFilters[category] = filters
+  //   setFilters(newFilters)
+  // }
 
   const submitChatmessage = (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ export default function TextChatScreen(props) {
     })
     setMessage('');
     setFilters(null);
-    setUncheck(true);
+    // setUncheck(true);
   }
   return (
       <Col span={20}>
@@ -81,14 +81,14 @@ export default function TextChatScreen(props) {
             <Row>
               <Form layout="inline" onSubmit={submitChatmessage}>
                 <Col span={18}>
-                  {props.userRole === "client" ?
+                  {/* {props.userRole === "client" ?
                       <Checkbox
                           list={locations}
                           handleFilters={filters => handleFilters(filters, "locations")}
                           uncheck={uncheck}
                       /> :
                       <Dropdown list={dropdowns}/>
-                  }
+                  } */}
 
                   <Input
                       id="message"
