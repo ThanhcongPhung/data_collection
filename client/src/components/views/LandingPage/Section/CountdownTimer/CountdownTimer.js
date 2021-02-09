@@ -23,17 +23,17 @@ export default function CountdownTimer(props) {
   return (
       <div className="countdown">
         <CountdownCircleTimer
-            onComplete={() => {
-              props.handleTimeout()
-            }}
-            isPlaying={props.isPlaying}
-            duration={props.duration}
-            children={renderTime}
-            colors={[
-              ['#004777', 0.33],
-              ['#F7B801', 0.33],
-              ['#A30000', 0.33],
-            ]}/>
+          onComplete={() => {
+            props.handleTimeout()
+          }}
+          isPlaying={props.isPlaying}
+          duration={props.duration}
+          children={renderTime}
+          colors={[
+            ['#004777', 0.33],
+            ['#F7B801', 0.33],
+            ['#A30000', 0.33],
+          ]}/>
       </div>
 
   )

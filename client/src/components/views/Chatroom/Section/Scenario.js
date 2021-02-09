@@ -1,9 +1,11 @@
 import React, {useState} from 'react'
 import {Col, Row} from "antd";
 import Checkbox2 from "./Client/Checkbox2";
-import {locations} from "./Data";
 
-export default function Scenario() {
+export default function Scenario(props) {
+  
+  const scenario = props ? props.scenario : [];
+
   const [Filters, setFilters] = useState({
     locations: [],
   })
@@ -20,8 +22,8 @@ export default function Scenario() {
             Việt ( có thể bằng 1 hoặc nhiều lần nói).</Col>
           <Col span={24}>
             <Checkbox2
-                list={locations}
-                handleFilters={filters => handleFilters(filters, "locations")}
+              list={scenario}
+              handleFilters={filters => handleFilters(filters, "locations")}
             />
           </Col>
         </Row>

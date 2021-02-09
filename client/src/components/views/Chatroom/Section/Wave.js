@@ -2,7 +2,7 @@
 const RATIO = window.devicePixelRatio;
 const WIDTH = RATIO * 320;
 const HEIGHT = RATIO * 100;
-const IDLE_AMPLITUDE = 0.1;
+const IDLE_AMPLITUDE = 0.0;
 const PLAY_AMPLITUDE = 0.6;
 
 const LOW_FPS = 30;

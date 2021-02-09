@@ -309,7 +309,6 @@ const generateName = () => {
 }
 
 const generateTask = (action, device) => {
-  // IMPLEMENT!!!
   return `${action} ${device.toLowerCase()}`
 }
 
@@ -332,7 +331,7 @@ const createRandomIntent = () => {
   let scale = null;
   let level = null;
   if (targetAction.scale != null) {
-    if (requireScale == 1 || Math.floor(Math.random() * 2) == 1) {
+    if (targetAction.requireScale === 1 || Math.floor(Math.random() * 2) === 1) {
       targetScale = getRandomFromArray(targetAction.scale);
     } 
   }
