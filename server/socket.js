@@ -287,6 +287,14 @@ const createRoom = async (userID1, userID2, roomType) => {
   const randomValue = randomGenerator()
 
   let intent = await createRandomIntent()
+  let progress = await createRandomProgress(
+    intent.action, 
+    intent.device, 
+    intent.floor,
+    intent.room,
+    intent.scale,
+    intent.level,
+  )
   const chatroom = await Chatroom.create({
     name: generateName() + randomValue,
     task: generateTask(intent.action, intent.device),
@@ -294,6 +302,7 @@ const createRoom = async (userID1, userID2, roomType) => {
     user1: userID1,
     user2: userID2,
     intent: intent._id,
+    progress: progress._id,
   })
 
   return chatroom._id
@@ -313,7 +322,8 @@ const generateTask = (action, device) => {
 }
 
 const { Intent } = require("./models/Intent");
-const { DEVICE, COLOR } = require("./config/intent");
+const { DEVICE } = require("./config/intent");
+// const { DEVICE, COLOR } = require("./config/intent");
 
 const createRandomIntent = () => {
   // gen device
@@ -337,11 +347,12 @@ const createRandomIntent = () => {
   }
   if (targetScale != null) {
     scale = targetScale.name;
-    if (scale === 'Màu') {
-      level = COLOR[Math.floor(Math.random() * 2)];
-    } else {
-      level = genRandomInt(targetScale.min, targetScale.max);
-    }
+    // Can't deal with this yet... Hardcode on frontend side for now.
+    // if (scale === 'Màu') {
+    //   level = COLOR[Math.floor(Math.random() * 2)];
+    // } else {
+    level = genRandomInt(targetScale.min, targetScale.max);
+    // }
   }
 
   const intent = Intent.create({
@@ -354,6 +365,21 @@ const createRandomIntent = () => {
   })
 
   return intent
+}
+
+const { Progress } = require("./models/Progress")
+
+const createRandomProgress = (action, device, floor, room, scale, level) => {
+  const progress = Progress.create({
+    action: (action === null ? -1 : 0),
+    device: (device === null ? -1 : 0),
+    floor: (floor === null ? -1 : 0),
+    room: (room === null ? -1 : 0),
+    scale: (scale === null ? -1 : 0),
+    level: (level === null ? -1 : 0),
+  })
+
+  return progress
 }
 
 const getRandomFromArray = (arr) => {

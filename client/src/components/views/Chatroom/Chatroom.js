@@ -23,6 +23,7 @@ export default function Chatroom(props) {
   const [userRole, setUserRole] = useState("");
   const [audioHistory, setAudioHistory] = useState([]);
   const [ scenario, setScenario ] = useState([]);
+  const [ progress, setProgress ] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -31,10 +32,10 @@ export default function Chatroom(props) {
       if (userID === response.payload.roomFound.user1) setUserRole("client");
       if (userID === response.payload.roomFound.user2) setUserRole("servant");
       const intent = response.payload.roomFound.intent
-      let temp = []
+      let tempIntent = []
       for (const property in intent) {
         if (property !== '_id' && property !== '__v' && intent[property] !== null) {
-          temp.push([
+          tempIntent.push([
             property,
             (property === 'floor' ? 'Tầng ' + intent[property] : intent[property]),
             intent[property],
@@ -44,8 +45,22 @@ export default function Chatroom(props) {
           ])
         }
       }
+      setScenario(tempIntent);
 
-      setScenario(temp);
+      let tempProgress = []
+      const progress = response.payload.roomFound.progress
+      for(const property in progress) {
+        if (property !== '_id' && property !== '__v' && progress[property] !== null) {
+          tempProgress.push([
+            property,
+            progress[property],
+            // key: property,
+            // value: progress[property],
+          ])
+        }
+      }
+      setProgress(tempProgress);
+      
     })
 
   useEffect(() => {
@@ -117,7 +132,7 @@ export default function Chatroom(props) {
               <Col>
                 {
                   // Got to update this scenario={scenario} to scenario={progress}
-                  userRole === "client" ? <Scenario scenario={scenario}/> : (
+                  userRole === "client" ? <Scenario scenario={scenario} progress={progress}/> : (
                     <>
                       <h3 style={{textAlign: "center"}}>Ghi chú công việc đã làm được</h3>
                       <TextArea style={{height: "200px"}} maxLength={100}/>

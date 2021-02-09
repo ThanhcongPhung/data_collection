@@ -1,11 +1,22 @@
 import React from 'react'
 import { Checkbox, Collapse, Row, Col } from 'antd';
 
+import { COLOR } from './../../../../Config';
+
 const {Panel} = Collapse
 
 export default function ClientCheckbox(props) {
 
   const list = props ? props.list : []
+
+  // update label for color criteria
+  if(list) {
+    if(list[4]) {
+      if(list[4][2].toLowerCase() === 'màu') {
+        list[5][1] = COLOR[list[5][2]]
+      }
+    }
+  }
 
   const onChange = (checkedValues) => {
     console.log('checked = ', checkedValues);

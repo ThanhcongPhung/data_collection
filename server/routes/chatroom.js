@@ -9,6 +9,7 @@ router.get("/", (req, res) => {
 
   Chatroom.find({})
     // .populate('user1') //not use this yet... populate will bring every information of 'user1' to the table, instead of just the id.
+    .populate('progress')
     .exec((err, roomFound) => {
       // .send() lets the browser automatically assign Content-Type 
       // whereas .json() specifies Content-Type as json type.
@@ -31,6 +32,7 @@ router.get("/random", (req, res) => {
     var random = Math.floor(Math.random() * count)
     Chatroom.findOne().skip(random)
     .populate('intent')
+    .populate('progress')
     .exec((err, roomFound) => {
       if (err) res.status(500).send({ success: false, message: "Can't proceed to find any room", err })
       return res.status(200).send({
@@ -45,6 +47,7 @@ router.get("/random", (req, res) => {
 router.get("/:roomID", (req, res) => {
   Chatroom.findById(req.params.roomID)
   .populate('intent')
+  .populate('progress')
   .exec((err, roomFound) => {
     if (err) res.status(500).send({ success: false, err })
     else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })

@@ -2,9 +2,12 @@ import React, {useState} from 'react'
 import {Col, Row} from "antd";
 import Checkbox2 from "./Client/Checkbox2";
 
+import { COLOR } from './../../../Config';
+
 export default function Scenario(props) {
   
   const scenario = props ? props.scenario : [];
+  const progress = props ? props.progress : [];
 
   const [Filters, setFilters] = useState({
     locations: [],
@@ -16,7 +19,7 @@ export default function Scenario(props) {
   }
 
   const generateScript = () => {
-    if (scenario) {
+    if (scenario && scenario.length >= 4) { 
       return `Bạn muốn ${scenario[0][2].toLowerCase()} ${scenario[1][2].toLowerCase()} trong ${scenario[3][2].toLowerCase()} ở tầng ${scenario[2][2]} ${generateAction()}. Bạn hãy mô tả yêu cầu trên bằng tiếng Việt ( có thể bằng 1 hoặc nhiều lần nói).`
     }
     
@@ -31,7 +34,7 @@ export default function Scenario(props) {
         case "âm lượng": 
           return `với ${scenario[4][2].toLowerCase()} ở mức ${scenario[5][2]}%`
         case "màu":
-          return `với ${scenario[4][2].toLowerCase()} ${scenario[5][2].toLowerCase()}`
+          return `với ${scenario[4][2].toLowerCase()} ${COLOR[scenario[5][2]].toLowerCase()}`
         case "kênh":
         case "mức":
           return `tại ${scenario[4][2].toLowerCase()} ${scenario[5][2]}`
@@ -61,6 +64,7 @@ export default function Scenario(props) {
           <Col span={24}>
             <Checkbox2
               list={scenario}
+              progress={progress}
               handleFilters={filters => handleFilters(filters, "locations")}
             />
           </Col>
