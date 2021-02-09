@@ -9,7 +9,7 @@ import LoginPage from "./views/LoginPage/LoginPage.js";
 import RegisterPage from "./views/RegisterPage/RegisterPage.js";
 import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer"
-
+import AudioImport from "./views/ImportAudio/AudioImport";
 import { BACKEND_URL } from './Config'
 import Servant from "./views/Chatroom/Servant";
 
@@ -71,7 +71,7 @@ function App(props) {
           {/* content-type: 0 - audio, 1 - text message */}
           <Route exact path="/chatroom/:content_type/:id" component={Auth(ChatroomWithSocket, true)} />
           <Route exact path="/servant/:id" component={Auth(ServantWithSocket, true)} />
-
+          <Route exact path="/audioImport" component={Auth(AudioImport, null)} />
         </Switch>
       </div>
       <Footer />
