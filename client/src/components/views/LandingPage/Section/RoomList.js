@@ -47,27 +47,6 @@ function RoomList(props) {
     return index
   }
 
-  // const columns = [
-  //   {
-  //     dataIndex: 'name',
-  //   },
-  //   {
-  //     title: "Task",
-  //     dataIndex: 'task',
-  //     width: 340,
-  //   },
-  //   {
-  //     render: () => (
-  //       <>
-  //         {/* !!! A BUG !!! CHAT ROOM INDEX DOESN'T REFRESH AFTER {LOG OUT THEN RE LOGIN}*/}
-  //         <Link to={`/chatroom/${updateIndex()}`}>
-  //           Join
-  //         </Link>
-  //       </>
-  //     )
-  //   }
-  // ]
-
   if (roomList == null) {
     return (
       <>

@@ -221,6 +221,22 @@ sockets.init = function(server) {
       }
     });
   });
+
+  // Just receive an intent. This should be seperate for servant and together with an audio for client.
+
+  // Compare the receive signal.
+
+  // If right, send one signal to the servant to congrat and one to the client telling them that the servant has understood and now recording. 
+  // Then save the intent to the progress record
+
+  // If different, send one signal to the servant telling them that they are wrong, telling them to ask the client what's going on
+  // The intent that the client sent won't be saved in the progress record. 
+
+  // Need to add a "I don't understand button, please say the line again" for both side. None of them can delete their previous audios unless the other party does so.
+  // If the button is press it, the last message that was sent out of the room will be deleted. (Of course, can't always press it). 
+  // This gonna be a problem since I have to update code for both amazon server and local server. Or I can cheat just by deleting the record of the room. 
+  // But since the policy of the website is that once the conversation is over, the room will be destroy along with its record... Maybe I should create a log for that.
+  // Create a log for the record so deleting audio won't be a problem.
 }
 
 const addToQueue = (queue, userID) => {
