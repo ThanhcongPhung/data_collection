@@ -1,0 +1,184 @@
+import React, {useState} from 'react';
+import Dropzone from 'react-dropzone';
+import Axios from 'axios';
+import './AudioImport.css';
+import {Button} from 'antd';
+import DisplayAudio from './DisplayAudio';
+
+export default function AudioImport() {
+  const [audio, setAudio] = useState(null);
+  const [file, setFile] = useState(null);
+  const [message, setMessage] = useState('');
+  const [content,setContent] = useState(null);
+  const onDrop = (files) => {
+
+    if (files && files.length > 0){
+      const file = files[0];
+      setFile(file);
+      setAudio(URL.createObjectURL(file))
+      // console.log(typeof files)
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const url = 'https://api.fpt.ai/hmi/asr/general';
+        // const config = {
+        //   method: 'POST',
+        //   headers: {'api-key': 'azjQBAy8CcTBAiRUn82D6KcG2BlonQfu'},
+        //   body: JSON.stringify({data: event.target.result})
+        // }
+        // fetch(url, config)
+        //     .then(response=> {
+        //       console.log(response.json())
+        //     })
+        // The file's text will be printed here
+        // setContent(event.target.result)
+        // let uint32View = new Uint32Array(event.target.result)
+        console.log(event.target.result)
+        // console.log(typeof event.target.result)
+      };
+      reader.readAsArrayBuffer(file);
+
+    }
+
+    let formData = new FormData();
+    const config = {
+      headers: {'content-type': 'multipart/form-data'}
+    }
+    formData.append("file", files[0])
+    // console.log(formData)
+    // var file2 = files[0];
+    // var data = file2.getAsBinary
+    // const url='https://api.fpt.ai/hmi/asr/general';
+    console.log(formData)
+    Axios.post('/api/uploadfiles', formData, config)
+        .then(response=>{
+          // if(response.data.success){
+          //   let dataUrl = response.data.url;
+            // console.log(dataUrl);
+          }
+        )
+  }
+  const submitFile =(e)=>{
+    e.preventDefault();
+    setMessage('Uploading...')
+    const contentType = file.type;
+    const options = {
+      params: {
+        Key: file.name,
+        ContentType: contentType
+      },
+      headers: {
+        'Content-Type': contentType
+      }
+    };
+    const generatePutUrl = 'http://localhost:5000/generate-put-url';
+    Axios.get(generatePutUrl,options).then(res=>{
+      const {
+        data: { putURL }
+      } = res;
+      // console.log(putURL)
+      Axios.put(putURL,file,options)
+          .then(res=>{
+            setMessage('Upload Successful')
+            setTimeout(()=>{
+              setMessage('');
+              document.querySelector('#upload-audio').value='';
+
+            },2000)
+          })
+          .catch(err=>{
+            setMessage('Sorry, something went wrong')
+            console.log('err', err);
+          })
+    })
+    setFile(null);
+  }
+  const getTranscript = (file) => {
+    const url = 'https://api.fpt.ai/hmi/asr/general';
+    // console.log(file)
+    const reader = new FileReader();
+    let fileBin = reader.readAsDataURL(file);
+    // console.log(fileBin)
+    // let formData = new FormData();
+    // formData.append("file", file)
+    //
+    // const config = {
+    //   method: 'POST',
+    //   headers: {'api-key': 'azjQBAy8CcTBAiRUn82D6KcG2BlonQfu'},
+    //   body: JSON.stringify({data: fileBin})
+    // }
+    // fetch(url, config)
+    //     .then(response=>{
+    //       console.log(response.json())
+    // if(response.status===0){
+    //   console.log(response.hypotheses);
+    // }
+    // })
+  }
+  const renderAudio = (audio) => {
+    if (audio !== null) {
+      return (
+          <div key={audio}>
+            <audio
+                controls="controls"
+                src={audio}>
+              <track kind="captions"/>
+            </audio>
+            <Button onClick={getTranscript(file)}>Get</Button>
+          </div>
+      )
+    } else return ""
+  }
+  return (
+      <div>
+        <React.Fragment>
+          <h2>Upload file in Reactj</h2>
+          <Dropzone onDrop={onDrop}>
+            {({getRootProps, getInputProps}) => (
+                <section>
+                  <div {...getRootProps()}>
+                    <input id='upload-audio' {...getInputProps()} />
+                    <h1>Drag and frop your audio here or <br/>
+                      <a>upload from your computer</a>
+                    </h1>
+                  </div>
+                </section>
+            )}
+          </Dropzone>
+          {/*<input*/}
+          {/*    id='upload-audio'*/}
+          {/*    type='file'*/}
+          {/*    accept='audio/*'*/}
+          {/*    onChange={onDrop}*/}
+          {/*/>*/}
+          <p>{message}</p>
+          <form onSubmit={submitFile}>
+            <Button id='file-upload-button' disabled={!file}>Upload</Button>
+          </form>
+        </React.Fragment>
+        <hr/>
+        {renderAudio(audio)}
+      </div>
+
+      // <div>
+      //   <h2>Upload file in Reactjs</h2>
+      //   <div className="dropzone">
+      //     <Dropzone onDrop={onDrop}>
+      //       {({getRootProps, getInputProps}) => (
+      //           <section>
+      //             <div {...getRootProps()}>
+      //               <input {...getInputProps()} />
+      //               <h1>Drag and frop your audio here or <br/>
+      //                 <a>upload from your computer</a>
+      //               </h1>
+      //             </div>
+      //           </section>
+      //       )}
+      //     </Dropzone>
+      //   </div>
+      //   {/*{console.log(audio)}*/}
+      //   <div className="submit-button">
+      //     {renderAudio(audio)}
+      //   </div>
+      // </div>
+  )
+}
