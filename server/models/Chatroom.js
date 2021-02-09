@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const chatroomSchema = new mongoose.Schema({
   name: {
     type:String,
-    maxlength:50
+    maxlength:50,
+    default: 'An unnamed room',
   },
   task: {
     type:String,
@@ -28,13 +29,20 @@ const chatroomSchema = new mongoose.Schema({
   },
   audioList: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Audio'
+    ref: 'Audio',
+    default: [],
   }],
-  // need to design some stuff for intent.
-  // intent goes here
   intent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Intent',
+    required: 'Intent ID is required',
+  },
+  // progress shows which criteria has been done. 
+  // -1 - non-exist, 0 - not done, 1 - done
+  progress: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Progress',
+    required: 'Progress ID is required',
   }
 })
 
