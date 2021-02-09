@@ -407,6 +407,11 @@ const DEVICE = [
             min: 18,
             max: 36,
           },
+          {
+            name: "Thời gian hẹn giờ",
+            min: 1,
+            max: 8,
+          },
         ],
       },
       {

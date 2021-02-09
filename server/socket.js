@@ -349,8 +349,8 @@ const createRandomIntent = () => {
     device: device,
     floor: floor,
     room: room,
-    level: level,
     scale: scale,
+    level: level,
   })
 
   return intent
