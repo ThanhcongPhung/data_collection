@@ -1,9 +1,12 @@
 import React, {useRef, useEffect, useState} from 'react';
+
+import { Row, Col, Tooltip, Checkbox } from 'antd';
 import {/*ShareIcon,*/ RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui/icons';
-import {Row, Col, Tooltip} from 'antd';
+
 import Wave from '../Shared/Wave';
 import RecordButton from '../Shared/RecordButton';
 import SendButton from '../Shared/SendButton';
+import ClientSendButton from '../Client/ClientSendButton';
 import ClientCheckbox from '../Client/ClientCheckbox';
 import Dropdown from '../Servant/Dropdown';
 import {dropdowns} from '../Data';
@@ -12,13 +15,15 @@ export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
   const audioRef = useRef(null);
 
-  let socket = props.socket;
-  const chatroomID = props.chatroomID;
-  const user = props.user;
+  let socket = props ? props.socket : null;
+  const chatroomID = props ? props.chatroomID : "";
+  const user = props ? props.user : null;
+  const userRole = props ? props.userRole : "";
   const [ isPlaying, setIsPlaying ] = useState(false);
   const [ audio, setAudio ] = useState(null);
-  const [ intent, setIntent ] = useState([]); 
+  const [ intent, setIntent ] = useState(null); 
   const [ isRecording, setIsRecording ] = useState(false);
+  const [ tagVisibility, setTagVisibility ] = useState(true);
 
   useEffect(() => {
     const canvasObj = canvasRef.current;
@@ -33,7 +38,6 @@ export default function AudioRecordingScreen(props) {
       }
     }
   });
-
 
   const sendAudioSignal = (link) => {
     if (socket) {
@@ -81,53 +85,57 @@ export default function AudioRecordingScreen(props) {
   //   console.log("Shared");
   // }
 
+  const toggleTagVisibility = (e) => {
+    setTagVisibility(!e.target.checked)
+  }
+
   const renderAudio = (audio) => {
     if (audio !== null) {
       return (
-          <div className="pill">
-            <div className="pill done">
-              <div className="pill done contents">
-                <audio preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
-                  <source src={audio.blobURL} type={getAudioFormat()}/>
-                </audio>
-                <Tooltip
-                  title={tooltipPlay}
-                  arrow
-                  open={isPlaying}
-                  theme="grey-tooltip">
-                  <button
-                      className="play"
-                      type="button"
-                      onClick={toggleIsPlaying}
-                  >
-                    <span className="padder">
-                      {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
-                    </span>
-                  </button>
-                </Tooltip>
-                {isPlaying ? (
-                  <div className="placeholder"/>
-                ) : (
-                  <>
-                    <Tooltip arrow title={tooltipRerecord}>
-                      <button className="redo" type="button" onClick={onRerecord}>
-                        <span className="padder">
-                          <RedoIcon/>
-                        </span>
-                      </button>
-                    </Tooltip>
-                    {/* <Tooltip arrow title={text}>
-                      <button className="share" type="button" onClick={onShare}>
-                        <span className="padder">
-                          <ShareIcon/>
-                        </span>
-                      </button>
-                    </Tooltip> */}
-                  </>
-                )}
-              </div>
+        <div className="pill">
+          <div className="pill done">
+            <div className="pill done contents">
+              <audio preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
+                <source src={audio.blobURL} type={getAudioFormat()}/>
+              </audio>
+              <Tooltip
+                title={tooltipPlay}
+                arrow
+                open={isPlaying}
+                theme="grey-tooltip">
+                <button
+                  className="play"
+                  type="button"
+                  onClick={toggleIsPlaying}
+                >
+                  <span className="padder">
+                    {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
+                  </span>
+                </button>
+              </Tooltip>
+              {isPlaying ? (
+                <div className="placeholder"/>
+              ) : (
+                <>
+                  <Tooltip arrow title={tooltipRerecord}>
+                    <button className="redo" type="button" onClick={onRerecord}>
+                      <span className="padder">
+                        <RedoIcon/>
+                      </span>
+                    </button>
+                  </Tooltip>
+                  {/* <Tooltip arrow title={text}>
+                    <button className="share" type="button" onClick={onShare}>
+                      <span className="padder">
+                        <ShareIcon/>
+                      </span>
+                    </button>
+                  </Tooltip> */}
+                </>
+              )}
             </div>
           </div>
+        </div>
       );
     } else return ""
   }
@@ -147,9 +155,12 @@ export default function AudioRecordingScreen(props) {
         <Row>
         <Row>
           <Col>
-            <div style={{width: '60%', margin: '1rem auto'}}>
+            <div style={{width: '75%', margin: '1rem auto'}}>
               {props.userRole === "client" ?
                 <ClientCheckbox
+                  // visible={tagVisibility && audio !== null}
+                  intent={tagVisibility ? intent : null}
+                  visible={tagVisibility}
                   setIntent={setIntent}
                   list={props.scenario}  
                 /> :
@@ -158,16 +169,38 @@ export default function AudioRecordingScreen(props) {
             </div>
           </Col>
         </Row>
-        <Row>
-          <div className="submit-button">
-            {renderAudio(audio)}
-            <SendButton 
-              audio={audio} 
-              intent={intent}
-              userID={user.userData ? user.userData._id : ""}
-              roomID={chatroomID}
-              sendAudioSignal={sendAudioSignal}/>
-          </div>
+        <Row justify="center" style={{display: 'flex', alignItems: 'center'}}>
+          <Col span={12} offset={3}>
+            <div className="submit-button">
+              {renderAudio(audio)}
+              {
+                userRole === "client" ? (
+                  <ClientSendButton 
+                    socket={socket}
+                    audio={audio} 
+                    intent={tagVisibility ? intent : null}
+                    userID={user.userData ? user.userData._id : ""}
+                    roomID={chatroomID}
+                    sendAudioSignal={sendAudioSignal}/>
+                ) : (
+                  <SendButton 
+                    audio={audio} 
+                    intent={tagVisibility ? intent : null}
+                    userID={user.userData ? user.userData._id : ""}
+                    roomID={chatroomID}
+                    sendAudioSignal={sendAudioSignal}/>
+                )
+              }
+              
+            </div>
+          </Col>
+          {
+            audio !== null ? (
+              <Col span={6}>
+                <Checkbox onChange={toggleTagVisibility}>Không có tag</Checkbox>
+              </Col>
+            ) : ""
+          }
         </Row>
       </Row>
     </>

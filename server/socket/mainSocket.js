@@ -207,6 +207,25 @@ sockets.init = function(server) {
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
     });
 
+    socket.on('client intent', ({roomID, intent}) => {
+      const clientRoom = roomID
+      const clientIntent = intent
+      console.log("Receive client intent: " + JSON.stringify(clientIntent) + " from room " + clientRoom)
+      // socket.on('servant intent', ({roomID, intent}) => {
+      //   const servantRoom = roomID
+      //   const servantIntent = intent
+
+      //   // confirm 2 person from the same room
+      //   if (clientRoom !== servantRoom) {
+      //     // Probably won't happen but gotta yell if someone's trying something funny.
+      //   } 
+
+      //   // compare the two intent, may need another compareObject function
+      //   // if okay, emit a signal, telling both ofthem that's it's okay.
+      //   // else emit a signal, telling the servant that he/she fucked up. Do it again, or press the godly "DELETE" button.
+      // })
+    });
+
     // when receive a message
     socket.on("Input Chat message", msg => {
       try {

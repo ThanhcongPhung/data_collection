@@ -8,6 +8,7 @@ const {Panel} = Collapse
 export default function ClientCheckbox(props) {
 
   const list = props ? props.list : []
+  const visible = props ? props.visible : true
 
   // update label for color criteria
   if(list) {
@@ -18,20 +19,40 @@ export default function ClientCheckbox(props) {
     }
   }
 
+  const getValueFromKey = (key) => {
+    for (const item of list) {
+      if (item[0] === key) return item[2]
+    }
+
+    return null
+  }
+
   const onChange = (checkedValues) => {
-    console.log('checked = ', checkedValues);
+    if (checkedValues === []) {
+      props.setIntent(null)
+    } else {
+      let intent = []
+      checkedValues.map(key => {
+        let temp = {
+          key: key,
+          value: getValueFromKey(key),
+        }
+
+        return intent.push(temp)
+      })
+
+      props.setIntent(intent)
+    }
   }
 
   const renderList = (list) => {
     // item - 0 - key - 1 - label - 2 - value
     return list ? list.map(item => {
-      let value = {
-        key: item[0],
-        value: item[2],
-      }
       return (
         <Col span={24/list.length} key={item[0]}>
-          <Checkbox value={value}>{item[1]}</Checkbox>  
+          {/* I was thinking of assigning object to the checkbox value, but then there's no way for me to manipulate the way it compares 2 objects 
+          so it can't be done. */}
+          <Checkbox value={item[0]} disabled={!visible}>{item[1]}</Checkbox>  
         </Col>
       )
     }) : ""

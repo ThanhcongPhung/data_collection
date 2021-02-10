@@ -37,7 +37,13 @@ export default function Scenario(props) {
           return `với ${scenario[4][2].toLowerCase()} ${COLOR[scenario[5][2]].toLowerCase()}`
         case "kênh":
         case "mức":
-          return `tại ${scenario[4][2].toLowerCase()} ${scenario[5][2]}`
+          if (scenario[0][2].toLowerCase() === "tăng") {
+            return `lên ${scenario[5][2]} ${scenario[4][2].toLowerCase()}`
+          } else if (scenario[0][2].toLowerCase() === "giảm") {
+            return `đi ${scenario[5][2]} ${scenario[4][2].toLowerCase()}`
+          } else {
+            return `tại ${scenario[4][2].toLowerCase()} ${scenario[5][2]}`
+          }
         case "nhiệt độ":
           return `với ${scenario[4][2].toLowerCase()} tại ${scenario[5][2]} độ`
         case "thời gian hẹn giờ":
