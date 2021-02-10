@@ -27,7 +27,8 @@ export default function Chatroom(props) {
 
   const dispatch = useDispatch();
 
-  dispatch(getRoom(chatroomID))
+  if(userRole === "") {
+    dispatch(getRoom(chatroomID))
     .then(async (response) => {
       if (userID === response.payload.roomFound.user1) setUserRole("client");
       if (userID === response.payload.roomFound.user2) setUserRole("servant");
@@ -62,6 +63,7 @@ export default function Chatroom(props) {
       setProgress(tempProgress);
       
     })
+  }
 
   useEffect(() => {
     if (socket) {
@@ -98,7 +100,8 @@ export default function Chatroom(props) {
         console.log(`User ${data.username} has left the room`)
       })
     }
-  })
+    // Idk about this... it may cause problem later...
+  }, [socket, audioHistory])
 
   return (
       <div className="chatroom">
@@ -147,9 +150,6 @@ export default function Chatroom(props) {
                 {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
               </Col> 
             </Row>
-            
-            
-            
           </Col>
         </Row>
       </div>

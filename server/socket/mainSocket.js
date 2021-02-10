@@ -1,5 +1,5 @@
 var sockets = {}
-const { Message } = require("./models/Message");
+const { Message } = require("./../models/Message");
 
 sockets.init = function(server) {
   // socket.io setup
@@ -174,6 +174,7 @@ sockets.init = function(server) {
       console.log(`The user ${username} whose ID is ${userID} has cancelled their ready status`);
     })
 
+    // when an user enters the room, announce to everyone else in the room
     socket.on('joinRoom', ({ chatroomID, username }) => {
       socket.join(chatroomID);
       console.log(`The user ${username} has joined chatroom: ${chatroomID}`);
@@ -184,6 +185,7 @@ sockets.init = function(server) {
       });
     });
 
+    // when an user leaves the room, announce to everyone else in the room
     socket.on('leaveRoom', ({ chatroomID, username }) => {
       socket.leave(chatroomID);
       console.log(`The user ${username} has left chatroom: ${chatroomID}`)
@@ -204,6 +206,8 @@ sockets.init = function(server) {
       });
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
     });
+
+    // when receive a message
     socket.on("Input Chat message", msg => {
       try {
         var message = new Message({ message: msg.chatMes, sender:msg.userId,intent: msg.intent, chatroomID:msg.chatroomID });
@@ -220,6 +224,7 @@ sockets.init = function(server) {
         console.error(error);
       }
     });
+  
   });
 
   // Just receive an intent. This should be seperate for servant and together with an audio for client.
@@ -232,11 +237,12 @@ sockets.init = function(server) {
   // If different, send one signal to the servant telling them that they are wrong, telling them to ask the client what's going on
   // The intent that the client sent won't be saved in the progress record. 
 
-  // Need to add a "I don't understand button, please say the line again" for both side. None of them can delete their previous audios unless the other party does so.
-  // If the button is press it, the last message that was sent out of the room will be deleted. (Of course, can't always press it). 
+  // Need to add a "I don't understand button, please say the line again" for both side. None of them can delete their own audios unless the other party does so.
+  // If the button is pressed, the last message that was sent out of the room will be deleted. (Of course, can't always press it). 
   // This gonna be a problem since I have to update code for both amazon server and local server. Or I can cheat just by deleting the record of the room. 
   // But since the policy of the website is that once the conversation is over, the room will be destroy along with its record... Maybe I should create a log for that.
   // Create a log for the record so deleting audio won't be a problem.
+  // Also create a log for those deleted record. So can pluck em out and put them into a trash folder
 }
 
 const addToQueue = (queue, userID) => {
@@ -295,7 +301,7 @@ const compareObject = (obj1, obj2) => {
   return JSON.stringify(obj1) === JSON.stringify(obj2)
 }
 
-const { Chatroom } = require("./models/Chatroom");
+const { Chatroom } = require("./../models/Chatroom");
 
 const createRoom = async (userID1, userID2, roomType) => {
   // user1 - client, user2 - servant
@@ -337,9 +343,9 @@ const generateTask = (action, device) => {
   return `${action} ${device.toLowerCase()}`
 }
 
-const { Intent } = require("./models/Intent");
-const { DEVICE } = require("./config/intent");
-// const { DEVICE, COLOR } = require("./config/intent");
+const { Intent } = require("./../models/Intent");
+const { DEVICE } = require("./../config/intent");
+// const { DEVICE, COLOR } = require("./../config/intent");
 
 const createRandomIntent = () => {
   // gen device
@@ -383,7 +389,7 @@ const createRandomIntent = () => {
   return intent
 }
 
-const { Progress } = require("./models/Progress")
+const { Progress } = require("./../models/Progress")
 
 const createRandomProgress = (action, device, floor, room, scale, level) => {
   const progress = Progress.create({
