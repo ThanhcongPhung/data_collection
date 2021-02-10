@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import {Col, Row} from "antd";
-import Checkbox2 from "./Client/Checkbox2";
+import Checkbox2 from "./Checkbox2";
 
-import { COLOR } from './../../../Config';
+import { COLOR } from './../../../../Config';
 
 export default function Scenario(props) {
   

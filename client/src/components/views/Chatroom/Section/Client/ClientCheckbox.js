@@ -25,9 +25,13 @@ export default function ClientCheckbox(props) {
   const renderList = (list) => {
     // item - 0 - key - 1 - label - 2 - value
     return list ? list.map(item => {
+      let value = {
+        key: item[0],
+        value: item[2],
+      }
       return (
         <Col span={24/list.length} key={item[0]}>
-          <Checkbox value={item[2]}>{item[1]}</Checkbox>  
+          <Checkbox value={value}>{item[1]}</Checkbox>  
         </Col>
       )
     }) : ""

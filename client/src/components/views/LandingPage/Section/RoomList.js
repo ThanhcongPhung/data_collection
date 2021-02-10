@@ -17,6 +17,8 @@ function RoomList(props) {
 
   // !!! POTENTIAL BUG!!! 
   // IF THE ROOM COUNT IS TOO BIG, IT MAY NOT LOAD EVERYTHING.
+  // as they say, there's some problem with setState that I need to clean up so I'll just drop a bomb here as a mark
+  // vvvvv Flood gate to make sure dispatch is fired only once.
   if (roomList.length === 0) {
     dispatch(getAllRooms())
     .then(response => {

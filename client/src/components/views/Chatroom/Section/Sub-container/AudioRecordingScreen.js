@@ -1,9 +1,9 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {/*ShareIcon,*/ RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui/icons';
 import {Row, Col, Tooltip} from 'antd';
-import Wave from '../Wave';
-import RecordButton from '../RecordButton';
-import SendButton from '../SendButton';
+import Wave from '../Shared/Wave';
+import RecordButton from '../Shared/RecordButton';
+import SendButton from '../Shared/SendButton';
 import ClientCheckbox from '../Client/ClientCheckbox';
 import Dropdown from '../Servant/Dropdown';
 import {dropdowns} from '../Data';
@@ -15,9 +15,10 @@ export default function AudioRecordingScreen(props) {
   let socket = props.socket;
   const chatroomID = props.chatroomID;
   const user = props.user;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audio, setAudio] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
+  const [ isPlaying, setIsPlaying ] = useState(false);
+  const [ audio, setAudio ] = useState(null);
+  const [ intent, setIntent ] = useState([]); 
+  const [ isRecording, setIsRecording ] = useState(false);
 
   useEffect(() => {
     const canvasObj = canvasRef.current;
@@ -149,6 +150,7 @@ export default function AudioRecordingScreen(props) {
             <div style={{width: '60%', margin: '1rem auto'}}>
               {props.userRole === "client" ?
                 <ClientCheckbox
+                  setIntent={setIntent}
                   list={props.scenario}  
                 /> :
                 <Dropdown list={dropdowns}/>
@@ -161,6 +163,7 @@ export default function AudioRecordingScreen(props) {
             {renderAudio(audio)}
             <SendButton 
               audio={audio} 
+              intent={intent}
               userID={user.userData ? user.userData._id : ""}
               roomID={chatroomID}
               sendAudioSignal={sendAudioSignal}/>

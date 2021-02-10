@@ -1,13 +1,14 @@
 import React from 'react'
 import axios from 'axios'
 
-import { BACKEND_URL } from '../../../Config'
+import { BACKEND_URL } from '../../../../Config'
 
 export default function Test(props) {
 
   const data = props ? props.audio : null
   const userID = props ? props.userID : ""
   const roomID = props ? props.roomID : ""
+  const intent = props ? props.intent : []
 
   // const uploadAudio = async (e) => {
 

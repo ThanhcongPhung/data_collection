@@ -15,6 +15,8 @@ export default function RandomRoomButton() {
   const [ alert, setAlert ] = useState(0)
   const dispatch = useDispatch();
 
+  // as they say, there's some problem with setState that I need to clean up so I'll just drop a bomb here as a mark.
+  // vvvvv Flood gate to make sure dispatch is fired only once.
   if (randomRoomID === '') {
     dispatch(getRandomRoom())
     .then(async (response) => {
