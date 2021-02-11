@@ -26,7 +26,6 @@ function LandingPage(props) {
   const [ roomLink, setRoomLink ] = useState('')
   
   const user = useSelector(state=>state.user)
-  console.log(user)
 
   let socket = props.socket;
  

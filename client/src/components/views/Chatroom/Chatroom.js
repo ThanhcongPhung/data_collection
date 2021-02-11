@@ -68,17 +68,16 @@ export default function Chatroom(props) {
       const audios = response.payload.roomFound.audioList;
       let tempAudioList = []
       audios.map(audio => {
-        return tempAudioList.push(audio.link)
+        // return tempAudioList.push(audio.link)
+        return tempAudioList = [audio.link, ...tempAudioList]
         // setAudioHistory((audioHistory) => [...audioHistory, audio.link])
       })
 
       if(audios.length % 2 === 0) {
         setTurn('client')
-      }
-      else if (audios.length % 2 === 1) {
+      } else if (audios.length % 2 === 1) {
         setTurn('servant')
-      }
-      else setTurn("")
+      } else setTurn("")
 
       setAudioHistory(tempAudioList)
     })
@@ -107,8 +106,14 @@ export default function Chatroom(props) {
       socket.on('newAudioURL', (data) => {
         // console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
         let newHistory = [...audioHistory]
-        newHistory.push(data.audioLink)
+        // newHistory.push(data.audioLink)
+        newHistory = [data.audioLink, ...audioHistory]
         setAudioHistory(newHistory)
+        if(turn === "client") {
+          setTurn("servant")
+        } else if (turn === "servant") {
+          setTurn("client")
+        } else setTurn("")
       })
 
       socket.on('joinRoom announce', (data) => {
@@ -120,7 +125,7 @@ export default function Chatroom(props) {
       })
     }
     // Idk about this... it may cause problem later...
-  }, [socket, audioHistory])
+  }, [turn, socket, audioHistory])
 
   return (
       <div className="chatroom">
@@ -133,7 +138,7 @@ export default function Chatroom(props) {
           <Col span={20}>
             {room_content_type === '0' ?
               <AudioRecordingScreen
-                recordingTurn={turn === userRole && turn !== "" && userRole !== ""}
+                recordingTurn={turn === userRole && turn !== ""}
                 canvasRef={canvasRef}
                 socket={socket}
                 user={user}

@@ -5,9 +5,10 @@ import {/*ShareIcon,*/ RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui
 
 import Wave from '../Shared/Wave';
 import RecordButton from '../Shared/RecordButton';
-import SendButton from '../Shared/SendButton';
+// import SendButton from '../Shared/SendButton';
 import ClientSendButton from '../Client/ClientSendButton';
 import ClientCheckbox from '../Client/ClientCheckbox';
+import ServantSendButton from '../Servant/ServantSendButton';
 import ServantDropDown from '../Servant/ServantDropDown';
 // import Dropdown from '../Servant/Dropdown';
 // import {dropdowns} from '../Data';
@@ -51,6 +52,7 @@ export default function AudioRecordingScreen(props) {
       })
     }
     setAudio(null);
+    setTagVisibility(true);
   }
 
   const toggleIsPlaying = () => {
@@ -169,7 +171,8 @@ export default function AudioRecordingScreen(props) {
                 /> :
                 // <Dropdown list={dropdowns}/>
                 <ServantDropDown 
-                  intent={tagVisibility ? intent : null}/>
+                  intent={tagVisibility ? intent : null}
+                  setIntent={setIntent}/>
               }
             </div>
           </Col>
@@ -189,7 +192,14 @@ export default function AudioRecordingScreen(props) {
                     roomID={chatroomID}
                     sendAudioSignal={sendAudioSignal}/>
                 ) : (
-                  <SendButton 
+                  // <SendButton 
+                  //   audio={audio} 
+                  //   intent={tagVisibility ? intent : null}
+                  //   userID={user.userData ? user.userData._id : ""}
+                  //   roomID={chatroomID}
+                  //   sendAudioSignal={sendAudioSignal}/>
+
+                  <ServantSendButton
                     audio={audio} 
                     intent={tagVisibility ? intent : null}
                     userID={user.userData ? user.userData._id : ""}

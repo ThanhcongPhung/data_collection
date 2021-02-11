@@ -9,6 +9,24 @@ export default function RecordButton(props) {
     const isRecording = props ? props.isRecording : false;
     const turn = props ? props.turn : false;
 
+    const renderRecordingButton = (
+        turn ? (
+            isRecording ? (
+                <button onClick={() => props.setIsRecording(false)} className="primary-button button" type="button">
+                    <StopIcon/>
+                </button> 
+            ) : (
+                <button onClick={() => props.setIsRecording(true)} className="primary-button button" type="button">
+                    <MicIcon/>
+                </button>
+            )
+        ) : (
+            <button onClick={() => alert("Yo")} style={{cursor: 'not-allowed'}} disabled>
+                <MicIcon />
+            </button>
+        )
+    )
+
     return (
         <div style={{margin: '4rem auto'}}>
             <div className="primary-button">
@@ -17,29 +35,11 @@ export default function RecordButton(props) {
                     record={isRecording}
                     onData={() => {}}
                     onSave={() => {}}
-                    onStart={() => {
-                        if (!turn) {
-                            props.setIsRecording(false)
-                            alert("Chưa tới lượt thu âm của bạn!")
-                        }
-                    }}
+                    onStart={() => {}}
                     onStop={blobObject => {
-                        if (turn) {
-                            props.setAudio(blobObject);
-                        } else {
-                            alert("Chưa tới lượt thu âm của bạn!")
-                        }
+                        props.setAudio(blobObject);
                     }}>
-                    {
-                    isRecording ? (
-                        <button onClick={() => props.setIsRecording(false)} className="primary-button button" type="button">
-                            <StopIcon/>
-                        </button> 
-                    ) : (
-                        <button onClick={() => props.setIsRecording(true)} className="primary-button button" type="button">
-                            <MicIcon/>
-                        </button>
-                    )}
+                    {renderRecordingButton}
                 </ReactRecord>
                 <div className="primary-button background"/>
             </div>
