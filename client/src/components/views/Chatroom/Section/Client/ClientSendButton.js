@@ -10,6 +10,7 @@ export default function ClientSendButton(props) {
   const roomID = props ? props.roomID : ""
   const intent = props ? props.intent : null
   const socket = props ? props.socket : null
+  const buttonDisable = props ? props.disable : true
 
   const uploadAudioAWS = async (e) => {
 
@@ -48,8 +49,12 @@ export default function ClientSendButton(props) {
   }
 
   const insertButton = data !== null ? (
-    // <button className="buttons" onClick={uploadAudio}>Gửi</button>
-    <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>
+    buttonDisable ? (
+      <button className="buttons" disabled>Gửi</button>  
+    ) : (
+      // <button className="buttons" onClick={uploadAudio}>Gửi</button>
+      <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>  
+    )
   ) : ""
 
   return (

@@ -28,7 +28,7 @@ export default function ClientCheckbox(props) {
   }
 
   const onChange = (checkedValues) => {
-    if (checkedValues === []) {
+    if (checkedValues.length === 0) {
       props.setIntent(null)
     } else {
       let intent = []

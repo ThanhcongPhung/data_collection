@@ -24,6 +24,7 @@ export default function Chatroom(props) {
   const [ audioHistory, setAudioHistory ] = useState([]);
   const [ scenario, setScenario ] = useState([]);
   const [ progress, setProgress ] = useState([]);
+  // const [ turn, setTurn ] = 
 
   const dispatch = useDispatch();
 
@@ -63,7 +64,14 @@ export default function Chatroom(props) {
         }
       }
       setProgress(tempProgress);
-      
+
+      let tempAudioList = []
+      response.payload.roomFound.audioList.map(audio => {
+        return tempAudioList.push(audio.link)
+        // setAudioHistory((audioHistory) => [...audioHistory, audio.link])
+      })
+
+      setAudioHistory(tempAudioList)
     })
   }
 

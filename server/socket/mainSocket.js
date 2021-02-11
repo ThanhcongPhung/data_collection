@@ -221,7 +221,7 @@ sockets.init = function(server) {
       //   } 
 
       //   // compare the two intent, may need another compareObject function
-      //   // if okay, emit a signal, telling both ofthem that's it's okay.
+      //   // if okay, emit a signal, telling both ofthem that's it's okay. Create the intent for audio from received. Update the progress for the room.
       //   // else emit a signal, telling the servant that he/she fucked up. Do it again, or press the godly "DELETE" button.
       // })
     });
