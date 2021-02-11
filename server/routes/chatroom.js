@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { Chatroom } = require("../models/Chatroom");
-
+// const { Audio } = require("../models/Audio");
+// const { Intent } = require("../models/Intent");
+// const { Progress } = require("../models/Progress")
 // const { auth } = require("../middleware/auth");
 
 // GET ALL
@@ -65,6 +67,7 @@ router.get("/:roomID/history", (req, res) => {
   })
 })
 
+// CREATE A ROOM
 router.post("/", async (req, res) => {
 
   const { name, task, content_type } = req.body;
@@ -84,5 +87,25 @@ router.post("/", async (req, res) => {
   });
   
 })
+
+// DELETE A ROOM
+// router.delete("/:roomID", (req, res) => {
+//   Chatroom.findByIdAndDelete(req.params.roomID, (err, roomDeleted) => {
+//     if (err) res.status(500).send({ success: false, err })
+//     else if (!roomDeleted) res.status(404).send({ success: false, message: "Room not found" })
+//     else {
+//       console.log(roomDeleted)
+//       const audioList = roomDeleted.audioList
+//       const intent = 
+//       // Delete audio record 
+//       Audio.
+//       // Write in the log about that record, write ID and intent of the audio if there's any.
+
+//       // Delete Intent
+
+//       // Delete Progress
+//     }
+//   })
+// })
 
 module.exports = router;

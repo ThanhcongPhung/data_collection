@@ -45,7 +45,13 @@ export default function Scenario(props) {
             return `tại ${scenario[4][2].toLowerCase()} ${scenario[5][2]}`
           }
         case "nhiệt độ":
-          return `với ${scenario[4][2].toLowerCase()} tại ${scenario[5][2]} độ`
+          if (scenario[0][2].toLowerCase() === "tăng") {
+            return `thêm ${scenario[5][2]} độ`
+          } else if (scenario[0][2].toLowerCase() === "giảm") {
+            return `đi ${scenario[5][2]} độ`
+          } else {
+            return `tại ${scenario[5][2]} độ`
+          }
         case "thời gian hẹn giờ":
           return `và hẹn giờ trong ${scenario[5][2]} tiếng`
         default:

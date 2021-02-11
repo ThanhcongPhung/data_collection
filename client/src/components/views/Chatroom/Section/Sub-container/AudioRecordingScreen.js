@@ -8,8 +8,9 @@ import RecordButton from '../Shared/RecordButton';
 import SendButton from '../Shared/SendButton';
 import ClientSendButton from '../Client/ClientSendButton';
 import ClientCheckbox from '../Client/ClientCheckbox';
-import Dropdown from '../Servant/Dropdown';
-import {dropdowns} from '../Data';
+import ServantDropDown from '../Servant/ServantDropDown';
+// import Dropdown from '../Servant/Dropdown';
+// import {dropdowns} from '../Data';
 
 export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
@@ -164,7 +165,8 @@ export default function AudioRecordingScreen(props) {
                   setIntent={setIntent}
                   list={props.scenario}  
                 /> :
-                <Dropdown list={dropdowns}/>
+                // <Dropdown list={dropdowns}/>
+                <ServantDropDown />
               }
             </div>
           </Col>

@@ -370,8 +370,11 @@ const createRandomIntent = () => {
   // gen device
   let target = getRandomFromArray(DEVICE);
   let device = target.name 
-  // gen floor
-  let floor = Math.floor(Math.random()*3 + 1);
+  // gen floor 
+  let floor = genRandomInt(1, 4);
+  if (device === "Cổng") {
+    floor = 1;
+  }
   // gen room
   let room = getRandomFromArray(target.room);
   // gen action
