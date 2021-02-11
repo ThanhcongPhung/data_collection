@@ -1,10 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Button, Row, Col } from 'antd'
+import React, { useState, useRef, useEffect } from 'react';
+import  { Link } from "react-router-dom";
+
+import { Button, Row, Col } from 'antd';
 
 export default function ReadyButton(props) {
   
-  const [ timer, setTimer ] = useState(0)
-  const increment = useRef(null)
+  const isAuth = props ? props.isAuth : false;
+  const [ timer, setTimer ] = useState(0);
+  const increment = useRef(null);
 
   useEffect(() => {
     // seems redundant but need it. So when the user denies their second queue confirmation, we'll reset the timer.
@@ -41,11 +44,17 @@ export default function ReadyButton(props) {
     <>
       <Row>
         <Col style={{textAlign: "center"}}>
-          {!props.readyStatus ? (
-            <Button onClick={ready}>Sẵn sàng</Button>
-          ): (
-            <Button onClick={cancelReady}>Dừng tìm kiếm</Button>
-          )}
+          {isAuth ? (
+            !props.readyStatus ? (
+              <Button onClick={ready}>Sẵn sàng</Button>
+            ) : (
+              <Button onClick={cancelReady}>Dừng tìm kiếm</Button>
+            )) : (
+              <Link to={`/login`}>
+                <Button>Sẵn sàng</Button>
+              </Link>
+            )
+          }
         </Col>
       </Row>
       

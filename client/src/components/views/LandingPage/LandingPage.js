@@ -26,6 +26,7 @@ function LandingPage(props) {
   const [ roomLink, setRoomLink ] = useState('')
   
   const user = useSelector(state=>state.user)
+  console.log(user)
 
   let socket = props.socket;
  
@@ -158,6 +159,7 @@ function LandingPage(props) {
         <Row style={{marginBottom: "10px", marginTop: "10px"}}>
           <Col style={{textAlign: "center"}}>
             <ReadyButton 
+              isAuth={user.userData ? user.userData.isAuth : false}
               readyStatus={readyStatus}
               readySignal={readySignal}
               cancelReadySignal={cancelReadySignal}/>
