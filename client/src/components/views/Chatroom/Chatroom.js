@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Row, Col, Input} from 'antd';
-import './Section/RecordButton.css';
+import './Section/Shared/RecordButton.css';
 import './Chatroom.css'
-import Scenario from './Section/Scenario';
-import AudioList from './Section/AudioList';
+import Scenario from './Section/Client/Scenario';
+import AudioList from './Section/Shared/AudioList';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import {getRoom} from '../../../_actions/chatroom_actions'
 import TextChatScreen from './Section/Sub-container/TextChatScreen';
@@ -20,21 +20,25 @@ export default function Chatroom(props) {
   const message = useSelector(state => state.message);
   let userID = user.userData ? user.userData._id : "";
   let username = user.userData ? user.userData.name : "";
-  const [userRole, setUserRole] = useState("");
-  const [audioHistory, setAudioHistory] = useState([]);
+  const [ userRole, setUserRole ] = useState("");
+  const [ audioHistory, setAudioHistory ] = useState([]);
   const [ scenario, setScenario ] = useState([]);
+  const [ progress, setProgress ] = useState([]);
 
   const dispatch = useDispatch();
 
-  dispatch(getRoom(chatroomID))
+  // as they say, there's some problem with setState that I need to clean up so I'll just drop a bomb here as a mark
+  // vvvvv Flood gate to make sure dispatch is fired only once.
+  if(userRole === "") {
+    dispatch(getRoom(chatroomID))
     .then(async (response) => {
       if (userID === response.payload.roomFound.user1) setUserRole("client");
       if (userID === response.payload.roomFound.user2) setUserRole("servant");
       const intent = response.payload.roomFound.intent
-      let temp = []
+      let tempIntent = []
       for (const property in intent) {
         if (property !== '_id' && property !== '__v' && intent[property] !== null) {
-          temp.push([
+          tempIntent.push([
             property,
             (property === 'floor' ? 'Tầng ' + intent[property] : intent[property]),
             intent[property],
@@ -44,9 +48,24 @@ export default function Chatroom(props) {
           ])
         }
       }
+      setScenario(tempIntent);
 
-      setScenario(temp);
+      let tempProgress = []
+      const progress = response.payload.roomFound.progress
+      for(const property in progress) {
+        if (property !== '_id' && property !== '__v' && progress[property] !== null) {
+          tempProgress.push([
+            property,
+            progress[property],
+            // key: property,
+            // value: progress[property],
+          ])
+        }
+      }
+      setProgress(tempProgress);
+      
     })
+  }
 
   useEffect(() => {
     if (socket) {
@@ -83,7 +102,8 @@ export default function Chatroom(props) {
         console.log(`User ${data.username} has left the room`)
       })
     }
-  })
+    // Idk about this... it may cause problem later...
+  }, [socket, audioHistory])
 
   return (
       <div className="chatroom">
@@ -117,7 +137,7 @@ export default function Chatroom(props) {
               <Col>
                 {
                   // Got to update this scenario={scenario} to scenario={progress}
-                  userRole === "client" ? <Scenario scenario={scenario}/> : (
+                  userRole === "client" ? <Scenario scenario={scenario} progress={progress}/> : (
                     <>
                       <h3 style={{textAlign: "center"}}>Ghi chú công việc đã làm được</h3>
                       <TextArea style={{height: "200px"}} maxLength={100}/>
@@ -132,9 +152,6 @@ export default function Chatroom(props) {
                 {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
               </Col> 
             </Row>
-            
-            
-            
           </Col>
         </Row>
       </div>

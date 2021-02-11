@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { Chatroom } = require("../models/Chatroom");
-
+// const { Audio } = require("../models/Audio");
+// const { Intent } = require("../models/Intent");
+// const { Progress } = require("../models/Progress")
 // const { auth } = require("../middleware/auth");
 
 // GET ALL
@@ -9,6 +11,7 @@ router.get("/", (req, res) => {
 
   Chatroom.find({})
     // .populate('user1') //not use this yet... populate will bring every information of 'user1' to the table, instead of just the id.
+    .populate('progress')
     .exec((err, roomFound) => {
       // .send() lets the browser automatically assign Content-Type 
       // whereas .json() specifies Content-Type as json type.
@@ -31,6 +34,7 @@ router.get("/random", (req, res) => {
     var random = Math.floor(Math.random() * count)
     Chatroom.findOne().skip(random)
     .populate('intent')
+    .populate('progress')
     .exec((err, roomFound) => {
       if (err) res.status(500).send({ success: false, message: "Can't proceed to find any room", err })
       return res.status(200).send({
@@ -45,6 +49,7 @@ router.get("/random", (req, res) => {
 router.get("/:roomID", (req, res) => {
   Chatroom.findById(req.params.roomID)
   .populate('intent')
+  .populate('progress')
   .exec((err, roomFound) => {
     if (err) res.status(500).send({ success: false, err })
     else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
@@ -62,6 +67,7 @@ router.get("/:roomID/history", (req, res) => {
   })
 })
 
+// CREATE A ROOM
 router.post("/", async (req, res) => {
 
   const { name, task, content_type } = req.body;
@@ -81,5 +87,25 @@ router.post("/", async (req, res) => {
   });
   
 })
+
+// DELETE A ROOM
+// router.delete("/:roomID", (req, res) => {
+//   Chatroom.findByIdAndDelete(req.params.roomID, (err, roomDeleted) => {
+//     if (err) res.status(500).send({ success: false, err })
+//     else if (!roomDeleted) res.status(404).send({ success: false, message: "Room not found" })
+//     else {
+//       console.log(roomDeleted)
+//       const audioList = roomDeleted.audioList
+//       const intent = 
+//       // Delete audio record 
+//       Audio.
+//       // Write in the log about that record, write ID and intent of the audio if there's any.
+
+//       // Delete Intent
+
+//       // Delete Progress
+//     }
+//   })
+// })
 
 module.exports = router;

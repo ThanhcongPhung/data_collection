@@ -1,7 +1,8 @@
 import React from 'react';
 import './RecordButton.css';
 import ReactRecord from 'react-record';
-import {StopIcon,MicIcon} from '../../../ui/icons';
+// import {StopIcon,MicIcon} from '../../../../ui/icons';
+import {StopIcon,MicIcon} from '../../../../ui/icons';
 
 export default function RecordButton(props) {
     return (

@@ -59,7 +59,7 @@ const server = app.listen(port, () => {
   console.log(`Server Listening on ${port}`)
 });
 
-var sockets = require('./socket')
+var sockets = require('./socket/mainSocket')
 sockets.init(server)
 
 // Generate Room ID

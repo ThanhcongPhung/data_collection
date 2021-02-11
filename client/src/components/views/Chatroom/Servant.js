@@ -4,10 +4,10 @@ import {Row, Col, Input, Button} from 'antd';
 import {dropdowns} from './Section/Data';
 import './Chatroom.css'
 
-import RecordButton from './Section/RecordButton'
+import RecordButton from './Section/Shared/RecordButton'
 
 // import useCanvas from "./Section/useCanvas";
-import SendButton from './Section/SendButton';
+import SendButton from './Section/Shared/SendButton';
 
 import AudioList from './Section/AudioList';
 import Dropdown from './Section/Servant/Dropdown';
