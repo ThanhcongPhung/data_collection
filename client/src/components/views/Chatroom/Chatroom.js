@@ -24,12 +24,12 @@ export default function Chatroom(props) {
   const [ audioHistory, setAudioHistory ] = useState([]);
   const [ scenario, setScenario ] = useState([]);
   const [ progress, setProgress ] = useState([]);
-  // const [ turn, setTurn ] = 
+  const [ turn, setTurn ] = useState("");
 
   const dispatch = useDispatch();
 
   // as they say, there's some problem with setState that I need to clean up so I'll just drop a bomb here as a mark
-  // vvvvv Flood gate to make sure dispatch is fired only once.
+  // vvvvv Flood gate to make sure dispatch is fired only once. But like this, it won't get refired even if another component of the page is re-rendered.
   if(userRole === "") {
     dispatch(getRoom(chatroomID))
     .then(async (response) => {
@@ -65,11 +65,20 @@ export default function Chatroom(props) {
       }
       setProgress(tempProgress);
 
+      const audios = response.payload.roomFound.audioList;
       let tempAudioList = []
-      response.payload.roomFound.audioList.map(audio => {
+      audios.map(audio => {
         return tempAudioList.push(audio.link)
         // setAudioHistory((audioHistory) => [...audioHistory, audio.link])
       })
+
+      if(audios.length % 2 === 0) {
+        setTurn('client')
+      }
+      else if (audios.length % 2 === 1) {
+        setTurn('servant')
+      }
+      else setTurn("")
 
       setAudioHistory(tempAudioList)
     })
@@ -124,6 +133,7 @@ export default function Chatroom(props) {
           <Col span={20}>
             {room_content_type === '0' ?
               <AudioRecordingScreen
+                recordingTurn={turn === userRole && turn !== "" && userRole !== ""}
                 canvasRef={canvasRef}
                 socket={socket}
                 user={user}

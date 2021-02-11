@@ -20,6 +20,7 @@ export default function AudioRecordingScreen(props) {
   const chatroomID = props ? props.chatroomID : "";
   const user = props ? props.user : null;
   const userRole = props ? props.userRole : "";
+  const turn = props ? props.recordingTurn : false;
   const [ isPlaying, setIsPlaying ] = useState(false);
   const [ audio, setAudio ] = useState(null);
   const [ intent, setIntent ] = useState(null); 
@@ -148,6 +149,7 @@ export default function AudioRecordingScreen(props) {
             <canvas className="primary-buttons canvas" ref={canvasRef}
                     style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
             <RecordButton
+              turn={turn}
               isRecording={isRecording}
               setAudio={setAudio}
               setIsRecording={setIsRecording}/>

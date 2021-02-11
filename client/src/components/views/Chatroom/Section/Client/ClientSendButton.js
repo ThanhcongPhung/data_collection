@@ -1,6 +1,8 @@
 import React from 'react'
 import axios from 'axios'
 
+// import { Popover } from 'antd';
+
 import { BACKEND_URL } from '../../../../Config'
 
 export default function ClientSendButton(props) {
@@ -11,6 +13,13 @@ export default function ClientSendButton(props) {
   const intent = props ? props.intent : null
   const socket = props ? props.socket : null
   const buttonDisable = props ? props.disable : true
+
+  // const popoverContent = (
+  //   <div>
+  //     <p>Content</p>
+  //     <p>Content</p>
+  //   </div>
+  // );
 
   const uploadAudioAWS = async (e) => {
 
@@ -50,7 +59,8 @@ export default function ClientSendButton(props) {
 
   const insertButton = data !== null ? (
     buttonDisable ? (
-      <button className="buttons" disabled>Gửi</button>  
+      // Can put an alert instead of a Popover but it looks stupid as fuck
+      <button className="buttons" style={{cursor: 'not-allowed'}} disabled>Gửi</button>  
     ) : (
       // <button className="buttons" onClick={uploadAudio}>Gửi</button>
       <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>  
