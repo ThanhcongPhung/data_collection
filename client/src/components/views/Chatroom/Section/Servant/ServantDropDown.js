@@ -70,6 +70,7 @@ export default function ServantDropDown(props) {
   const [ level, setLevel ] = useState('')
 
   const handleDeviceChange = (value) => {
+    console.log(value)
     setRoomList(roomData[value]);
     setSelectedRoom(roomData[value][0]);
 

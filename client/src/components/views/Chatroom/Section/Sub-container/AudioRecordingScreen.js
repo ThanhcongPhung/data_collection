@@ -166,7 +166,8 @@ export default function AudioRecordingScreen(props) {
                   list={props.scenario}  
                 /> :
                 // <Dropdown list={dropdowns}/>
-                <ServantDropDown />
+                <ServantDropDown 
+                  intent={tagVisibility ? intent : null}/>
               }
             </div>
           </Col>
