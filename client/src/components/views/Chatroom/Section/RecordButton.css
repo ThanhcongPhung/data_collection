@@ -3,14 +3,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /*margin: 0 18px;*/
+    margin: 0 18px;
     outline: none;
-    background-image: linear-gradient(0deg, #fff 20%, #f3f2f1);
+    /*background-image: linear-gradient(0deg, #fff 20%, #f3f2f1);*/
 }
-.primary-button:hover{
-    /*background-color: #ff4f5e;*/
-    /*color: #ff4f5e;*/
-}
+
 
 .background {
     position: absolute;
@@ -21,13 +18,22 @@
     filter: blur(7.6px);
     transition: opacity .2s linear;
     opacity: 0.7;
+    /*background-image: linear-gradient(to left, #88d1f1, #b1b5e5);*/
     background: linear-gradient(90deg,#f89096,#b1b4e5);
 }
-/*.background:hover{*/
-/*    background: linear-gradient(90deg,#ff4f5e,#b1b4e5);*/
-/*}*/
+.backgroundplay{
+    position: absolute;
+    margin: 0 auto;
+    border-radius: 50%;
+    width: 109px;
+    height: 109px;
+    filter: blur(7.6px);
+    transition: opacity .2s linear;
+    opacity: 0.7;
+    background-image: linear-gradient(to left, #88d1f1, #b1b5e5);
+}
 
-.button {
+button.record {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,6 +46,35 @@
     background: white;
     opacity: 1;
     cursor: pointer;
+}
+button.play {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 2;
+    border: none;
+    border-radius: 50%;
+    width: 88px;
+    height: 88px;
+    background: white;
+    opacity: 1;
+    cursor: pointer;
+}
+button.play svg{
+    height: 22px;
+}
+button.play:hover{
+    background-color: #59cbb7;
+}
+button.play:hover svg path{
+    fill: white;
+}
+button.record:hover{
+    background-color: #ff4f5e;
+}
+button.record:hover path{
+    fill: white;
 }
 .button-ready {
     display: flex;

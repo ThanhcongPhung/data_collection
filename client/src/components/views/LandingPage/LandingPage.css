@@ -1,0 +1,125 @@
+.container{
+    border-top: 1px solid #f3f2f0;
+    overflow: hidden;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    height: 500px;
+}
+
+.box{
+    border: 1px solid #f3f2f0;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background: white;
+    transition: 0.5s;
+    flex:1;
+    opacity: 0.8;
+
+}
+.box:before{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity linear 0.2s;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: 100%;
+    background-image: url('./Section/images/speak.svg');
+}
+.box:hover{
+    opacity: 1;
+    flex: 2;
+    background-size: 100%;
+    /*justify-content: center;*/
+    /*position: relative;*/
+}
+
+.box:hover .content-hover{
+    display: block;
+}
+.box:hover .guide{
+    display: block;
+}
+.box1:hover .content-hover{
+    display: block;
+}
+.box1:hover .guide{
+    display: block;
+}
+.column-title{
+    display: flex;
+    flex-direction: column;
+    order: 0;
+    width: 30%;
+}
+.content-hover{
+    display: none;
+    transition: 1s;
+    font-size: 14px;
+    color: #959595;
+}
+a.guide{
+    margin-top: 20px;
+    display: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #629ff4;
+    text-decoration: underline;
+}
+.column-cta{
+    display: flex;
+    flex-direction: column;
+    order: 2;
+}
+.primary-button-home{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 18px;
+}
+.box1{
+    border: 1px solid #f3f2f0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background: white;
+    transition: 0.5s;
+    opacity: 0.8;
+    flex:1;
+
+}
+.box1:before{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity linear 0.2s;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-size: 100%;
+    background-position-y: 100%;
+    background-image: url('./Section/images/listen.svg');
+}
+.box1:hover{
+    opacity: 1;
+    flex: 2;
+    background-size: 100%;
+}
+
+
+
