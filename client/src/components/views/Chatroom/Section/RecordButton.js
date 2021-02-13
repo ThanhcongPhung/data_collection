@@ -17,10 +17,10 @@ export default function RecordButton(props) {
                         props.setAudio(blobObject);
                     }}>
                     {props.isRecording ?
-                        <button onClick={() => props.setIsRecording(false)} className="primary-button button" type="button">
+                        <button onClick={() => props.setIsRecording(false)} className="record" type="button">
                             <StopIcon/>
                         </button> :
-                        <button onClick={() => props.setIsRecording(true)} className="primary-button button" type="button">
+                        <button onClick={() => props.setIsRecording(true)} className="record" type="button">
                             <MicIcon/>
                         </button>}
                 </ReactRecord>
