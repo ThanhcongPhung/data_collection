@@ -1,36 +1,38 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useSelector } from "react-redux";
-import { Redirect } from 'react-router-dom';
+import React, {useState, useEffect, useRef} from 'react'
+import {useSelector} from "react-redux";
+import {Redirect} from 'react-router-dom';
 
-import { Col, Row } from "antd";
+import {Col, Row} from "antd";
+import {OldPlayIcon, MicIcon} from '../../ui/icons';
 
 import RoomList from './Section/RoomList';
 import RandomRoomButton from './Section/RandomRoomButton';
 import ReadyButton from './Section/ReadyButton';
 import ContentSelection from './Section/ContentSelection';
 import ConfirmModal from './Section/ConfirmModal';
+import './LandingPage.css';
 
 function LandingPage(props) {
   const role = useRef("")
   const content_type = useRef("")
 
-  const [ inputType, setInputType ] = useState("audio")
-  const [ readyStatus, setReadyStatus ] = useState(false)
+  const [inputType, setInputType] = useState("audio")
+  const [readyStatus, setReadyStatus] = useState(false)
   // 0 - nothing, 1 - waiting for the other person to accept
-  const [ promptStatus, setPromptStatus ] = useState(0)
-  const [ promptDuration, setPromptDuration ] = useState(10)
+  const [promptStatus, setPromptStatus] = useState(0)
+  const [promptDuration, setPromptDuration] = useState(10)
 
-  const [ matchFound, setMatchFound ] = useState(false)
-  const [ redirect, setRedirect ] = useState(false) // redirect is the substitute of history.
-  const [ roomLink, setRoomLink ] = useState('')
-  
-  const user = useSelector(state=>state.user)
+  const [matchFound, setMatchFound] = useState(false)
+  const [redirect, setRedirect] = useState(false) // redirect is the substitute of history.
+  const [roomLink, setRoomLink] = useState('')
+
+  const user = useSelector(state => state.user)
 
   let socket = props.socket;
- 
+
   useEffect(() => {
     if (socket) {
-      socket.on('match', ({ client, servant, roomType }) => {
+      socket.on('match', ({client, servant, roomType}) => {
         let yourRole = ""
         if (user.userData && client.userID === user.userData._id) yourRole = "client"
         if (user.userData && servant.userID === user.userData._id) yourRole = "servant"
@@ -44,7 +46,7 @@ function LandingPage(props) {
 
   useEffect(() => {
     if (socket) {
-      socket.on('prompt successful', ({ roomID }) => {
+      socket.on('prompt successful', ({roomID}) => {
         let link = `/chatroom/${content_type.current === "audio" ? 0 : 1}/${roomID}`
         setMatchFound(false)
         setReadyStatus(false)
@@ -128,57 +130,96 @@ function LandingPage(props) {
   }
 
   return (
-    <>
-      {
-        redirect ? (<Redirect to={roomLink} userRole={role.current} />) : ""
+      <>
+        {
+        redirect ? (<Redirect to={roomLink} userRole={role.current}/>) : ""
       }
-      <div>
-        <Row>
-          <Col span={8}>Client role guide</Col>
-          <Col span={8} style={{textAlign: "center"}}>
-            <ConfirmModal 
-              socket={socket}
-              visible={matchFound}
-              roomType={content_type.current}
-              promptStatus={promptStatus}
-              promptDuration={promptDuration}
-              setPromptStatus={setPromptStatus}
-              handleOk={handleConfirmPromptModal}
-              handleCancel={handleDenyPromptModal}/>
-          </Col>
-          <Col span={8}>Servant role guide</Col>
-        </Row>
-        <Row style={{marginBottom: "10px", marginTop: "10px"}}>
-          <Col style={{textAlign: "center"}}>
-            <ContentSelection 
-              disabled={readyStatus}
-              setInputType={setInputType}/>
-          </Col>
-        </Row>
-        <Row style={{marginBottom: "10px", marginTop: "10px"}}>
-          <Col style={{textAlign: "center"}}>
-            <ReadyButton 
-              readyStatus={readyStatus}
-              readySignal={readySignal}
-              cancelReadySignal={cancelReadySignal}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col style={{textAlign: "center"}}>
-            {readyStatus}
-          </Col>
-        </Row>
-        <Row>
-          <div className="app">
-
-            <RoomList pageSize="3"/>
-            <RandomRoomButton/>
+        <div className="container">
+          <div className="box">
+            <div className="column-title">
+              <h1 style={{fontSize: "48px", fontWeight: "normal"}}>Speak</h1>
+              <h1 style={{fontSize: "20px", fontWeight: "normal"}}>Donate your voice</h1>
+              <p className="content-hover">Recording voice clips is an integral
+                part of building our open dataset; some would say it's the fun part too.
+              </p>
+              <a href="https://www.w3schools.com/" className="guide">Guide</a>
+            </div>
+            <div className="column-cta">
+              <div className="primary-button">
+                <button className="record" type="button">
+                  <MicIcon/>
+                </button>
+                <div className="primary-button background"/>
+              </div>
+            </div>
           </div>
-        </Row>
+          <div className="box1">
+            <div className="column-title">
+              <h1 style={{fontSize: "48px", fontWeight: "normal"}}>Listen</h1>
+              <h1 style={{fontSize: "20px", fontWeight: "normal"}}>Help us validate data</h1>
+              <p className="content-hover">Validating donated clips is equally important to the Common Voice mission.
+                Take a listen and help us create quality open source voice data.
+              </p>
+              <a href="https://www.w3schools.com/" className="guide">Guide</a>
+            </div>
+            <div className="column-cta">
+              <div className="primary-button">
+                <button className="play" type="button">
+                  <OldPlayIcon/>
+                </button>
+                <div className="primary-button backgroundplay"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <Row>
+            <Col span={8}>Client role guide</Col>
+            <Col span={8} style={{textAlign: "center"}}>
+              <ConfirmModal
+                  socket={socket}
+                  visible={matchFound}
+                  roomType={content_type.current}
+                  promptStatus={promptStatus}
+                  promptDuration={promptDuration}
+                  setPromptStatus={setPromptStatus}
+                  handleOk={handleConfirmPromptModal}
+                  handleCancel={handleDenyPromptModal}/>
+            </Col>
+            <Col span={8}>Servant role guide</Col>
+          </Row>
+          <Row style={{marginBottom: "10px", marginTop: "10px"}}>
+            <Col style={{textAlign: "center"}}>
+              <ContentSelection
+                  disabled={readyStatus}
+                  setInputType={setInputType}/>
+            </Col>
+          </Row>
+          <Row style={{marginBottom: "10px", marginTop: "10px"}}>
+            <Col style={{textAlign: "center"}}>
+              <ReadyButton
+                  readyStatus={readyStatus}
+                  readySignal={readySignal}
+                  cancelReadySignal={cancelReadySignal}/>
+            </Col>
+          </Row>
+          <Row>
+            <Col style={{textAlign: "center"}}>
+              {readyStatus}
+            </Col>
+          </Row>
+          <Row>
+            <div className="app">
 
-      </div>
+              <RoomList pageSize="3"/>
 
-    </>
+              {/*{<RandomRoomButton/>*!/*/}
+            </div>
+          </Row>
+
+        </div>
+
+      </>
   )
 }
 
