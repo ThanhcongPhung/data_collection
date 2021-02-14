@@ -9,16 +9,16 @@ export default function AudioImport() {
   const [audio, setAudio] = useState(null);
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
-  const [content,setContent] = useState(null);
+  const [content, setContent] = useState(null);
   const onDrop = (files) => {
 
-    if (files && files.length > 0){
+    if (files && files.length > 0) {
       const file = files[0];
       setFile(file);
       setAudio(URL.createObjectURL(file))
       // console.log(typeof files)
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         const url = 'https://api.fpt.ai/hmi/asr/general';
         // const config = {
         //   method: 'POST',
@@ -50,14 +50,14 @@ export default function AudioImport() {
     // const url='https://api.fpt.ai/hmi/asr/general';
     console.log(formData)
     Axios.post('/api/uploadfiles', formData, config)
-        .then(response=>{
-          // if(response.data.success){
-          //   let dataUrl = response.data.url;
-            // console.log(dataUrl);
-          }
+        .then(response => {
+              // if(response.data.success){
+              //   let dataUrl = response.data.url;
+              // console.log(dataUrl);
+            }
         )
   }
-  const submitFile =(e)=>{
+  const submitFile = (e) => {
     e.preventDefault();
     setMessage('Uploading...')
     const contentType = file.type;
@@ -71,21 +71,21 @@ export default function AudioImport() {
       }
     };
     const generatePutUrl = 'http://localhost:5000/generate-put-url';
-    Axios.get(generatePutUrl,options).then(res=>{
+    Axios.get(generatePutUrl, options).then(res => {
       const {
-        data: { putURL }
+        data: {putURL}
       } = res;
       // console.log(putURL)
-      Axios.put(putURL,file,options)
-          .then(res=>{
+      Axios.put(putURL, file, options)
+          .then(res => {
             setMessage('Upload Successful')
-            setTimeout(()=>{
+            setTimeout(() => {
               setMessage('');
-              document.querySelector('#upload-audio').value='';
+              document.querySelector('#upload-audio').value = '';
 
-            },2000)
+            }, 2000)
           })
-          .catch(err=>{
+          .catch(err => {
             setMessage('Sorry, something went wrong')
             console.log('err', err);
           })
@@ -117,47 +117,78 @@ export default function AudioImport() {
   const renderAudio = (audio) => {
     if (audio !== null) {
       return (
-          <div key={audio}>
-            <audio
-                controls="controls"
-                src={audio}>
-              <track kind="captions"/>
-            </audio>
-            <Button onClick={getTranscript(file)}>Get</Button>
-          </div>
+          
+          <section className="renderAudio" key={audio}>
+            <div className="containerAudio">
+              <audio
+                  controls="controls"
+                  src={audio}>
+                <track kind="captions"/>
+              </audio>
+              <Button onClick={getTranscript(file)}>Get Text</Button>
+            </div>
+
+          </section>
       )
     } else return ""
   }
   return (
-      <div>
-        <React.Fragment>
-          <h2>Upload file in Reactj</h2>
-          <Dropzone onDrop={onDrop}>
-            {({getRootProps, getInputProps}) => (
-                <section>
-                  <div {...getRootProps()}>
-                    <input id='upload-audio' {...getInputProps()} />
-                    <h1>Drag and frop your audio here or <br/>
-                      <a>upload from your computer</a>
-                    </h1>
-                  </div>
-                </section>
-            )}
-          </Dropzone>
-          {/*<input*/}
-          {/*    id='upload-audio'*/}
-          {/*    type='file'*/}
-          {/*    accept='audio/*'*/}
-          {/*    onChange={onDrop}*/}
-          {/*/>*/}
-          <p>{message}</p>
-          <form onSubmit={submitFile}>
-            <Button id='file-upload-button' disabled={!file}>Upload</Button>
-          </form>
-        </React.Fragment>
-        <hr/>
+      <div id="content">
+        <div className="speech-to-text-main">
+          <br></br>
+          <div className="get-audio">
+            <section className="launched">
+              <div className="title-and-search">
+                <div style={{display: "flex", flexDirection: "row"}}>
+                  <h1 style={{marginRight: "1.5rem"}}>Automatic Speech Recognition</h1>
+                </div>
+                <hr className="hr"></hr>
+              </div>
+              <Dropzone onDrop={onDrop}>
+                {({getRootProps, getInputProps}) => (
+                    <section>
+                      <div {...getRootProps({className: 'dropzone'})}>
+                        <input id='upload-audio' {...getInputProps()} />
+                        <p>Drag 'n' drop some files here, or click to select files</p>
+                      </div>
+                    </section>
+                )}
+              </Dropzone>
+            </section>
+
+          </div>
+        </div>
         {renderAudio(audio)}
       </div>
+      // <div className="speech-to-text-main">
+      //   {/*<React.Fragment>*/}
+      //     <h2>Upload file in Reactj</h2>
+      //     <Dropzone onDrop={onDrop}>
+      //       {({getRootProps, getInputProps}) => (
+      //           <section>
+      //             <div {...getRootProps()}>
+      //               <input id='upload-audio' {...getInputProps()} />
+      //               <h1>Drag and frop your audio here or <br/>
+      //                 <a>upload from your computer</a>
+      //               </h1>
+      //             </div>
+      //           </section>
+      //       )}
+      //     </Dropzone>
+      //     {/*<input*/}
+      //     {/*    id='upload-audio'*/}
+      //     {/*    type='file'*/}
+      //     {/*    accept='audio/*'*/}
+      //     {/*    onChange={onDrop}*/}
+      //     {/*/>*/}
+      //     <p>{message}</p>
+      //     <form onSubmit={submitFile}>
+      //       <Button id='file-upload-button' disabled={!file}>Upload</Button>
+      //     </form>
+      //   {/*</React.Fragment>*/}
+      //   <hr/>
+      //   {renderAudio(audio)}
+      // </div>
 
       // <div>
       //   <h2>Upload file in Reactjs</h2>
