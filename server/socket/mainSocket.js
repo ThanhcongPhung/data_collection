@@ -1,5 +1,6 @@
 var sockets = {}
 const { Message } = require("./../models/Message");
+const { Intent } = require("./../models/Intent");
 
 sockets.init = function(server) {
   // socket.io setup
@@ -207,10 +208,122 @@ sockets.init = function(server) {
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
     });
 
-    socket.on('client intent', ({roomID, intent}) => {
-      const clientRoom = roomID
-      const clientIntent = intent
-      console.log("Receive client intent: " + JSON.stringify(clientIntent) + " from room " + clientRoom)
+    socket.on('client intent', async ({ roomID, audioID, intent }) => {
+      console.log("Receive client intent: " + JSON.stringify(intent) + " of audio " + audioID + " from room " + roomID)
+
+      // check turn of the room. Throw a fit if it's not 1. If it's 1 then: 
+      Chatroom.findById(roomID)
+      .then(async (roomFound) => {
+        if (!roomFound) {
+          console.log("... Some shenanigan.. Room doesn't even exist.");
+          // IMPLEMENT SOME KIND OF ERROR!!!
+          return null;
+        } else {
+          if (roomFound.turn !== 1) {
+            console.log("... Some shenanigan.. It's not client's turn to send this signal.");
+            // IMPLEMENT SOME KIND OF ERROR!!!
+            return null;
+          } else {
+            // create intent
+            let extractIntent = {
+              action: null,
+              device: null,
+              floor: null,
+              room: null,
+              scale: null,
+              level: null,
+            };
+
+            intent.map(property => {
+              return extractIntent[property.key] = property.value;
+            })
+            const { action, device, floor, room, scale, level } = extractIntent;
+            const newIntent = await Intent.create({
+              action,
+              device,
+              floor,
+              room,
+              scale,
+              level,
+            });
+
+            // save intent to audio
+            Audio.findById(audioID)
+            .then(async (audioFound) => {
+              if (!audioFound) {
+                console.log("... Some shenanigan.. Audio doesn't even exist.");
+                // IMPLEMENT SOME KIND OF ERROR!!!
+                return null;
+              } else {
+                audioFound.intent = newIntent._id;
+                return audioFound.save();
+              }
+            })
+            .catch(err => {
+              // IMPLEMENT SOME KIND OF ERROR!!!
+              console.log("Can't update audio's intent, ", err);
+            })
+
+            roomFound.type = 2;
+            return roomFound.save();
+          }
+        }
+      })
+      .catch(err => {
+        // IMPLEMENT SOME KIND OF ERROR!!!
+        console.log(err);
+      })
+
+
+      // save the intent.
+      // Still need a way to let them know that we are throwing a fit :D
+      // const latestAudioID = await Chatroom.findById(roomID)
+      // .then((err, roomFound) => {
+      //   if (err) {
+      //     console.log("Server error, can't find room.");
+      //     // IMPLEMENT SOME KIND OF ERROR!!!
+      //     return null;
+      //   }
+      //   else if (!roomFound) {
+      //     console.log("... Some shenanigan.. Room doesn't even exist.");
+      //     // IMPLEMENT SOME KIND OF ERROR!!!
+      //     return null;
+      //   }
+      //   else {
+      //     if (room.turn !== 1) {
+      //       console.log("... Some shenanigan.. It's not client's turn to send this signal.");
+      //       // IMPLEMENT SOME KIND OF ERROR!!!
+      //       return null;
+      //     } else {
+      //       roomFound.type = 2;
+      //       return roomFound.save();
+      //     }
+      //   }
+      // })
+      // .then(roomUpdated => {
+      //   console.log(`Room ${roomUpdated._id} updated turn to ${roomUpdated.turn}`)
+      //   return roomUpdated.audioList[roomUpdated.audioList.length - 1]
+      // })
+      // .catch(err => console.log(err))
+
+      // save the intent temporarily to the audio (not yet to the progress)
+      // Audio.findById(latestAudioID)
+      // .then((err, audioFound) => {
+      //   if (err) {
+      //     console.log("Server error, can't find audio.");
+      //     // IMPLEMENT SOME KIND OF ERROR!!!
+      //     return null;
+      //   }
+      //   else if (!audioFound) {
+      //     console.log("... Some shenanigan.. Audio doesn't even exist.");
+      //     // IMPLEMENT SOME KIND OF ERROR!!!
+      //     return null;
+      //   } else {
+      //     // audioFound.intent
+      //   }
+      // })
+
+
       // socket.on('servant intent', ({roomID, intent}) => {
       //   const servantRoom = roomID
       //   const servantIntent = intent
@@ -225,6 +338,10 @@ sockets.init = function(server) {
       //   // else emit a signal, telling the servant that he/she fucked up. Do it again, or press the godly "DELETE" button.
       // })
     });
+
+    socket.on('servant intent', ({ roomID, intent }) => {
+
+    })
 
     // when receive a message
     socket.on("Input Chat message", msg => {
@@ -321,6 +438,7 @@ const compareObject = (obj1, obj2) => {
 }
 
 const { Chatroom } = require("./../models/Chatroom");
+const { Audio } = require("./../models/Audio");
 
 const createRoom = async (userID1, userID2, roomType) => {
   // user1 - client, user2 - servant
@@ -344,6 +462,7 @@ const createRoom = async (userID1, userID2, roomType) => {
     user2: userID2,
     intent: intent._id,
     progress: progress._id,
+    turn: 1,
   })
 
   return chatroom._id
@@ -362,7 +481,6 @@ const generateTask = (action, device) => {
   return `${action} ${device.toLowerCase()}`
 }
 
-const { Intent } = require("./../models/Intent");
 const { DEVICE } = require("./../config/intent");
 // const { DEVICE, COLOR } = require("./../config/intent");
 

@@ -103,11 +103,11 @@ export default function Chatroom(props) {
 
   useEffect(() => {
     if (socket) {
-      socket.on('newAudioURL', (data) => {
-        // console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
+      socket.on('newAudioURL', ({ userID, sender, audioLink }) => {
+        console.log(`Receive signal from ${sender} with the ID of ${userID}. Here's the link: ${audioLink}`)
         let newHistory = [...audioHistory]
         // newHistory.push(data.audioLink)
-        newHistory = [data.audioLink, ...audioHistory]
+        newHistory = [audioLink, ...audioHistory]
         setAudioHistory(newHistory)
         if(turn === "client") {
           setTurn("servant")

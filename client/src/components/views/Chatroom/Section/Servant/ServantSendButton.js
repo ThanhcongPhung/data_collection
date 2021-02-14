@@ -29,13 +29,15 @@ export default function ServantSendButton(props) {
         formdata,
         requestConfig,
       ).then(res => {
-        props.sendAudioSignal(res.data.Location)
-        // console.log(res.data)
+        props.sendAudioSignal(res.data.data.Location)
+        const audioID = res.data.audioID
       })
     } catch(error){
       alert(error)
     }
   }
+
+  // need intent sending button
 
   const insertButton = data !== null ? (
     // <button className="buttons" onClick={uploadAudio}>Gửi</button>

@@ -13,7 +13,6 @@ export default function ClientSendButton(props) {
   const intent = props ? props.intent : null
   const socket = props ? props.socket : null
   const buttonDisable = props ? props.disable : true
-
   // const popoverContent = (
   //   <div>
   //     <p>Content</p>
@@ -22,13 +21,6 @@ export default function ClientSendButton(props) {
   // );
 
   const uploadAudioAWS = async (e) => {
-
-    if (socket) {
-      socket.emit('client intent', {
-        roomID,
-        intent,
-      })
-    }
 
     // create data
     let formdata = new FormData()
@@ -49,8 +41,15 @@ export default function ClientSendButton(props) {
         formdata,
         requestConfig,
       ).then(res => {
-        props.sendAudioSignal(res.data.Location)
-        // console.log(res.data)
+        props.sendAudioSignal(res.data.data.Location)
+        const audioID = res.data.audioID
+        if (socket) {
+          socket.emit('client intent', {
+            roomID,
+            audioID,
+            intent,
+          })
+        }
       })
     } catch(error){
       alert(error)

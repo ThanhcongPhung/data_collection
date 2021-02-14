@@ -24,8 +24,15 @@ const audioSchema = new mongoose.Schema({
   intent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Intent',
+    default: null,
   }
 })
+
+// update intent
+// update audio's intent
+
+// messageSchema.statics.updateAudio = 
+
 
 const Audio = mongoose.model('Audio', audioSchema);
 

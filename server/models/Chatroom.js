@@ -43,8 +43,19 @@ const chatroomSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Progress',
     required: 'Progress ID is required',
+  },
+  // 1 - client - 2 - servant send intent - 3 - servant send audio
+  turn: {
+    type: Number,
+    min: 1,
+    max: 3,
+    default: 1,
+    required: "Need to decide whose turn of this room is",
   }
 })
+
+// update room's intent and progress
+// messageSchema.statics.updateAudio = 
 
 
 const Chatroom = mongoose.model('Chatroom', chatroomSchema);

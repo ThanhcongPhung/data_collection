@@ -43,19 +43,19 @@ router.post('/', upload, (req, res) => {
   const userID = req.body.userID;
   const roomID = req.body.roomID;
 
-  s3.upload(params, (err, data) => {
+  s3.upload(params, async (err, data) => {
     if (err) throw err
     // console.log(`File uploaded successfully at ${data.Location}`)
 
     // save the audio information 
-    saveAudioMongo(userID, data.Location)
-    .then(audioID => {
-      // update audio history in room
-      err = updateRoomInfo(roomID, audioID)
-      if (err) throw err
-    })
+    const audioID = await saveAudioMongo(userID, data.Location)
+    err = updateRoomInfo(roomID, audioID)
+    if (err) {
+      res.status(500).send(err)
+      throw err 
+    }
 
-    res.status(200).send(data)
+    res.status(200).send({data, audioID: audioID})
   })
 })
 
@@ -67,6 +67,7 @@ const saveAudioMongo = async (userID, link) => {
   const audio = await Audio.create({
     user: userID,
     link: link,
+    intent: null,
   })
 
   return audio._id
@@ -77,14 +78,17 @@ const updateRoomInfo = (roomID, audioID) => {
   Chatroom.findById(roomID)
   .then(roomFound => {
     if(!roomFound) {
+      console.log("Room not found!!!")
+      // IMPLEMENT ERROR HANDLING HERE!!
       return "Room not found!"
     } else {
       roomFound.audioList.push(audioID);
       return roomFound.save();
     }
   })
-  .then(roomUpdated => {
+  .then((err, roomFound) => {
     // console.log(`Room ${roomUpdated.name} updated audio information successfully!`)
+    if (err) return err
     return null
   })
   .catch(err => {

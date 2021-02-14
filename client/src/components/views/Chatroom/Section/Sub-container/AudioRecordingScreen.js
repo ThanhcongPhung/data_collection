@@ -210,13 +210,16 @@ export default function AudioRecordingScreen(props) {
               
             </div>
           </Col>
-          {
+          {/* {
             audio !== null ? (
               <Col span={6}>
                 <Checkbox onChange={toggleTagVisibility}>Không có tag</Checkbox>
               </Col>
             ) : ""
-          }
+          } */}
+          <Col span={6}>
+            <Checkbox onChange={toggleTagVisibility}>Không có tag</Checkbox>
+          </Col>
         </Row>
       </Row>
     </>
