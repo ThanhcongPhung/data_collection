@@ -14,7 +14,7 @@ export default function ClientCheckbox(props) {
   if(list) {
     if(list[4]) {
       if(list[4][2].toLowerCase() === 'màu') {
-        list[5][1] = COLOR[list[5][2]]
+        list[5][1] = COLOR[list[5][2] + 1]
       }
     }
   }

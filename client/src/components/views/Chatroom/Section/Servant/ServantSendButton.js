@@ -5,9 +5,19 @@ import { BACKEND_URL } from '../../../../Config';
 
 export default function ServantSendButton(props) {
 
-  const data = props ? props.audio : null
-  const userID = props ? props.userID : ""
-  const roomID = props ? props.roomID : ""
+  const data = props ? props.audio : null;
+  const userID = props ? props.userID : "";
+  const roomID = props ? props.roomID : "";
+  const turn = props ? props.turn : -1;
+  const socket = props ? props.socket : null;
+  const intent = props ? props.intent : {
+    device: null,
+    room: null,
+    action: null,
+    scale: null,
+    floor: null,
+    level: null,
+  };
 
   const uploadAudioAWS = async (e) => {
 
@@ -30,7 +40,7 @@ export default function ServantSendButton(props) {
         requestConfig,
       ).then(res => {
         props.sendAudioSignal(res.data.data.Location)
-        const audioID = res.data.audioID
+        // const audioID = res.data.audioID
       })
     } catch(error){
       alert(error)
@@ -38,15 +48,27 @@ export default function ServantSendButton(props) {
   }
 
   // need intent sending button
+  const onConfirm = () => {
+    if (socket) {
+      socket.emit('servant intent', {
+        roomID,
+        // audioID,
+        intent,
+      });
+    }
+  }
 
-  const insertButton = data !== null ? (
-    // <button className="buttons" onClick={uploadAudio}>Gửi</button>
+  // const insertSendIntentButton = 
+
+  const insertSendButton = (turn === 3 && data !== null) ? (
     <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>
-  ) : ""
+  ) : (turn === 2 ? (
+    <button className="buttons" onClick={onConfirm}>Xác nhận</button>
+  ) : "")
 
   return (
     <>
-      {insertButton}
+      {insertSendButton}
     </>   
   )
 }

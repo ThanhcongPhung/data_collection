@@ -24,7 +24,7 @@ export default function Chatroom(props) {
   const [ audioHistory, setAudioHistory ] = useState([]);
   const [ scenario, setScenario ] = useState([]);
   const [ progress, setProgress ] = useState([]);
-  const [ turn, setTurn ] = useState("");
+  const [ turn, setTurn ] = useState(-1);
 
   const dispatch = useDispatch();
 
@@ -70,14 +70,9 @@ export default function Chatroom(props) {
       audios.map(audio => {
         // return tempAudioList.push(audio.link)
         return tempAudioList = [audio.link, ...tempAudioList]
-        // setAudioHistory((audioHistory) => [...audioHistory, audio.link])
       })
 
-      if(audios.length % 2 === 0) {
-        setTurn('client')
-      } else if (audios.length % 2 === 1) {
-        setTurn('servant')
-      } else setTurn("")
+      setTurn(response.payload.roomFound.turn)
 
       setAudioHistory(tempAudioList)
     })
@@ -109,11 +104,16 @@ export default function Chatroom(props) {
         // newHistory.push(data.audioLink)
         newHistory = [audioLink, ...audioHistory]
         setAudioHistory(newHistory)
-        if(turn === "client") {
-          setTurn("servant")
-        } else if (turn === "servant") {
-          setTurn("client")
-        } else setTurn("")
+        // if client sent then move on
+        if(turn === 1) {
+          setTurn(2)
+        // if servant sent then move on
+        } else if (turn === 3) {
+          setTurn(1)
+        } else {
+          // when turn = 2 (Throw a fit... shoudn't be triggered this thing at that time)
+          // when turn = -1 (loading...)
+        }
       })
 
       socket.on('joinRoom announce', (data) => {
@@ -138,7 +138,8 @@ export default function Chatroom(props) {
           <Col span={20}>
             {room_content_type === '0' ?
               <AudioRecordingScreen
-                recordingTurn={turn === userRole && turn !== ""}
+                // recordingTurn={turn === userRole && turn !== ""}
+                turn={turn}
                 canvasRef={canvasRef}
                 socket={socket}
                 user={user}

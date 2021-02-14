@@ -7,12 +7,12 @@ import { BACKEND_URL } from '../../../../Config'
 
 export default function ClientSendButton(props) {
 
-  const data = props ? props.audio : null
-  const userID = props ? props.userID : ""
-  const roomID = props ? props.roomID : ""
-  const intent = props ? props.intent : null
-  const socket = props ? props.socket : null
-  const buttonDisable = props ? props.disable : true
+  const data = props ? props.audio : null;
+  const userID = props ? props.userID : "";
+  const roomID = props ? props.roomID : "";
+  const intent = props ? props.intent : null;
+  const socket = props ? props.socket : null;
+  const buttonDisable = props ? props.disable : true;
   // const popoverContent = (
   //   <div>
   //     <p>Content</p>
@@ -23,17 +23,17 @@ export default function ClientSendButton(props) {
   const uploadAudioAWS = async (e) => {
 
     // create data
-    let formdata = new FormData()
-    formdata.append('soundBlob', data.blob, 'test.wav')
-    formdata.append('userID', userID)
-    formdata.append('roomID', roomID)
-    // formdata.append('audioIntent', intent)
+    let formdata = new FormData();
+    formdata.append('soundBlob', data.blob, 'test.wav');
+    formdata.append('userID', userID);
+    formdata.append('roomID', roomID);
+    // formdata.append('audioIntent', intent);
      
     const requestConfig = {     
       headers: new Headers({
         enctype: "multipart/form-data"
       })
-    }
+    };
     
     try {
       await axios.post(
@@ -41,18 +41,18 @@ export default function ClientSendButton(props) {
         formdata,
         requestConfig,
       ).then(res => {
-        props.sendAudioSignal(res.data.data.Location)
-        const audioID = res.data.audioID
+        props.sendAudioSignal(res.data.data.Location);
+        const audioID = res.data.audioID;
         if (socket) {
           socket.emit('client intent', {
             roomID,
             audioID,
             intent,
-          })
+          });
         }
       })
     } catch(error){
-      alert(error)
+      alert(error);
     }
   }
 
