@@ -438,6 +438,12 @@ sockets.init = function(server) {
       })
     });
 
+    // when room intent is finished. Kick everyone out. Lock the room. Log the record to a txt file.
+    // The record will consist of the room information. (Doesn't matter who's servant, who's client.)
+    
+    // remove people from the room record when they disconnect or leave room.
+    // update matching.
+
     // when receive a message
     socket.on("Input Chat message", msg => {
       try {
