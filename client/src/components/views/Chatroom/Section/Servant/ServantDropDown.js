@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Collapse, Select, InputNumber, Row, Col } from 'antd';
 
 import { COLOR } from '../../../../Config';

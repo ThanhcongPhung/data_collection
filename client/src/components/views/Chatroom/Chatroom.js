@@ -106,10 +106,10 @@ export default function Chatroom(props) {
         setAudioHistory(newHistory)
         // if client sent then move on
         if(turn === 1) {
-          setTurn(2)
+          setTurn(2);
         // if servant sent then move on
         } else if (turn === 3) {
-          setTurn(1)
+          setTurn(1);
         } else {
           // when turn = 2 (Throw a fit... shoudn't be triggered this thing at that time)
           // when turn = -1 (loading...)
@@ -117,11 +117,20 @@ export default function Chatroom(props) {
       })
 
       socket.on('joinRoom announce', (data) => {
-        console.log(`User ${data.username} has joined the room`)
+        console.log(`User ${data.username} has joined the room`);
       })
 
       socket.on('leaveRoom announce', (data) => {
-        console.log(`User ${data.username} has left the room`)
+        console.log(`User ${data.username} has left the room`);
+      })
+
+      socket.on('intent correct', () => {
+        console.log(`Servant has understood client's intent correctly! It's now servant turn to record the reply.`);
+        setTurn(3);
+      })
+
+      socket.on('intent incorrect', () => {
+        console.log(`Servant doesn't seem to understood client's intent!`)
       })
     }
     // Idk about this... it may cause problem later...

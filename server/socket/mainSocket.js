@@ -316,6 +316,7 @@ sockets.init = function(server) {
 
             // check intent against audio's intent.
             .then(audioFound => {
+              // console.log(audioFound.intent)
               return compareIntent(audioFound.intent, intent);
             })
             .catch(err => console.log("Error: ", err))
@@ -328,15 +329,63 @@ sockets.init = function(server) {
 
       // if correct, emit a signal, telling both of them that's it's okay. Update the progress for the room and move turn to 3.
       if (compare) {
-        // update progress
 
-        // update turn
+        Chatroom.findById(roomID)
+        .then(roomFound => {
+          if (!roomFound) {
+            console.log("... Some shenanigan.. Room doesn't even exist.");
+            // IMPLEMENT SOME KIND OF ERROR!!!
+            return null;
+          } else {
+            // already check up there but fuck it, just in case.
+            if (roomFound.turn !== 2) {
+              console.log("Saving intent... Some shenanigan.. It's not servant's turn to send intent.");
+              // IMPLEMENT SOME KIND OF ERROR!!!
+              return null;
+            } else {
+              // update progress
+              Progress.findById(roomFound.progress)
+              .then(progressFound => {
+                if (!progressFound) {
+                  console.log("... Some shenanigan.. Progress doesn't even exist.");
+                } else {
+                  // console.log(`Progress: `, progressFound)
+                  // console.log(`Intent: `, intent)
+                  for (const property in intent) {
+                    if(intent[property] !== null) {
+                      if(progressFound[property] !== 0) {
+                        console.log("... something's wrong with progress and intent... property: ", property);
+                        console.log(`Progress: `, progressFound);
+                        console.log(`Intent: `, intent);
+                        // IMPLEMENT SOME KIND OF ERROR!!!
+                        return 
+                      } else {
+                        progressFound[property] = 1;
+                      }
+                    }
+                  }
+                }
+                // console.log(progressFound)
+                return progressFound.save();
+              })
+              .catch(err => console.log(err))
 
-        // emit signal
+              // emit signal
+              io.to(roomID).emit('intent correct', {});
+              
+              // update turn
+              // BUG!!!! Since there's no error system for progress updating so even though if there's any problem with progress updating, the system will still move on.
+              roomFound.turn = 3;
+              return roomFound.save();
+            }
+          }
+        })
+        .catch(err => console.log(err))
+        
         
       } else {
         // else emit a signal, telling the servant that he/she fucked up. Do it again, or press the godly "DELETE" button to remove the client's audio reverse the turn to 1.. 
-        // emit signal
+        io.to(roomID).emit('intent incorrect', {});
       }
       
 
@@ -363,9 +412,6 @@ sockets.init = function(server) {
   
   });
 
-  // Just receive an intent. This should be seperate for servant and together with an audio for client.
-
-  // Compare the receive signal.
 
   // If right, send one signal to the servant to congrat and one to the client telling them that the servant has understood and now recording. 
   // Then save the intent to the progress record
