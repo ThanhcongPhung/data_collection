@@ -39,8 +39,14 @@ export default function ServantSendButton(props) {
         formdata,
         requestConfig,
       ).then(res => {
-        props.sendAudioSignal(res.data.data.Location)
-        // const audioID = res.data.audioID
+        props.sendAudioSignal(res.data.data.Location);
+        const audioID = res.data.audioID;
+        if (socket) {
+          socket.emit('servant audio', {
+            roomID,
+            audioID,
+          });
+        }
       })
     } catch(error){
       alert(error)

@@ -234,9 +234,11 @@ sockets.init = function(server) {
               level: null,
             };
 
-            intent.map(property => {
-              return extractIntent[property.key] = property.value;
-            })
+            if (intent !== null) {
+              intent.map(property => {
+                return extractIntent[property.key] = property.value;
+              })
+            }
             const { action, device, floor, room, scale, level } = extractIntent;
             const newIntent = await Intent.create({
               action,
@@ -325,7 +327,7 @@ sockets.init = function(server) {
       })
       .catch(err => console.log(err))
 
-      console.log(compare)
+      // console.log(compare)
 
       // if correct, emit a signal, telling both of them that's it's okay. Update the progress for the room and move turn to 3.
       if (compare) {
@@ -353,7 +355,7 @@ sockets.init = function(server) {
                   // console.log(`Intent: `, intent)
                   for (const property in intent) {
                     if(intent[property] !== null) {
-                      if(progressFound[property] !== 0) {
+                      if(progressFound[property] === -1) {
                         console.log("... something's wrong with progress and intent... property: ", property);
                         console.log(`Progress: `, progressFound);
                         console.log(`Intent: `, intent);
@@ -387,10 +389,54 @@ sockets.init = function(server) {
         // else emit a signal, telling the servant that he/she fucked up. Do it again, or press the godly "DELETE" button to remove the client's audio reverse the turn to 1.. 
         io.to(roomID).emit('intent incorrect', {});
       }
-      
+    });
 
-      
-    })
+    socket.on('servant audio', async ({ roomID, audioID }) => {
+      // update room turn
+      Chatroom.findById(roomID)
+      .then(async (roomFound) => {
+        if (!roomFound) {
+          console.log("... Some shenanigan.. Room doesn't even exist.");
+          // IMPLEMENT SOME KIND OF ERROR!!!
+          return null;
+        } else {
+
+          // create intent, servant intent is always null. Not having any intention is an intent.
+          const newIntent = await Intent.create({
+            action: null,
+            device: null,
+            floor: null,
+            room: null,
+            scale: null,
+            level: null,
+          });
+
+          // save intent to audio
+          Audio.findById(audioID)
+          .then(async (audioFound) => {
+            if (!audioFound) {
+              console.log("... Some shenanigan.. Audio doesn't even exist.");
+              // IMPLEMENT SOME KIND OF ERROR!!!
+              return null;
+            } else {
+              audioFound.intent = newIntent._id;
+              return audioFound.save();
+            }
+          })
+          .catch(err => {
+            // IMPLEMENT SOME KIND OF ERROR!!!
+            console.log("Can't update audio's intent, ", err);
+          })
+
+          roomFound.turn = 1;
+          return roomFound.save();
+        }
+      })
+      .catch(err => {
+        // IMPLEMENT SOME KIND OF ERROR!!!
+        console.log(err);
+      })
+    });
 
     // when receive a message
     socket.on("Input Chat message", msg => {
@@ -411,13 +457,6 @@ sockets.init = function(server) {
     });
   
   });
-
-
-  // If right, send one signal to the servant to congrat and one to the client telling them that the servant has understood and now recording. 
-  // Then save the intent to the progress record
-
-  // If different, send one signal to the servant telling them that they are wrong, telling them to ask the client what's going on
-  // The intent that the client sent won't be saved in the progress record. 
 
   // Need to add a "I don't understand button, please say the line again" for both side. None of them can delete their own audios unless the other party does so.
   // If the button is pressed, the last message that was sent out of the room will be deleted. (Of course, can't always press it). 

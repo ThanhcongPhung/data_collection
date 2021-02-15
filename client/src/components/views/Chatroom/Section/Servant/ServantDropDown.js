@@ -115,7 +115,7 @@ export default function ServantDropDown(props) {
   }
 
   const onSelectedFloorChange = (value) => {
-    var floor = value.match(/\d/g)[0];
+    var floor = value === "Không có" ? null : value.match(/\d/g)[0];
     // console.log(value);
     setSelectedFloor(value);
 

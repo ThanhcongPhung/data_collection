@@ -13,6 +13,7 @@ export default function ClientSendButton(props) {
   const intent = props ? props.intent : null;
   const socket = props ? props.socket : null;
   const buttonDisable = props ? props.disable : true;
+
   // const popoverContent = (
   //   <div>
   //     <p>Content</p>
