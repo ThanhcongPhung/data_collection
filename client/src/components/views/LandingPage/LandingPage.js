@@ -158,6 +158,7 @@ function LandingPage(props) {
         <Row style={{marginBottom: "10px", marginTop: "10px"}}>
           <Col style={{textAlign: "center"}}>
             <ReadyButton 
+              isAuth={user.userData ? user.userData.isAuth : false}
               readyStatus={readyStatus}
               readySignal={readySignal}
               cancelReadySignal={cancelReadySignal}/>

@@ -1,5 +1,6 @@
 var sockets = {}
 const { Message } = require("./../models/Message");
+const { Intent } = require("./../models/Intent");
 
 sockets.init = function(server) {
   // socket.io setup
@@ -207,24 +208,241 @@ sockets.init = function(server) {
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
     });
 
-    socket.on('client intent', ({roomID, intent}) => {
-      const clientRoom = roomID
-      const clientIntent = intent
-      console.log("Receive client intent: " + JSON.stringify(clientIntent) + " from room " + clientRoom)
-      // socket.on('servant intent', ({roomID, intent}) => {
-      //   const servantRoom = roomID
-      //   const servantIntent = intent
+    socket.on('client intent', async ({ roomID, audioID, intent }) => {
+      console.log("Receive client intent: " + JSON.stringify(intent) + " of audio " + audioID + " from room " + roomID)
 
-      //   // confirm 2 person from the same room
-      //   if (clientRoom !== servantRoom) {
-      //     // Probably won't happen but gotta yell if someone's trying something funny.
-      //   } 
+      // check turn of the room. Throw a fit if it's not 1. If it's 1 then: 
+      Chatroom.findById(roomID)
+      .then(async (roomFound) => {
+        if (!roomFound) {
+          console.log("... Some shenanigan.. Room doesn't even exist.");
+          // IMPLEMENT SOME KIND OF ERROR!!!
+          return null;
+        } else {
+          if (roomFound.turn !== 1) {
+            console.log("... Some shenanigan.. It's not client's turn to send intent.");
+            // IMPLEMENT SOME KIND OF ERROR!!!
+            return null;
+          } else {
+            // create intent
+            let extractIntent = {
+              action: null,
+              device: null,
+              floor: null,
+              room: null,
+              scale: null,
+              level: null,
+            };
 
-      //   // compare the two intent, may need another compareObject function
-      //   // if okay, emit a signal, telling both ofthem that's it's okay.
-      //   // else emit a signal, telling the servant that he/she fucked up. Do it again, or press the godly "DELETE" button.
-      // })
+            if (intent !== null) {
+              intent.map(property => {
+                return extractIntent[property.key] = property.value;
+              })
+            }
+            const { action, device, floor, room, scale, level } = extractIntent;
+            const newIntent = await Intent.create({
+              action,
+              device,
+              floor,
+              room,
+              scale,
+              level,
+            });
+
+            // save intent to audio
+            Audio.findById(audioID)
+            .then(async (audioFound) => {
+              if (!audioFound) {
+                console.log("... Some shenanigan.. Audio doesn't even exist.");
+                // IMPLEMENT SOME KIND OF ERROR!!!
+                return null;
+              } else {
+                audioFound.intent = newIntent._id;
+                return audioFound.save();
+              }
+            })
+            .catch(err => {
+              // IMPLEMENT SOME KIND OF ERROR!!!
+              console.log("Can't update audio's intent, ", err);
+            })
+
+            roomFound.turn = 2;
+            return roomFound.save();
+          }
+        }
+      })
+      .catch(err => {
+        // IMPLEMENT SOME KIND OF ERROR!!!
+        console.log(err);
+      })
     });
+
+    socket.on('servant intent', async ({ roomID, intent }) => {
+      
+      // parse the received intent
+      if (intent === null) {
+        intent = {
+          device: null,
+          room: null,
+          action: null,
+          scale: null,
+          floor: null,
+          level: null,
+        };
+      } else {
+        const properties = ["action", "device", "floor", "room", "scale", "level"];
+        for (let key in properties) {
+          if(intent[properties[key]] === undefined) intent[properties[key]] = null
+        }
+      }
+
+      // compare servant's intent and client's intent.
+      const compare = await Chatroom.findById(roomID)
+      .then(async (roomFound) => {
+        // check room status.
+        if (!roomFound) {
+          console.log("... Some shenanigan.. Room doesn't even exist.");
+          // IMPLEMENT SOME KIND OF ERROR!!!
+          return null;
+        } else {
+          if (roomFound.turn !== 2) {
+            console.log("... Some shenanigan.. It's not servant's turn to send intent.");
+            // IMPLEMENT SOME KIND OF ERROR!!!
+            return null;
+          } else {
+            
+            // get latest audio.
+            const latestAudioID = roomFound.audioList[roomFound.audioList.length - 1]
+            return Audio.findById(latestAudioID)
+            .populate('intent')
+
+            // check intent against audio's intent.
+            .then(audioFound => {
+              // console.log(audioFound.intent)
+              return compareIntent(audioFound.intent, intent);
+            })
+            .catch(err => console.log("Error: ", err))
+          }
+        }
+      })
+      .catch(err => console.log(err))
+
+      // console.log(compare)
+
+      // if correct, emit a signal, telling both of them that's it's okay. Update the progress for the room and move turn to 3.
+      if (compare) {
+
+        Chatroom.findById(roomID)
+        .then(roomFound => {
+          if (!roomFound) {
+            console.log("... Some shenanigan.. Room doesn't even exist.");
+            // IMPLEMENT SOME KIND OF ERROR!!!
+            return null;
+          } else {
+            // already check up there but fuck it, just in case.
+            if (roomFound.turn !== 2) {
+              console.log("Saving intent... Some shenanigan.. It's not servant's turn to send intent.");
+              // IMPLEMENT SOME KIND OF ERROR!!!
+              return null;
+            } else {
+              // update progress
+              Progress.findById(roomFound.progress)
+              .then(progressFound => {
+                if (!progressFound) {
+                  console.log("... Some shenanigan.. Progress doesn't even exist.");
+                } else {
+                  // console.log(`Progress: `, progressFound)
+                  // console.log(`Intent: `, intent)
+                  for (const property in intent) {
+                    if(intent[property] !== null) {
+                      if(progressFound[property] === -1) {
+                        console.log("... something's wrong with progress and intent... property: ", property);
+                        console.log(`Progress: `, progressFound);
+                        console.log(`Intent: `, intent);
+                        // IMPLEMENT SOME KIND OF ERROR!!!
+                        return 
+                      } else {
+                        progressFound[property] = 1;
+                      }
+                    }
+                  }
+                }
+                // console.log(progressFound)
+                return progressFound.save();
+              })
+              .catch(err => console.log(err))
+
+              // emit signal
+              io.to(roomID).emit('intent correct', {});
+              
+              // update turn
+              // BUG!!!! Since there's no error system for progress updating so even though if there's any problem with progress updating, the system will still move on.
+              roomFound.turn = 3;
+              return roomFound.save();
+            }
+          }
+        })
+        .catch(err => console.log(err))
+        
+        
+      } else {
+        // else emit a signal, telling the servant that he/she fucked up. Do it again, or press the godly "DELETE" button to remove the client's audio reverse the turn to 1.. 
+        io.to(roomID).emit('intent incorrect', {});
+      }
+    });
+
+    socket.on('servant audio', async ({ roomID, audioID }) => {
+      // update room turn
+      Chatroom.findById(roomID)
+      .then(async (roomFound) => {
+        if (!roomFound) {
+          console.log("... Some shenanigan.. Room doesn't even exist.");
+          // IMPLEMENT SOME KIND OF ERROR!!!
+          return null;
+        } else {
+
+          // create intent, servant intent is always null. Not having any intention is an intent.
+          const newIntent = await Intent.create({
+            action: null,
+            device: null,
+            floor: null,
+            room: null,
+            scale: null,
+            level: null,
+          });
+
+          // save intent to audio
+          Audio.findById(audioID)
+          .then(async (audioFound) => {
+            if (!audioFound) {
+              console.log("... Some shenanigan.. Audio doesn't even exist.");
+              // IMPLEMENT SOME KIND OF ERROR!!!
+              return null;
+            } else {
+              audioFound.intent = newIntent._id;
+              return audioFound.save();
+            }
+          })
+          .catch(err => {
+            // IMPLEMENT SOME KIND OF ERROR!!!
+            console.log("Can't update audio's intent, ", err);
+          })
+
+          roomFound.turn = 1;
+          return roomFound.save();
+        }
+      })
+      .catch(err => {
+        // IMPLEMENT SOME KIND OF ERROR!!!
+        console.log(err);
+      })
+    });
+
+    // when room intent is finished. Kick everyone out. Lock the room. Log the record to a txt file.
+    // The record will consist of the room information. (Doesn't matter who's servant, who's client.)
+    
+    // remove people from the room record when they disconnect or leave room.
+    // update matching.
 
     // when receive a message
     socket.on("Input Chat message", msg => {
@@ -245,16 +463,6 @@ sockets.init = function(server) {
     });
   
   });
-
-  // Just receive an intent. This should be seperate for servant and together with an audio for client.
-
-  // Compare the receive signal.
-
-  // If right, send one signal to the servant to congrat and one to the client telling them that the servant has understood and now recording. 
-  // Then save the intent to the progress record
-
-  // If different, send one signal to the servant telling them that they are wrong, telling them to ask the client what's going on
-  // The intent that the client sent won't be saved in the progress record. 
 
   // Need to add a "I don't understand button, please say the line again" for both side. None of them can delete their own audios unless the other party does so.
   // If the button is pressed, the last message that was sent out of the room will be deleted. (Of course, can't always press it). 
@@ -321,6 +529,7 @@ const compareObject = (obj1, obj2) => {
 }
 
 const { Chatroom } = require("./../models/Chatroom");
+const { Audio } = require("./../models/Audio");
 
 const createRoom = async (userID1, userID2, roomType) => {
   // user1 - client, user2 - servant
@@ -344,6 +553,7 @@ const createRoom = async (userID1, userID2, roomType) => {
     user2: userID2,
     intent: intent._id,
     progress: progress._id,
+    turn: 1,
   })
 
   return chatroom._id
@@ -362,8 +572,7 @@ const generateTask = (action, device) => {
   return `${action} ${device.toLowerCase()}`
 }
 
-const { Intent } = require("./../models/Intent");
-const { DEVICE } = require("./../config/intent");
+const { DEVICE, COLOR } = require("./../config/intent");
 // const { DEVICE, COLOR } = require("./../config/intent");
 
 const createRandomIntent = () => {
@@ -435,6 +644,26 @@ const genRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// intent1 from client, intent2 from servant
+const compareIntent = (intent1, intent2) => {
+
+  if (intent1.scale === "Màu") {
+    return (intent1.action === intent2.action || (intent1.action === null && intent2.action === null)) && 
+    (intent1.device === intent2.device || (intent1.device === null && intent2.device === null)) && 
+    (intent1.room === intent2.room || (intent1.room === null && intent2.room === null)) && 
+    (intent1.floor === intent2.floor || (intent1.floor === null && intent2.floor === null)) && 
+    (intent1.scale === intent2.scale || (intent1.scale === null && intent2.scale === null)) && 
+    (COLOR[intent1.level] === intent2.level || (intent1.level === null && intent2.level === null));
+  } else {
+    return (intent1.action === intent2.action || (intent1.action === null && intent2.action === null)) && 
+    (intent1.device === intent2.device || (intent1.device === null && intent2.device === null)) && 
+    (intent1.room === intent2.room || (intent1.room === null && intent2.room === null)) && 
+    (intent1.floor === parseInt(intent2.floor) || (intent1.floor === null && intent2.floor === null)) && 
+    (intent1.scale === intent2.scale || (intent1.scale === null && intent2.scale === null)) && 
+    (intent1.level === intent2.level  || (intent1.level === null && intent2.level === null));
+  }
 }
 
 module.exports = sockets;

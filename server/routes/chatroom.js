@@ -33,7 +33,7 @@ router.get("/random", (req, res) => {
     // Get a random entry 
     var random = Math.floor(Math.random() * count)
     Chatroom.findOne().skip(random)
-    .populate('intent')
+    // .populate('intent')
     .populate('progress')
     .exec((err, roomFound) => {
       if (err) res.status(500).send({ success: false, message: "Can't proceed to find any room", err })
@@ -50,6 +50,7 @@ router.get("/:roomID", (req, res) => {
   Chatroom.findById(req.params.roomID)
   .populate('intent')
   .populate('progress')
+  .populate('audioList')
   .exec((err, roomFound) => {
     if (err) res.status(500).send({ success: false, err })
     else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })

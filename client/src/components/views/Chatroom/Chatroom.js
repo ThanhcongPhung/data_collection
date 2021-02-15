@@ -24,11 +24,12 @@ export default function Chatroom(props) {
   const [ audioHistory, setAudioHistory ] = useState([]);
   const [ scenario, setScenario ] = useState([]);
   const [ progress, setProgress ] = useState([]);
+  const [ turn, setTurn ] = useState(-1);
 
   const dispatch = useDispatch();
 
   // as they say, there's some problem with setState that I need to clean up so I'll just drop a bomb here as a mark
-  // vvvvv Flood gate to make sure dispatch is fired only once.
+  // vvvvv Flood gate to make sure dispatch is fired only once. But like this, it won't get refired even if another component of the page is re-rendered.
   if(userRole === "") {
     dispatch(getRoom(chatroomID))
     .then(async (response) => {
@@ -63,7 +64,17 @@ export default function Chatroom(props) {
         }
       }
       setProgress(tempProgress);
-      
+
+      const audios = response.payload.roomFound.audioList;
+      let tempAudioList = []
+      audios.map(audio => {
+        // return tempAudioList.push(audio.link)
+        return tempAudioList = [audio.link, ...tempAudioList]
+      })
+
+      setTurn(response.payload.roomFound.turn)
+
+      setAudioHistory(tempAudioList)
     })
   }
 
@@ -87,23 +98,43 @@ export default function Chatroom(props) {
 
   useEffect(() => {
     if (socket) {
-      socket.on('newAudioURL', (data) => {
-        // console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
+      socket.on('newAudioURL', ({ userID, sender, audioLink }) => {
+        console.log(`Receive signal from ${sender} with the ID of ${userID}. Here's the link: ${audioLink}`)
         let newHistory = [...audioHistory]
-        newHistory.push(data.audioLink)
+        // newHistory.push(data.audioLink)
+        newHistory = [audioLink, ...audioHistory]
         setAudioHistory(newHistory)
+        // if client sent then move on
+        if(turn === 1) {
+          setTurn(2);
+        // if servant sent then move on
+        } else if (turn === 3) {
+          setTurn(1);
+        } else {
+          // when turn = 2 (Throw a fit... shoudn't be triggered this thing at that time)
+          // when turn = -1 (loading...)
+        }
       })
 
       socket.on('joinRoom announce', (data) => {
-        console.log(`User ${data.username} has joined the room`)
+        console.log(`User ${data.username} has joined the room`);
       })
 
       socket.on('leaveRoom announce', (data) => {
-        console.log(`User ${data.username} has left the room`)
+        console.log(`User ${data.username} has left the room`);
+      })
+
+      socket.on('intent correct', () => {
+        console.log(`Servant has understood client's intent correctly! It's now servant turn to record the reply.`);
+        setTurn(3);
+      })
+
+      socket.on('intent incorrect', () => {
+        console.log(`Servant doesn't seem to understood client's intent!`)
       })
     }
     // Idk about this... it may cause problem later...
-  }, [socket, audioHistory])
+  }, [turn, socket, audioHistory])
 
   return (
       <div className="chatroom">
@@ -116,6 +147,8 @@ export default function Chatroom(props) {
           <Col span={20}>
             {room_content_type === '0' ?
               <AudioRecordingScreen
+                // recordingTurn={turn === userRole && turn !== ""}
+                turn={turn}
                 canvasRef={canvasRef}
                 socket={socket}
                 user={user}

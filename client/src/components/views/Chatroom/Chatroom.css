@@ -49,13 +49,19 @@
     width: 178px;
     height: 57px;
     color: white;
-    background: #708fc1;
+    background: #4079d3;
     text-transform: uppercase;
     font-family: Open Sans, sans-serif;
     font-weight: 600;
 }
 .buttons:hover{
-    background: #629ff4;
+    background: #1c6ddf;
+}
+.buttons:disabled{
+    background-color: #cad6e7;
+}
+.buttonDisabled {
+    pointer-events: none;
 }
 .pill{
     border-radius: 29px;

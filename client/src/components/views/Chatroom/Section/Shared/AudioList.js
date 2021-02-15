@@ -7,17 +7,18 @@ export default function AudioList(props) {
 
   const [container, setContainer] = useState(10);
 
-  const showAudio = props.audioList ? props.audioList.map(audio => {
-    return (
-      <div key={audio}>
-        <audio
-          controls="controls"
-          src={audio}>
-        <track kind="captions"/>
-        </audio>
-      </div>
-    )
-  }) : ""
+  const showAudio = props ? (
+    props.audioList ? props.audioList.map(audio => {
+      return (
+        <div key={audio}>
+          <audio
+            controls="controls"
+            src={audio}>
+          <track kind="captions"/>
+          </audio>
+        </div>
+      )
+    }) : "") : ""
 
   return (
       <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%"}}

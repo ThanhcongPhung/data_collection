@@ -5,10 +5,12 @@ import {/*ShareIcon,*/ RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui
 
 import Wave from '../Shared/Wave';
 import RecordButton from '../Shared/RecordButton';
-import SendButton from '../Shared/SendButton';
+// import SendButton from '../Shared/SendButton';
 import ClientSendButton from '../Client/ClientSendButton';
 import ClientCheckbox from '../Client/ClientCheckbox';
+import ServantSendButton from '../Servant/ServantSendButton';
 import ServantDropDown from '../Servant/ServantDropDown';
+import LoadingScreen from '../Shared/LoadingScreen';
 // import Dropdown from '../Servant/Dropdown';
 // import {dropdowns} from '../Data';
 
@@ -20,6 +22,7 @@ export default function AudioRecordingScreen(props) {
   const chatroomID = props ? props.chatroomID : "";
   const user = props ? props.user : null;
   const userRole = props ? props.userRole : "";
+  const turn = props ? props.turn : false;
   const [ isPlaying, setIsPlaying ] = useState(false);
   const [ audio, setAudio ] = useState(null);
   const [ intent, setIntent ] = useState(null); 
@@ -50,6 +53,7 @@ export default function AudioRecordingScreen(props) {
       })
     }
     setAudio(null);
+    setTagVisibility(true);
   }
 
   const toggleIsPlaying = () => {
@@ -148,6 +152,7 @@ export default function AudioRecordingScreen(props) {
             <canvas className="primary-buttons canvas" ref={canvasRef}
                     style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
             <RecordButton
+              turn={(turn === 1 && userRole === "client") || (turn === 3 && userRole === "servant")}
               isRecording={isRecording}
               setAudio={setAudio}
               setIsRecording={setIsRecording}/>
@@ -164,10 +169,15 @@ export default function AudioRecordingScreen(props) {
                   visible={tagVisibility}
                   setIntent={setIntent}
                   list={props.scenario}  
-                /> :
+                /> : 
+              props.userRole === "servant" ? (
                 // <Dropdown list={dropdowns}/>
                 <ServantDropDown 
-                  intent={tagVisibility ? intent : null}/>
+                  intent={intent}
+                  setIntent={setIntent}/>
+              ) : (
+                <LoadingScreen />
+              )
               }
             </div>
           </Col>
@@ -179,6 +189,7 @@ export default function AudioRecordingScreen(props) {
               {
                 userRole === "client" ? (
                   <ClientSendButton 
+                    disable={turn !== 1 && intent === null && tagVisibility}
                     socket={socket}
                     audio={audio} 
                     intent={tagVisibility ? intent : null}
@@ -186,7 +197,16 @@ export default function AudioRecordingScreen(props) {
                     roomID={chatroomID}
                     sendAudioSignal={sendAudioSignal}/>
                 ) : (
-                  <SendButton 
+                  // <SendButton 
+                  //   audio={audio} 
+                  //   intent={tagVisibility ? intent : null}
+                  //   userID={user.userData ? user.userData._id : ""}
+                  //   roomID={chatroomID}
+                  //   sendAudioSignal={sendAudioSignal}/>
+
+                  <ServantSendButton
+                    socket={socket}
+                    turn={turn}
                     audio={audio} 
                     intent={tagVisibility ? intent : null}
                     userID={user.userData ? user.userData._id : ""}
@@ -197,13 +217,16 @@ export default function AudioRecordingScreen(props) {
               
             </div>
           </Col>
-          {
+          {/* {
             audio !== null ? (
               <Col span={6}>
                 <Checkbox onChange={toggleTagVisibility}>Không có tag</Checkbox>
               </Col>
             ) : ""
-          }
+          } */}
+          <Col span={6}>
+            <Checkbox onChange={toggleTagVisibility}>Không có tag</Checkbox>
+          </Col>
         </Row>
       </Row>
     </>
