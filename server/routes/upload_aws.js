@@ -86,10 +86,12 @@ const updateRoomInfo = (roomID, audioID) => {
       return roomFound.save();
     }
   })
-  .then((err, roomFound) => {
+  .then((roomUpdated) => {
     // console.log(`Room ${roomUpdated.name} updated audio information successfully!`)
-    if (err) return err
-    return null
+    if (!roomUpdated) {
+      console.log("Can't update room information after upload audio!!!")
+      return
+    }
   })
   .catch(err => {
     console.log("Unable to update audio information to room")
