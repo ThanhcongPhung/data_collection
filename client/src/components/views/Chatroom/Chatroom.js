@@ -147,7 +147,6 @@ export default function Chatroom(props) {
           <Col span={20}>
             {room_content_type === '0' ?
               <AudioRecordingScreen
-                // recordingTurn={turn === userRole && turn !== ""}
                 turn={turn}
                 canvasRef={canvasRef}
                 socket={socket}
