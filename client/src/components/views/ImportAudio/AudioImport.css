@@ -43,11 +43,12 @@
     background: #f6f7ff;
     cursor: pointer;
     position: absolute;
-    width: 50%;
+    width: 40%;
     height: 30%;
     box-sizing: border-box;
-    /*justify-content: center;*/
+    justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 .dropzone:hover{
     border: 3px dotted #d0d0d0;
@@ -60,18 +61,68 @@ section{
     position: fixed;
     bottom: 0;
     width: 100%;
-    background: aqua;
+    background: #f6f7ff;
     padding: 20px 0;
 }
 .containerAudio{
-    width: 100%;
+    width: 60%;
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+audio{
+    outline: none;
+    color: black;
+}
+.identifiedText{
+    margin:-2px;
+    background-color: #f6f7ff;
+    width: 50%;
+    height: 80px;
+    border-radius: 5px;
+    padding: 10px;
+    opacity: 0.7;
+}
+.identifiedText:hover{
+    opacity: 1;
+    cursor: copy;
+}
+.ant-btn-primary {
+    background-color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: .9rem;
+    border-radius: 50px;
+    border: 1px solid rgba(0,0,0,.1);
+    color: black;
+    padding: .5rem 1rem;
+    min-width: 14rem;
+    display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+}
+.ant-btn-primary{
+
+}
+img{
+    vertical-align: middle;
+    border-style: none;
+    height: 153.61px;
+    width: 153.61px;
+}
+.getText{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.submitText{
+    width: 50%;
 }
 
