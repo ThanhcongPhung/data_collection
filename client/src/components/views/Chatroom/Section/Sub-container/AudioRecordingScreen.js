@@ -189,7 +189,8 @@ export default function AudioRecordingScreen(props) {
               {
                 userRole === "client" ? (
                   <ClientSendButton 
-                    disable={turn !== 1 && intent === null && tagVisibility}
+                    turn={turn}
+                    disable={intent === null && tagVisibility}
                     socket={socket}
                     audio={audio} 
                     intent={tagVisibility ? intent : null}
