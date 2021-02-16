@@ -4,12 +4,17 @@ import Axios from 'axios';
 import './AudioImport.css';
 import {Button} from 'antd';
 import DisplayAudio from './DisplayAudio';
+import {Input} from 'antd';
 
+const {TextArea} = Input;
 export default function AudioImport() {
   const [audio, setAudio] = useState(null);
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
   const [content, setContent] = useState(null);
+  const [value, setValue] = useState('')
+
+
   const onDrop = (files) => {
 
     if (files && files.length > 0) {
@@ -114,20 +119,24 @@ export default function AudioImport() {
     // }
     // })
   }
+  const convertFileSize = (size) => {
+    var sizeInMB = (size / (1024 * 1024)).toFixed(3);
+    return sizeInMB;
+  }
   const renderAudio = (audio) => {
     if (audio !== null) {
       return (
-          
           <section className="renderAudio" key={audio}>
             <div className="containerAudio">
+              <div className="nameAudio">{file.name}</div>
               <audio
                   controls="controls"
                   src={audio}>
                 <track kind="captions"/>
               </audio>
-              <Button onClick={getTranscript(file)}>Get Text</Button>
+              <Button onClick={getTranscript(file)} type="primary">Get Text</Button>
+              <Button onClick={getTranscript(file)} type="primary" disable={!value}>Submit Audio</Button>
             </div>
-
           </section>
       )
     } else return ""
@@ -144,18 +153,50 @@ export default function AudioImport() {
                 </div>
                 <hr className="hr"></hr>
               </div>
-              <Dropzone onDrop={onDrop}>
-                {({getRootProps, getInputProps}) => (
-                    <section>
-                      <div {...getRootProps({className: 'dropzone'})}>
-                        <input id='upload-audio' {...getInputProps()} />
-                        <p>Drag 'n' drop some files here, or click to select files</p>
-                      </div>
-                    </section>
-                )}
-              </Dropzone>
+              {!audio ?
+                  <Dropzone onDrop={onDrop}>
+                    {({getRootProps, getInputProps}) => (
+                        <section>
+                          <div {...getRootProps({className: 'dropzone'})}>
+                            <input id='upload-audio' {...getInputProps()} />
+                            <p>Drag 'n' drop some files here, or click to select files</p>
+                          </div>
+                        </section>
+                    )}
+                  </Dropzone> :
+                  <Dropzone onDrop={onDrop}>
+                    {({getRootProps, getInputProps}) => (
+                        <section>
+                          <div {...getRootProps({className: 'dropzone'})}>
+                            <input id='upload-audio' {...getInputProps()} />
+                            <img src="https://stc-ai-developers.zdn.vn/image/audio_img.png"/>
+                            <div>Name: {file.name}</div>
+                            <div>Size: {convertFileSize(file.size)}MB</div>
+                          </div>
+                        </section>
+                    )}
+                  </Dropzone>
+              }
             </section>
-
+            <section style={{marginTop: "23%",position:'relative'}}>
+              <div className="title-and-search">
+                <div style={{display: "flex", flexDirection: "row"}}>
+                  <h1 style={{marginRight: "1.5rem"}}>Identified Text</h1>
+                </div>
+                <hr className="hr"></hr>
+              </div>
+              <div className="getText">
+                <div className="identifiedText">Identified Text</div>
+                <div className="submitText">
+                  <TextArea
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                      placeholder="Coppy text into here"
+                      autoSize={{minRows: 3, maxRows: 5}}
+                  />
+                </div>
+              </div>
+            </section>
           </div>
         </div>
         {renderAudio(audio)}

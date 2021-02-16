@@ -11,6 +11,7 @@
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-app-polyfill": "^1.0.6",
+    "react-copy-to-clipboard": "^5.0.3",
     "react-countdown-circle-timer": "^2.4.0",
     "react-dom": "^16.8.6",
     "react-dropzone": "^11.3.0",
