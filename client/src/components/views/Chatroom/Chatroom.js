@@ -100,10 +100,10 @@ export default function Chatroom(props) {
     if (socket) {
       socket.on('newAudioURL', ({ userID, sender, audioLink }) => {
         // console.log(`Receive signal from ${sender} with the ID of ${userID}. Here's the link: ${audioLink}`)
-        let newHistory = [...audioHistory]
+        let newHistory = [...audioHistory];
         // newHistory.push(data.audioLink)
-        newHistory = [audioLink, ...audioHistory]
-        setAudioHistory(newHistory)
+        newHistory = [audioLink, ...audioHistory];
+        setAudioHistory(newHistory);
         // if client sent then move on
         if(turn === 1) {
           setTurn(2);
@@ -114,24 +114,37 @@ export default function Chatroom(props) {
           // when turn = 2 (Throw a fit... shoudn't be triggered this thing at that time)
           // when turn = -1 (loading...)
         }
-      })
+      });
 
       socket.on('joinRoom announce', (data) => {
         console.log(`User ${data.username} has joined the room`);
-      })
+      });
 
       socket.on('leaveRoom announce', (data) => {
         console.log(`User ${data.username} has left the room`);
-      })
+      });
 
       socket.on('intent correct', () => {
         console.log(`Servant has understood client's intent correctly! It's now servant turn to record the reply.`);
         setTurn(3);
-      })
+      });
 
       socket.on('intent incorrect', () => {
         console.log(`Servant doesn't seem to understood client's intent!`)
-      })
+      });
+
+      socket.on('audio removed', () => {
+        let newHistory = [...audioHistory];
+        newHistory.shift();
+
+        setAudioHistory(newHistory);
+
+        if (turn === 1) {
+          setTurn(3);
+        } else if (turn === 2) {
+          setTurn (1);
+        }
+      });
     }
     // Idk about this... it may cause problem later...
   }, [turn, socket, audioHistory])

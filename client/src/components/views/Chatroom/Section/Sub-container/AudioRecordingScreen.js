@@ -194,6 +194,7 @@ export default function AudioRecordingScreen(props) {
                     socket={socket}
                     audio={audio} 
                     intent={tagVisibility ? intent : null}
+                    userRole={userRole}
                     userID={user.userData ? user.userData._id : ""}
                     roomID={chatroomID}
                     sendAudioSignal={sendAudioSignal}/>
@@ -210,6 +211,7 @@ export default function AudioRecordingScreen(props) {
                     turn={turn}
                     audio={audio} 
                     intent={tagVisibility ? intent : null}
+                    userRole={userRole}
                     userID={user.userData ? user.userData._id : ""}
                     roomID={chatroomID}
                     sendAudioSignal={sendAudioSignal}/>

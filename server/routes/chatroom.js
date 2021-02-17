@@ -144,17 +144,14 @@ router.put("/:roomID/:userRole", (req, res) => {
         // update progress
         let err = await Progress.findById(progressID)
         .then(progressFound => {
-          console.log('Before: ')
-          console.log(progressFound)
           for (let key in target) {
-            console.log(`Key: ${key} value: ${target[key]}, compare with null: ${target[key] === null}`)
             if(target[key] !== null) {
               if (progressFound[key] === -1) {
                 // return res.status(500).send({ success: -3, message: "Something's wrong with the server. PUT... chatroom... Updating progress..." });
-                return "Something's wrong with the server. PUT... chatroom... Updating progress..."
+                return "Something's wrong with the server. PUT... chatroom... Updating progress...";
               } else if (progressFound[key] === 0) {
                 // return res.status(500).send({ success: -3, message: "Something's wrong with the server. Maybe the audio is already deleted and progress is already updated!" });
-                return "Something's wrong with the server. Maybe the audio is already deleted and progress is already updated!"
+                return "Something's wrong with the server. Maybe the audio is already deleted and progress is already updated!";
               } else {
                 progressFound[key]--;
               }
@@ -164,11 +161,7 @@ router.put("/:roomID/:userRole", (req, res) => {
           // return null
           return progressFound.save((err, progressUpdated) => {
             if (err) return err;
-            else {
-              console.log('After: ');
-              console.log(progressUpdated);
-              return null;
-            }
+            else return null;
           });
         })
         .catch(err => console.log("Yikes... Removing audio... handling progress: ", err))
@@ -182,15 +175,14 @@ router.put("/:roomID/:userRole", (req, res) => {
       } else if (roomFound.turn === 2) {
         roomFound.turn = 1;
       } else {
+        // If somehow they can bypass the "check turn" floodgate, it will lead to this message. How to prevent that though :/
         res.status(200).send({ success: 0, message: "How did you even do this...? Removing audio... Update room turn... " });
         return
       }
 
       return roomFound.save((err, roomUpdated) => {
-        console.log("Err: ", err);
-        console.log("Room Updated: ", roomUpdated);
-        if (err) res.status(500).send({ success: -3, err});
-        return res.status(200).send({ success: 1 });
+        if (err) res.status(500).send({ success: -3, message: err});
+        return res.status(200).send({ success: 1, message: 'Remove audio successfully!' });
       })
     }
   });

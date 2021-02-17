@@ -1,9 +1,28 @@
-import React from 'react'
+import React from 'react';
+import { useDispatch } from "react-redux";
 
-export default function RejectAudioButton() {
+import { removeLatestAudio } from '../../../../../_actions/chatroom_actions';
+
+export default function RejectAudioButton(props) {
+
+  const userRole = props ? props.userRole : "";
+  const roomID = props ? props.roomID : "";
+  const socket = props ? props.socket : null;
+  const dispatch = useDispatch();
 
   const onReject = () => {
-    console.log("Click")
+    dispatch(removeLatestAudio(roomID, userRole))
+    .then(async (response) => {
+      if (response.payload.success === 1) {
+        if (socket) {
+          socket.emit('remove audio', {
+            roomID,
+          });
+        }
+      } else {
+        alert(`${response.payload.message}. Code: ${response.payload.success}`);
+      } 
+    })
     // tao API cho Chatroom de xoa audio trong audioList. Chac se can them thong tin vao log. *chua biet them gi
     // API se return ve 
     //  -3 - server side

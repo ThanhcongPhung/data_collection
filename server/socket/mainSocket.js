@@ -443,6 +443,10 @@ sockets.init = function(server) {
       })
     });
 
+    socket.on("remove audio", ({ roomID }) => {
+      io.to(roomID).emit('audio removed');
+    });
+
     // when room intent is finished. Kick everyone out. Lock the room. Log the record to a txt file.
     // The record will consist of the room information. (Doesn't matter who's servant, who's client.)
     

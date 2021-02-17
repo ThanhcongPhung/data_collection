@@ -8,6 +8,7 @@ import RejectAudioButton from './../Shared/RejectAudioButton';
 export default function ServantSendButton(props) {
 
   const data = props ? props.audio : null;
+  const userRole = props ? props.userRole : "";
   const userID = props ? props.userID : "";
   const roomID = props ? props.roomID : "";
   const turn = props ? props.turn : -1;
@@ -72,7 +73,9 @@ export default function ServantSendButton(props) {
     <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>
   ) : (turn === 2 ? (
     <div>
-      <RejectAudioButton 
+      <RejectAudioButton
+        roomID={roomID}
+        userRole={userRole} 
         socket={socket}/>
       <button className="buttons" onClick={onConfirm}>Xác nhận</button>
     </div>

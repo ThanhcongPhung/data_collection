@@ -9,6 +9,7 @@ import { BACKEND_URL } from '../../../../Config';
 export default function ClientSendButton(props) {
 
   const data = props ? props.audio : null;
+  const userRole = props ? props.userRole : "";
   const userID = props ? props.userID : "";
   const roomID = props ? props.roomID : "";
   const intent = props ? props.intent : null;
@@ -70,7 +71,9 @@ export default function ClientSendButton(props) {
   ) : (
     (turn === 1) ? (
       <RejectAudioButton 
-        socket={socket}/>
+        socket={socket}
+        roomID={roomID}
+        userRole={userRole}/>
     ) : ""
   )
 
