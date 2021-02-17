@@ -7,6 +7,7 @@ export const LOGOUT_USER = 'logout_user';
 export const GET_ONE = 'get_one_room';
 export const GET_ALL = 'get_all_rooms';
 export const GET_RANDOM = 'get_random_room';
+export const DELETE_AUDIO = 'remove_latest_audio';
 
 //for message
 export const GET_MESSAGES = 'get_message';

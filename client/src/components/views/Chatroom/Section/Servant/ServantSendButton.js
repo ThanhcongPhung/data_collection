@@ -3,9 +3,12 @@ import axios from 'axios';
 
 import { BACKEND_URL } from '../../../../Config';
 
+import RejectAudioButton from './../Shared/RejectAudioButton';
+
 export default function ServantSendButton(props) {
 
   const data = props ? props.audio : null;
+  const userRole = props ? props.userRole : "";
   const userID = props ? props.userID : "";
   const roomID = props ? props.roomID : "";
   const turn = props ? props.turn : -1;
@@ -69,7 +72,14 @@ export default function ServantSendButton(props) {
   const insertSendButton = (turn === 3 && data !== null) ? (
     <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>
   ) : (turn === 2 ? (
-    <button className="buttons" onClick={onConfirm}>Xác nhận</button>
+    <div>
+      <RejectAudioButton
+        roomID={roomID}
+        userRole={userRole} 
+        socket={socket}/>
+      <button className="buttons" onClick={onConfirm}>Xác nhận</button>
+    </div>
+    
   ) : "")
 
   return (

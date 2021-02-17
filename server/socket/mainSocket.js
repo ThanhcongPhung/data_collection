@@ -319,15 +319,23 @@ sockets.init = function(server) {
             // check intent against audio's intent.
             .then(audioFound => {
               // console.log(audioFound.intent)
-              return compareIntent(audioFound.intent, intent);
+              const result = compareIntent(audioFound.intent, intent);
+              // if the intent is an exact match to the audio's intent, update audio's revertable status to true in case if it's removed later on.
+              if (result) {
+                audioFound.revertable = true;
+                // I'm so afraid of this shit... it may cause a lot of potential BUG!!!
+                audioFound.save((err, audioUpdated) => {
+                  if (err) return false;
+                  return true;
+                })
+              }
+              return result
             })
             .catch(err => console.log("Error: ", err))
           }
         }
       })
       .catch(err => console.log(err))
-
-      // console.log(compare)
 
       // if correct, emit a signal, telling both of them that's it's okay. Update the progress for the room and move turn to 3.
       if (compare) {
@@ -351,8 +359,6 @@ sockets.init = function(server) {
                 if (!progressFound) {
                   console.log("... Some shenanigan.. Progress doesn't even exist.");
                 } else {
-                  // console.log(`Progress: `, progressFound)
-                  // console.log(`Intent: `, intent)
                   for (const property in intent) {
                     if(intent[property] !== null) {
                       if(progressFound[property] === -1) {
@@ -362,12 +368,11 @@ sockets.init = function(server) {
                         // IMPLEMENT SOME KIND OF ERROR!!!
                         return 
                       } else {
-                        progressFound[property] = 1;
+                        progressFound[property]++;
                       }
                     }
                   }
                 }
-                // console.log(progressFound)
                 return progressFound.save();
               })
               .catch(err => console.log(err))
@@ -436,6 +441,10 @@ sockets.init = function(server) {
         // IMPLEMENT SOME KIND OF ERROR!!!
         console.log(err);
       })
+    });
+
+    socket.on("remove audio", ({ roomID }) => {
+      io.to(roomID).emit('audio removed');
     });
 
     // when room intent is finished. Kick everyone out. Lock the room. Log the record to a txt file.

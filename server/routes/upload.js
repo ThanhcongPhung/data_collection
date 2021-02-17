@@ -74,6 +74,8 @@ const saveAudioMongo = async (userID, link) => {
   const audio = await Audio.create({
     user: userID,
     link: link,
+    intent: null,
+    revertable: false,
   })
 
   return audio._id

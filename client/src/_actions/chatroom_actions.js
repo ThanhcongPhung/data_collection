@@ -3,6 +3,7 @@ import {
   GET_ONE,
   GET_ALL,
   GET_RANDOM,
+  DELETE_AUDIO,
 } from './types';
 import { ROOM_SERVER } from '../components/Config.js';
 
@@ -36,5 +37,16 @@ export function getRandomRoom() {
   return {
     type: GET_RANDOM,
     payload: request
+  }
+}
+
+export function removeLatestAudio(roomID, userRole) {
+  const request =
+    axios.put(`${ROOM_SERVER}/${roomID}/${userRole}`)
+      .then(response => response.data);
+
+  return {
+    type: DELETE_AUDIO,
+    payload: request,
   }
 }
