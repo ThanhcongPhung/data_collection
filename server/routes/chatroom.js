@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Chatroom } = require("../models/Chatroom");
-// const { Audio } = require("../models/Audio");
 // const { Intent } = require("../models/Intent");
-// const { Progress } = require("../models/Progress")
 // const { auth } = require("../middleware/auth");
 
 // GET ALL
@@ -86,7 +84,116 @@ router.post("/", async (req, res) => {
       roomCreated
     });
   });
+})
+
+const { Audio } = require("../models/Audio");
+const { Progress } = require("../models/Progress");
+
+// REMOVE AUDIO
+router.put("/:roomID/:userRole", (req, res) => {
+  const roomID = req.params.roomID;
+  const userRole = req.params.userRole;
+  Chatroom.findById(roomID)
+  .then( async (roomFound) => {
+    if (!roomFound) res.status(404).send({ success: false, message: "Room not found" });
+    else {
+
+      // check turn
+      if (!((userRole === "client" && roomFound.turn === 1) || (userRole === "servant" && roomFound.turn === 2))) {
+        res.status(409).send({ success: 0, message: "You have to wait for your turn!" });
+        return
+      } 
+
+      // check if there's anything to delete
+      if (roomFound.audioList.length === 0) {
+        res.status(406).send({ success: -1, message: "There's nothing to delete!" });
+        return
+      }
+
+      // remove the latest audio and get its ID (OPTIONAL: Log it to a file)
+      const latestAudioID = roomFound.audioList.pop();
+
+      // LOG TO A FILE!!!
+
+      const progressID = roomFound.progress;
   
+      // get the intent of the removed audio
+      const audioIntent = 
+        await Audio.findById(latestAudioID)
+        .populate('intent')
+        .then(audioFound => {
+          if (!audioFound) {
+            res.status(404).send({ success: -2, message: "Audio not found!" })
+          } else {
+            // check audio's revertable status. If false, then no need to update intent, return null. Else return intent and let's update progress.
+            if (audioFound.revertable) {
+              return audioFound.intent;
+            } else return null;
+          }
+        })
+        .catch(err => console.log("Yikes... Removing audio... handling audio: ", err))
+      
+      // maybe I don't need to update progress since it'll never be in such state. But it's better safe than sorry. Maybe we'll change the policy for that later on.
+      // If null, then no need to update intent. Else let's update progress.
+      if (audioIntent !== null) {
+        const  { action, device, floor, room, scale, level } = audioIntent;
+        const target = { action, device, floor, room, scale, level };
+
+        console.log("Target: ", target);
+
+        // update progress
+        let err = await Progress.findById(progressID)
+        .then(progressFound => {
+          console.log('Before: ')
+          console.log(progressFound)
+          for (let key in target) {
+            console.log(`Key: ${key} value: ${target[key]}, compare with null: ${target[key] === null}`)
+            if(target[key] !== null) {
+              if (progressFound[key] === -1) {
+                // return res.status(500).send({ success: -3, message: "Something's wrong with the server. PUT... chatroom... Updating progress..." });
+                return "Something's wrong with the server. PUT... chatroom... Updating progress..."
+              } else if (progressFound[key] === 0) {
+                // return res.status(500).send({ success: -3, message: "Something's wrong with the server. Maybe the audio is already deleted and progress is already updated!" });
+                return "Something's wrong with the server. Maybe the audio is already deleted and progress is already updated!"
+              } else {
+                progressFound[key]--;
+              }
+            }
+          }
+          
+          // return null
+          return progressFound.save((err, progressUpdated) => {
+            if (err) return err;
+            else {
+              console.log('After: ');
+              console.log(progressUpdated);
+              return null;
+            }
+          });
+        })
+        .catch(err => console.log("Yikes... Removing audio... handling progress: ", err))
+        
+        if (err !== null) console.log(err);
+      }
+      
+      // update turn
+      if (roomFound.turn === 1) {
+        roomFound.turn = 3;
+      } else if (roomFound.turn === 2) {
+        roomFound.turn = 1;
+      } else {
+        res.status(200).send({ success: 0, message: "How did you even do this...? Removing audio... Update room turn... " });
+        return
+      }
+
+      return roomFound.save((err, roomUpdated) => {
+        console.log("Err: ", err);
+        console.log("Room Updated: ", roomUpdated);
+        if (err) res.status(500).send({ success: -3, err});
+        return res.status(200).send({ success: 1 });
+      })
+    }
+  });
 })
 
 // DELETE A ROOM

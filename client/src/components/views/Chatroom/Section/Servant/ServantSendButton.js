@@ -72,7 +72,8 @@ export default function ServantSendButton(props) {
     <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>
   ) : (turn === 2 ? (
     <div>
-      <RejectAudioButton />
+      <RejectAudioButton 
+        socket={socket}/>
       <button className="buttons" onClick={onConfirm}>Xác nhận</button>
     </div>
     

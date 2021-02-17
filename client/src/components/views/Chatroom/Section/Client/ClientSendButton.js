@@ -69,7 +69,8 @@ export default function ClientSendButton(props) {
     )
   ) : (
     (turn === 1) ? (
-      <RejectAudioButton />
+      <RejectAudioButton 
+        socket={socket}/>
     ) : ""
   )
 
