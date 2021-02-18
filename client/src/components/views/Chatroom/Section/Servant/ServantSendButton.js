@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 import { BACKEND_URL } from '../../../../Config';
@@ -6,6 +6,8 @@ import { BACKEND_URL } from '../../../../Config';
 import RejectAudioButton from './../Shared/RejectAudioButton';
 
 export default function ServantSendButton(props) {
+
+  const [ buttonState, setButtonState ] = useState(false);
 
   const data = props ? props.audio : null;
   const userRole = props ? props.userRole : "";
@@ -37,12 +39,14 @@ export default function ServantSendButton(props) {
     }
     
     try {
+      setButtonState(true);
       await axios.post(
         `${BACKEND_URL}/api/aws/upload`,
         formdata,
         requestConfig,
       ).then(res => {
         props.sendAudioSignal(res.data.data.Location);
+        setButtonState(false);
         const audioID = res.data.audioID;
         if (socket) {
           socket.emit('servant audio', {
@@ -57,27 +61,29 @@ export default function ServantSendButton(props) {
   }
 
   // need intent sending button
-  const onConfirm = () => {
+  const onConfirm = async () => {
+    // await setButtonState(true);
     if (socket) {
-      socket.emit('servant intent', {
+      await socket.emit('servant intent', {
         roomID,
         // audioID,
         intent,
       });
     }
+    // setButtonState(false);
   }
 
   // const insertSendIntentButton = 
 
   const insertSendButton = (turn === 3 && data !== null) ? (
-    <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>
+    <button className="buttons" onClick={uploadAudioAWS} disabled={buttonState}>Gửi</button>
   ) : (turn === 2 ? (
     <div>
       <RejectAudioButton
         roomID={roomID}
         userRole={userRole} 
         socket={socket}/>
-      <button className="buttons" onClick={onConfirm}>Xác nhận</button>
+      <button className="buttons" onClick={onConfirm} disabled={buttonState}>Xác nhận</button>
     </div>
     
   ) : "")

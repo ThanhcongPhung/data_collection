@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 // import { Popover } from 'antd';
@@ -16,6 +16,8 @@ export default function ClientSendButton(props) {
   const socket = props ? props.socket : null;
   const buttonDisable = props ? props.disable : true;
   const turn = props ? props.turn : -1;
+
+  const [ buttonState, setButtonState ] = useState(false);
 
   // const popoverContent = (
   //   <div>
@@ -40,12 +42,14 @@ export default function ClientSendButton(props) {
     };
     
     try {
+      setButtonState(true);
       await axios.post(
         `${BACKEND_URL}/api/aws/upload`,
         formdata,
         requestConfig,
       ).then(res => {
         props.sendAudioSignal(res.data.data.Location);
+        setButtonState(false);
         const audioID = res.data.audioID;
         if (socket) {
           socket.emit('client intent', {
@@ -65,8 +69,7 @@ export default function ClientSendButton(props) {
       // Can put an alert instead of a Popover but it looks stupid as fuck
       <button className="buttons" style={{cursor: 'not-allowed'}} disabled>Gửi</button>  
     ) : (
-      // <button className="buttons" onClick={uploadAudio}>Gửi</button>
-      <button className="buttons" onClick={uploadAudioAWS}>Gửi</button>  
+      <button className="buttons" onClick={uploadAudioAWS} disabled={buttonState}>Gửi</button>  
     )
   ) : (
     (turn === 1) ? (

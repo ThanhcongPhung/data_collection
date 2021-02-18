@@ -41,6 +41,25 @@
     /*background: white;*/
 }
 
+.reject-buttons {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    border-radius: 50px;
+    width: 178px;
+    height: 57px;
+    color: white;
+    background: #d6381c;
+    text-transform: uppercase;
+    font-family: Open Sans, sans-serif;
+    font-weight: 600;
+    margin-right: 15px;
+}
+
+.reject-buttons:disabled {
+    background-color: #d09b91;
+}
+
 .buttons {
     cursor: pointer;
     border: none;
