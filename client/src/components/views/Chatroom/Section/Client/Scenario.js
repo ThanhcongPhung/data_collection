@@ -1,13 +1,21 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import {Col, Row} from "antd";
 import Checkbox2 from "./Checkbox2";
 
+import LoadingComponent from './../../../Loading/LoadingComponent';
 import { COLOR } from './../../../../Config';
 
 export default function Scenario(props) {
   
   const scenario = props ? props.scenario : [];
   const progress = props ? props.progress : [];
+  const [ loading, setLoading ] = useState(true);
+
+  useEffect(() => {
+    if (scenario !== [] && progress !== []) {
+      setLoading(false);
+    } else setLoading(true);
+  }, [scenario, progress])
 
   const [Filters, setFilters] = useState({
     locations: [],
@@ -71,7 +79,13 @@ export default function Scenario(props) {
         <Row style={{borderLeft:"1px solid",height:"100%",borderColor:"white",backgroundColor:"white"}}>
           <h3 style={{fontWeight:'bold',fontSize:'18px',textAlign: "center"}}>Kịch bản hội thoại</h3>
           <Col span={24} style={{fontSize:"15px",marginTop:"auto"}}>
-            {generateScript()}
+            {
+              loading ? (
+                <LoadingComponent />
+              ) : (
+                generateScript()
+              )
+            }
           </Col>
           <Col span={24}>
             <Checkbox2

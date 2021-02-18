@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Checkbox, Collapse, Row, Col } from 'antd';
 
+import LoadingComponent from './../../../Loading/LoadingComponent';
 import { COLOR } from './../../../../Config';
 
 const {Panel} = Collapse
@@ -9,6 +10,13 @@ export default function ClientCheckbox(props) {
 
   const list = props ? props.list : []
   const visible = props ? props.visible : true
+  const [ loading, setLoading ] = useState(true);
+
+  useEffect(() => {
+    if (list !== []) {
+      setLoading(false);
+    } else setLoading(true);
+  }, [list])
 
   // update label for color criteria
   if(list) {
@@ -56,6 +64,10 @@ export default function ClientCheckbox(props) {
         </Col>
       )
     }) : ""
+  }
+
+  if (loading) {
+    return <LoadingComponent />
   }
 
   return (

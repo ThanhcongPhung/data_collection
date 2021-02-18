@@ -33,9 +33,7 @@ export default function AudioRecordingScreen(props) {
   // useEffect(() => {
   //   if (socket !== null && chatroomID !== "" && user != null && userRole !== "") {
   //     setLoading(false);
-  //   } else {
-  //     setLoading(true);
-  //   }
+  //   } else setLoading(true);
   // }, [socket, chatroomID, user, userRole]);
 
   useEffect(() => {

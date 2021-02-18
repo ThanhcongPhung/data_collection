@@ -9,6 +9,7 @@ import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import {getRoom} from '../../../_actions/chatroom_actions'
 import TextChatScreen from './Section/Sub-container/TextChatScreen';
 import LoadingPage from '../Loading/LoadingPage';
+import LoadingComponent from '../Loading/LoadingComponent';
 
 const {TextArea} = Input;
 
@@ -33,9 +34,7 @@ export default function Chatroom(props) {
   useEffect(() => {
     if (userRole !== "" && socket !== null && user !== null) {
       setLoading(false);
-    } else {
-      setLoading(true);
-    }
+    } else setLoading(true);
   }, [userRole, socket, user]);
  
   // as they say, there's some problem with setState that I need to clean up so I'll just drop a bomb here as a mark
@@ -199,11 +198,15 @@ export default function Chatroom(props) {
                 <Col>
                   {
                     // Got to update this scenario={scenario} to scenario={progress}
-                    userRole === "client" ? <Scenario scenario={scenario} progress={progress}/> : (
+                    // Remember to flood gate this shit too.
+                    userRole === "client" ? <Scenario scenario={scenario} progress={progress}/> : 
+                    userRole === "servant" ? (
                       <>
                         <h3 style={{textAlign: "center"}}>Ghi chú công việc đã làm được</h3>
                         <TextArea style={{height: "200px"}} maxLength={100}/>
                       </>
+                    ) : (
+                      <LoadingComponent />
                     )
                   }
                 </Col> 

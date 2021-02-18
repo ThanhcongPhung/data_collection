@@ -1,11 +1,9 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import {Affix, Col, Row} from "antd";
-// import React from 'react'
-// import { Col, Row } from "antd";
 
 export default function AudioList(props) {
 
-  const [container, setContainer] = useState(10);
+  const [ container, setContainer ] = useState(10);
 
   const showAudio = props ? (
     props.audioList ? props.audioList.map(audio => {
