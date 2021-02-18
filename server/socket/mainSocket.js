@@ -444,6 +444,7 @@ sockets.init = function(server) {
     });
 
     socket.on("remove audio", ({ roomID }) => {
+      console.log("Removing audio in room ", roomID);
       io.to(roomID).emit('audio removed');
     });
 

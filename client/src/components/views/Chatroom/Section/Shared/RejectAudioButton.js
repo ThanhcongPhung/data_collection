@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
 
 import { removeLatestAudio } from '../../../../../_actions/chatroom_actions';
 
 export default function RejectAudioButton(props) {
 
+  const [ buttonState, setButtonState ] = useState(false);
+
   const userRole = props ? props.userRole : "";
   const roomID = props ? props.roomID : "";
   const socket = props ? props.socket : null;
   const dispatch = useDispatch();
 
-  const onReject = () => {
+  const onReject = async () => {
+    await setButtonState(true);
     dispatch(removeLatestAudio(roomID, userRole))
     .then(async (response) => {
+      setButtonState(false);
       if (response.payload.success === 1) {
         if (socket) {
           socket.emit('remove audio', {
@@ -33,7 +37,7 @@ export default function RejectAudioButton(props) {
   } 
 
   const insertButton = (
-    <button className="buttons" style={{backgroundColor: 'red', marginRight: '15px'}} onClick={onReject}>Không hiểu audio</button>  
+    <button className="reject-buttons" onClick={onReject} disabled={buttonState}>Không hiểu audio</button>  
   )
 
   return (
