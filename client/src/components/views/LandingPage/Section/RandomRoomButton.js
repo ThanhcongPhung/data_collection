@@ -54,6 +54,7 @@ export default function RandomRoomButton() {
   } else {
     return (
       <>
+      {/* flood gate this button so it can only be clicked once. This button mechanic will be changed later. */}
         <Link to={`/chatroom/${roomType}/${randomRoomID}`}><Button>Chọn phòng ngẫu nhiên</Button></Link>
       </>
     )

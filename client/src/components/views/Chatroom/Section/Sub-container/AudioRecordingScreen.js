@@ -10,7 +10,7 @@ import ClientSendButton from '../Client/ClientSendButton';
 import ClientCheckbox from '../Client/ClientCheckbox';
 import ServantSendButton from '../Servant/ServantSendButton';
 import ServantDropDown from '../Servant/ServantDropDown';
-import LoadingScreen from '../Shared/LoadingScreen';
+import LoadingComponent from './../../../Loading/LoadingComponent';
 // import Dropdown from '../Servant/Dropdown';
 // import {dropdowns} from '../Data';
 
@@ -28,6 +28,15 @@ export default function AudioRecordingScreen(props) {
   const [ intent, setIntent ] = useState(null); 
   const [ isRecording, setIsRecording ] = useState(false);
   const [ tagVisibility, setTagVisibility ] = useState(true);
+  // const [ loading, setLoading ] = useState(true);
+
+  // useEffect(() => {
+  //   if (socket !== null && chatroomID !== "" && user != null && userRole !== "") {
+  //     setLoading(false);
+  //   } else {
+  //     setLoading(true);
+  //   }
+  // }, [socket, chatroomID, user, userRole]);
 
   useEffect(() => {
     const canvasObj = canvasRef.current;
@@ -145,20 +154,29 @@ export default function AudioRecordingScreen(props) {
     } else return ""
   }
 
+  // if (loading) {
+  //   return <LoadingPage /> 
+  // }
+
   return (
-      <>
-        <Row style={{textAlign: "center"}}>
-          <div className="primary-buttons">
-            <canvas className="primary-buttons canvas" ref={canvasRef}
-                    style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
-            <RecordButton
-              turn={(turn === 1 && userRole === "client") || (turn === 3 && userRole === "servant")}
-              isRecording={isRecording}
-              setAudio={setAudio}
-              setIsRecording={setIsRecording}/>
-          </div>
-        </Row>
-        <Row>
+    <>
+      <Row>
+        <Col style={{textAlign: "center"}}>
+          <p>You are the {userRole}</p>
+        </Col>
+      </Row>
+      <Row style={{textAlign: "center"}}>
+        <div className="primary-buttons">
+          <canvas className="primary-buttons canvas" ref={canvasRef}
+                  style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
+          <RecordButton
+            turn={(turn === 1 && userRole === "client") || (turn === 3 && userRole === "servant")}
+            isRecording={isRecording}
+            setAudio={setAudio}
+            setIsRecording={setIsRecording}/>
+        </div>
+      </Row>
+      <Row>
         <Row>
           <Col>
             <div style={{width: '75%', margin: '1rem auto'}}>
@@ -176,7 +194,7 @@ export default function AudioRecordingScreen(props) {
                   intent={intent}
                   setIntent={setIntent}/>
               ) : (
-                <LoadingScreen />
+                <LoadingComponent />
               )
               }
             </div>
@@ -235,3 +253,4 @@ export default function AudioRecordingScreen(props) {
     </>
   )
 }
+

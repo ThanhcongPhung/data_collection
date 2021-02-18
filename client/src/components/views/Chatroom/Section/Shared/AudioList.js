@@ -28,7 +28,7 @@ export default function AudioList(props) {
           <Col span={24} style={{textAlign: "center",fontsize:"18px"}}>Lịch sử hội thoại</Col>
           {/* Empty affix will cause the system to fire a long-ass warning */}
           <Affix target={() => container}>
-            
+            <div></div>
           </Affix>
           {showAudio}
         </Row>

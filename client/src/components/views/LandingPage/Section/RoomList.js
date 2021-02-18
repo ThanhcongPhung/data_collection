@@ -7,10 +7,13 @@ import ErrorInternalSystem from '../../Error/ErrorInternalSystem';
 import { Table } from 'antd';
 import { CheckCircleTwoTone, MinusCircleTwoTone , MinusOutlined } from '@ant-design/icons';
 
+import LoadingComponent from './../../Loading/LoadingComponent';
+
 const { Column } = Table;
 
 function RoomList(props) {
 
+  const [ loading, setLoading ] = useState(true);
   const [ roomList, setRoomList ] = useState([]);
   const pageSize = props ? props.pageSize : 4;
   const dispatch = useDispatch();
@@ -39,6 +42,7 @@ function RoomList(props) {
       } else {
         alert("Something's wrong with the server. We are very sorry for the inconvenience!")
       }
+      setLoading(false);
     })
   }
 
@@ -49,7 +53,11 @@ function RoomList(props) {
     return index
   }
 
-  if (roomList == null) {
+  if (loading) {
+    return (
+      <LoadingComponent />
+    )
+  } else if (roomList == null) {
     return (
       <>
         <ErrorInternalSystem />

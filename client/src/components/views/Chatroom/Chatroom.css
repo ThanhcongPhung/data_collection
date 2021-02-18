@@ -58,6 +58,7 @@
 
 .reject-buttons:disabled {
     background-color: #d09b91;
+    cursor: not-allowed;
 }
 
 .buttons {
@@ -78,6 +79,7 @@
 }
 .buttons:disabled{
     background-color: #cad6e7;
+    cursor: not-allowed;
 }
 .buttonDisabled {
     pointer-events: none;
