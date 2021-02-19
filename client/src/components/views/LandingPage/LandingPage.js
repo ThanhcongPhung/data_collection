@@ -174,7 +174,7 @@ function LandingPage(props) {
         </div>
         <div>
           <Row>
-            <Col span={8}>Client role guide</Col>
+            <Col span={8}></Col>
             <Col span={8} style={{textAlign: "center"}}>
               <ConfirmModal
                   socket={socket}
@@ -186,7 +186,7 @@ function LandingPage(props) {
                   handleOk={handleConfirmPromptModal}
                   handleCancel={handleDenyPromptModal}/>
             </Col>
-            <Col span={8}>Servant role guide</Col>
+            <Col span={8}></Col>
           </Row>
           <Row style={{marginBottom: "10px", marginTop: "10px"}}>
             <Col style={{textAlign: "center"}}>
