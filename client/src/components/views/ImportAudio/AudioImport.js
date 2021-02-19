@@ -5,6 +5,7 @@ import './AudioImport.css';
 import {Button} from 'antd';
 import DisplayAudio from './DisplayAudio';
 import {Input} from 'antd';
+import { BACKEND_URL } from '../../Config'
 
 const {TextArea} = Input;
 export default function AudioImport() {
@@ -25,65 +26,49 @@ export default function AudioImport() {
       const reader = new FileReader();
       reader.onload = function (event) {
         const url = 'https://api.fpt.ai/hmi/asr/general';
-        // const config = {
-        //   method: 'POST',
-        //   headers: {'api-key': 'azjQBAy8CcTBAiRUn82D6KcG2BlonQfu'},
-        //   body: JSON.stringify({data: event.target.result})
-        // }
+        const config = {
+          method: 'POST',
+          headers: {'api-key': 'azjQBAy8CcTBAiRUn82D6KcG2BlonQfu'},
+          body: JSON.stringify({data: event.target.result})
+        }
         // fetch(url, config)
         //     .then(response=> {
         //       console.log(response.json())
         //     })
         // The file's text will be printed here
         // setContent(event.target.result)
-        // let uint32View = new Uint32Array(event.target.result)
-        console.log(event.target.result)
+        // console.log(event.target.result)
         // console.log(typeof event.target.result)
       };
-      reader.readAsArrayBuffer(file);
+      reader.readAsText(file,'utf8')
 
     }
 
-    let formData = new FormData();
-    const config = {
-      headers: {'content-type': 'multipart/form-data'}
-    }
-    formData.append("file", files[0])
-    // console.log(formData)
-    // var file2 = files[0];
-    // var data = file2.getAsBinary
-    // const url='https://api.fpt.ai/hmi/asr/general';
-    console.log(formData)
-    Axios.post('/api/uploadfiles', formData, config)
-        .then(response => {
-              // if(response.data.success){
-              //   let dataUrl = response.data.url;
-              // console.log(dataUrl);
-            }
-        )
   }
   const submitFile = (e) => {
     e.preventDefault();
     setMessage('Uploading...')
     const contentType = file.type;
+    const fileName = `${Date.now()}_${file.name}`;
     const options = {
       params: {
-        Key: file.name,
+        Key: fileName,
         ContentType: contentType
       },
       headers: {
         'Content-Type': contentType
       }
     };
-    const generatePutUrl = 'http://localhost:5000/generate-put-url';
+    const generatePutUrl = `${BACKEND_URL}/generate-put-url`;
     Axios.get(generatePutUrl, options).then(res => {
       const {
-        data: {putURL}
+        data: {putURL,Key}
       } = res;
       // console.log(putURL)
       Axios.put(putURL, file, options)
           .then(res => {
             setMessage('Upload Successful')
+            console.log(res)
             setTimeout(() => {
               setMessage('');
               document.querySelector('#upload-audio').value = '';
@@ -96,6 +81,7 @@ export default function AudioImport() {
           })
     })
     setFile(null);
+    setAudio(null);
   }
   const getTranscript = (file) => {
     const url = 'https://api.fpt.ai/hmi/asr/general';
@@ -135,7 +121,7 @@ export default function AudioImport() {
                 <track kind="captions"/>
               </audio>
               <Button onClick={getTranscript(file)} type="primary">Get Text</Button>
-              <Button onClick={getTranscript(file)} type="primary" disable={!value}>Submit Audio</Button>
+              <Button onClick={submitFile} type="primary" disable={!value}>Submit Audio</Button>
             </div>
           </section>
       )

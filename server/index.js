@@ -50,21 +50,21 @@ app.get('/generate-put-url', (req,res)=>{
   console.log(req.query)
   generatePutUrl(Key, ContentType).then(putURL => {
     console.log(putURL)
-    res.send({putURL});
+    res.send({putURL,Key});
   })
       .catch(err => {
         res.send(err);
       });
 });
 
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}_${file.originalname}`)
-  },
-})
+// var storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, `${Date.now()}_${file.originalname}`)
+//   },
+// })
 
 
 // var upload = multer({storage: storage}).single("file")
