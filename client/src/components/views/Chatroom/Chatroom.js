@@ -68,11 +68,11 @@ export default function Chatroom(props) {
 
   return (
       <div className="chatroom">
-        <Row>
-          <Col style={{textAlign: "center"}}>
-            <p>You are the {userRole}</p>
-          </Col>
-        </Row>
+        {/*<Row>*/}
+        {/*  <Col style={{textAlign: "center"}}>*/}
+        {/*    <p>You are the {userRole}</p>*/}
+        {/*  </Col>*/}
+        {/*</Row>*/}
         <Row>
           {room_content_type === '0' ?
               <AudioRecordingScreen

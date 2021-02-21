@@ -47,7 +47,7 @@ button.record {
     opacity: 1;
     cursor: pointer;
 }
-button.play {
+button.listen {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,13 +61,13 @@ button.play {
     opacity: 1;
     cursor: pointer;
 }
-button.play svg{
+button.listen svg{
     height: 22px;
 }
-button.play:hover{
+button.listen:hover{
     background-color: #59cbb7;
 }
-button.play:hover svg path{
+button.listen:hover svg path{
     fill: white;
 }
 button.record:hover{

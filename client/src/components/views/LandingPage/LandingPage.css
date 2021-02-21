@@ -56,10 +56,12 @@
     display: block;
 }
 .column-title{
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     order: 0;
     width: 30%;
+    position: relative;
 }
 .content-hover{
     display: none;
@@ -76,6 +78,7 @@ a.guide{
     text-decoration: underline;
 }
 .column-cta{
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     order: 2;
