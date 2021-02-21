@@ -8,26 +8,25 @@ export default function AudioList(props) {
   const showAudio = props.audioList ? props.audioList.map(audio => {
     console.log(typeof audio)
     return (
-      <div key={audio}>
-        <audio
-          controls="controls"
-          src={audio}>
-        <track kind="captions"/>
-        </audio>
-      </div>
+        <div key={audio}>
+          <audio
+              className="audioPlay"
+              controls="controls"
+              src={audio}>
+            <track kind="captions"/>
+          </audio>
+        </div>
     )
   }) : ""
 
   return (
-      <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%"}}
-           ref={setContainer}>
-        <Row style={{fontWeight: 'bold', border: "1px solid white", flexGrow: '1',backgroundColor:"white"}}>
-          <Col span={24} style={{textAlign: "center",fontsize:"18px"}}>Lịch sử hội thoại</Col>
-          <Affix target={() => container}>
-
-          </Affix>
+      <section className="audioHistory">
+        <h2 style={{fontSize: "34px"}}>Audio History</h2>
+        <hr className="hr1"></hr>
+        <div className="listAudio" ref={setContainer}>
           {showAudio}
-        </Row>
-      </div>
+        </div>
+      </section>
+
   )
 }

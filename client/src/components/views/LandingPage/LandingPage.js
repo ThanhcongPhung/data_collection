@@ -142,7 +142,7 @@ function LandingPage(props) {
               <p className="content-hover">Recording voice clips is an integral
                 part of building our open dataset; some would say it's the fun part too.
               </p>
-              <a href="https://www.w3schools.com/" className="guide">Guide</a>
+              <a href="https://www.w3schools.com/" className="guide" target="_blank">Guide</a>
             </div>
             <div className="column-cta">
               <div className="primary-button">
@@ -164,7 +164,7 @@ function LandingPage(props) {
             </div>
             <div className="column-cta">
               <div className="primary-button">
-                <button className="play" type="button">
+                <button className="listen" type="button">
                   <OldPlayIcon/>
                 </button>
                 <div className="primary-button backgroundplay"/>
