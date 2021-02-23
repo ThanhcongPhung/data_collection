@@ -142,7 +142,7 @@ export default function AudioRecordingScreen(props) {
   }
 
   return (
-      <Col span={20}>
+      <div>
         <Row style={{textAlign: "center"}}>
           <div className="primary-buttons">
             <canvas className="primary-buttons canvas" ref={canvasRef}
@@ -173,10 +173,15 @@ export default function AudioRecordingScreen(props) {
           <Row>
             <div className="submit-button">
               {renderAudio(audio)}
-              <SendButton audio={audio} sendAudioSignal={sendAudioSignal}/>
+              <SendButton
+                  audio={audio}
+                  sendAudioSignal={sendAudioSignal}
+                  userID={user.userData ? user.userData._id : ""}
+                  roomID={chatroomID}
+              />
             </div>
           </Row>
         </Row>
-      </Col>
+      </div>
   )
 }

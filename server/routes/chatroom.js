@@ -23,13 +23,23 @@ router.get("/", (req, res) => {
 
 // GET ONE
 router.get("/:roomID", (req, res) => {
+  Chatroom.findById(req.params.roomID)
+      .populate('audioList')
+      .exec((err, roomFound) => {
+        if (err) res.status(500).send({ success: false, err })
+        else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
+        else res.status(200).send({ success: true, roomFound })
+      })
+})
+// GET ALL AUDIOS OF ONE ROOM
+router.get("/:roomID/history", (req, res) => {
   Chatroom.findById(req.params.roomID, (err, roomFound) => {
+    let history = roomFound.audioList;
     if (err) res.status(500).send({ success: false, err })
     else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
-    else res.status(200).send({ success: true, roomFound })
+    else res.status(200).send({ success: true, history })
   })
 })
-
 // GET RANDOM
 router.get("/random", (req, res) => {
 
@@ -66,6 +76,16 @@ router.post("/", async (req, res) => {
     });
   });
   
+})
+
+// GET ALL AUDIOS OF ONE ROOM
+router.get("/:roomID/history", (req, res) => {
+  Chatroom.findById(req.params.roomID, (err, roomFound) => {
+    let history = roomFound.audioList;
+    if (err) res.status(500).send({ success: false, err })
+    else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
+    else res.status(200).send({ success: true, history })
+  })
 })
 
 module.exports = router;
