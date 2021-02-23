@@ -1,30 +1,27 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect,useRef} from 'react'
+import {useDispatch} from 'react-redux';
 import {Affix, Col, Row} from "antd";
-
+import {getAudios} from '../../../../_actions/audio_actions';
+import ChatCard from './Sub-container/ChatCard';
 export default function AudioList(props) {
+  let audios = props.audio;
+  const dispatch = useDispatch();
+  const divRef = useRef(null);
 
-  const [container, setContainer] = useState(10);
-
-  const showAudio = props.audioList ? props.audioList.map(audio => {
-    console.log(typeof audio)
-    return (
-        <div key={audio}>
-          <audio
-              className="audioPlay"
-              controls="controls"
-              src={audio}>
-            <track kind="captions"/>
-          </audio>
-        </div>
-    )
-  }) : ""
-
+  useEffect(()=>{
+    dispatch(getAudios(props.chatroomID));
+  })
+  // useEffect(() => {
+  //   divRef.current.scrollIntoView({behavior: 'smooth'});
+  // });
   return (
       <section className="audioHistory">
         <h2 style={{fontSize: "34px"}}>Audio History</h2>
         <hr className="hr1"></hr>
-        <div className="listAudio" ref={setContainer}>
-          {showAudio}
+        <div className="listAudio" >
+          {audios.audios && audios.audios.map((audio) => (
+              <ChatCard key={audio._id} {...audio} />
+          ))}
         </div>
       </section>
 
