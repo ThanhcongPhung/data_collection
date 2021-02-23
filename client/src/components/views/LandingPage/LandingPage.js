@@ -188,13 +188,13 @@ function LandingPage(props) {
             </Col>
             <Col span={8}></Col>
           </Row>
-          <Row style={{marginBottom: "10px", marginTop: "10px"}}>
-            <Col style={{textAlign: "center"}}>
-              <ContentSelection
-                  disabled={readyStatus}
-                  setInputType={setInputType}/>
-            </Col>
-          </Row>
+          {/*<Row style={{marginBottom: "10px", marginTop: "10px"}}>*/}
+          {/*  <Col style={{textAlign: "center"}}>*/}
+          {/*    <ContentSelection*/}
+          {/*        disabled={readyStatus}*/}
+          {/*        setInputType={setInputType}/>*/}
+          {/*  </Col>*/}
+          {/*</Row>*/}
           <Row style={{marginBottom: "10px", marginTop: "10px"}}>
             <Col style={{textAlign: "center"}}>
               <ReadyButton

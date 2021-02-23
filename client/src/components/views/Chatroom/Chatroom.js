@@ -68,28 +68,46 @@ export default function Chatroom(props) {
 
   return (
       <div className="chatroom">
-        {/*<Row>*/}
-        {/*  <Col style={{textAlign: "center"}}>*/}
-        {/*    <p>You are the {userRole}</p>*/}
-        {/*  </Col>*/}
-        {/*</Row>*/}
-        <Row>
-          {room_content_type === '0' ?
-              <AudioRecordingScreen
-                  canvasRef={canvasRef}
-                  socket={socket}
-                  user={user}
-                  roomContentType={room_content_type}
-                  chatroomID={chatroomID}
-                  userRole={userRole}
-              /> :
-              <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}
-                              dispatch={dispatch} message={message} userRole={userRole}/>}
-          <Col span={4}>
-            <Scenario/>
-            {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
-          </Col>
-        </Row>
+        <section className="left-screen">
+          <AudioRecordingScreen
+              canvasRef={canvasRef}
+              socket={socket}
+              user={user}
+              roomContentType={room_content_type}
+              chatroomID={chatroomID}
+              userRole={userRole}
+          />
+        </section>
+
+        <section className="right-screen">
+          <Scenario/>
+          <AudioList audioList={audioHistory}/>
+        </section>
+
       </div>
+      // <div className="chatroom">
+      //   {/*<Row>*/}
+      //   {/*  <Col style={{textAlign: "center"}}>*/}
+      //   {/*    <p>You are the {userRole}</p>*/}
+      //   {/*  </Col>*/}
+      //   {/*</Row>*/}
+      //   <Row>
+      //     {room_content_type === '0' ?
+      //         <AudioRecordingScreen
+      //             canvasRef={canvasRef}
+      //             socket={socket}
+      //             user={user}
+      //             roomContentType={room_content_type}
+      //             chatroomID={chatroomID}
+      //             userRole={userRole}
+      //         /> :
+      //         <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}
+      //                         dispatch={dispatch} message={message} userRole={userRole}/>}
+      //     <Col span={4}>
+      //       <Scenario/>
+      //       {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
+      //     </Col>
+      //   </Row>
+      // </div>
   )
 }

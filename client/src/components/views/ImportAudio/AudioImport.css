@@ -44,7 +44,7 @@
     cursor: pointer;
     position: absolute;
     width: 40%;
-    height: 30%;
+    min-height: 250px;
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
@@ -65,7 +65,7 @@ section{
     padding: 20px 0;
 }
 .containerAudio{
-    width: 60%;
+    width: 100%;
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
@@ -118,6 +118,7 @@ img{
     width: 153.61px;
 }
 .getText{
+    margin-top: 1.5rem 0;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

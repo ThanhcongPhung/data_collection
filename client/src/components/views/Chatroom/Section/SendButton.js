@@ -6,6 +6,8 @@ import { BACKEND_URL } from '../../../Config'
 export default function Test(props) {
 
   const data = props ? props.audio : null;
+  const userID = props ? props.userID : "";
+  const roomID = props ? props.roomID : "";
 
   const generateRandomString = (length, allowedChars) => {
     let text = '';
@@ -72,6 +74,8 @@ export default function Test(props) {
     // create data
     let formdata = new FormData()
     formdata.append('soundBlob', data.blob, 'test.wav')
+    formdata.append('userID', userID);
+    formdata.append('roomID', roomID);
 
     const requestConfig = {
       headers: new Headers({
@@ -87,7 +91,6 @@ export default function Test(props) {
       ).then(res => {
         props.sendAudioSignal(res.data.link)
         console.log(res.data.link)
-        console.log(res)
       })
     } catch(error){
         alert(error)
