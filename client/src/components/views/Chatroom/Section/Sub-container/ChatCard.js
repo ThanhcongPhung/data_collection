@@ -6,16 +6,17 @@ export default function ChatCard(props){
   return (
       <div style={{width:'100%',marginLeft:'20px'}}>
         <Comment
-            author={props.sender.name}
+            author={props.user.name}
             avatar={
               <Avatar
-                  src={props.sender.image} alt={props.sender.name}
+                  src={props.user.image} alt={props.user.name}
               />
             }
             content={
-                  <p>
-                    {props.message}
-                  </p>
+              <audio
+                  src={props.link} alt="audio"
+                  type="audio/wav" controls
+              />
             }
             datetime={
               <Tooltip title={moment(props.createdAt).format('YYYY-MM-DD HH:mm:ss')}>

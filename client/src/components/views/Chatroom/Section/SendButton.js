@@ -89,8 +89,7 @@ export default function Test(props) {
         formdata,
         requestConfig,
       ).then(res => {
-        props.sendAudioSignal(res.data.link)
-        console.log(res.data.link)
+        // props.sendAudioSignal(res.data.link)
       })
     } catch(error){
         alert(error)
