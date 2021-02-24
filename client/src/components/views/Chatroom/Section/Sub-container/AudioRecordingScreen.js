@@ -1,6 +1,6 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {ShareIcon, RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui/icons';
-import {Row, Col, Tooltip} from 'antd';
+import {Row, Col, Tooltip,Input} from 'antd';
 import Wave from '../Wave';
 import RecordButton from '../RecordButton';
 import SendButton from '../SendButton';
@@ -8,7 +8,7 @@ import Checkbox from '../Client/Checkbox';
 import Dropdown from '../Servant/Dropdown';
 import {dropdowns} from '../Data';
 import {locations} from '../Data'
-
+const { TextArea } = Input;
 export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
   const audioRef = useRef(null);
@@ -142,7 +142,7 @@ export default function AudioRecordingScreen(props) {
   }
 
   return (
-      <Col span={20}>
+      <div>
         <Row style={{textAlign: "center"}}>
           <div className="primary-buttons">
             <canvas className="primary-buttons canvas" ref={canvasRef}
@@ -156,14 +156,16 @@ export default function AudioRecordingScreen(props) {
         <Row>
           <Row>
             <Col>
-              <div style={{width: '60%', margin: '1rem auto'}}>
-                {props.userRole === "client" ?
-                    <Checkbox
-                        list={locations}
-                        handleFilters={filters => handleFilters(filters, "locations")}
-                    /> :
-                    <Dropdown list={dropdowns}/>
-                }
+              <div className="identifiedTextRecord">
+                &quot;Identified Text&quot;
+                {/*<Text>I&quot;ve seen the movie.</Text>*/}
+                {/*{props.userRole === "client" ?*/}
+                {/*    <Checkbox*/}
+                {/*        list={locations}*/}
+                {/*        handleFilters={filters => handleFilters(filters, "locations")}*/}
+                {/*    /> :*/}
+                {/*    <Dropdown list={dropdowns}/>*/}
+                {/*}*/}
               </div>
 
             </Col>
@@ -171,10 +173,15 @@ export default function AudioRecordingScreen(props) {
           <Row>
             <div className="submit-button">
               {renderAudio(audio)}
-              <SendButton audio={audio} sendAudioSignal={sendAudioSignal}/>
+              <SendButton
+                  audio={audio}
+                  sendAudioSignal={sendAudioSignal}
+                  userID={user.userData ? user.userData._id : ""}
+                  roomID={chatroomID}
+              />
             </div>
           </Row>
         </Row>
-      </Col>
+      </div>
   )
 }

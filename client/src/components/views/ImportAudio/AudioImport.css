@@ -1,0 +1,129 @@
+.dropzone {
+    outline: none;
+}
+
+#content {
+    position: relative;
+    min-height: 80vh;
+    /*background: #f6f7ff;*/
+    /*height: 100%;*/
+}
+
+.speech-to-text-main {
+    max-width: 76rem;
+
+    /*padding-top: 107px;*/
+    /*display: flex;*/
+    /*flex-wrap: wrap;*/
+    margin-right: auto;
+    margin-left: auto;
+    box-sizing: border-box;
+    min-height: 100%;
+    padding: 0 1rem;
+}
+.get-audio{
+    /*display: flex;*/
+    /*width: 200vw;*/
+}
+.title-and-search{
+    display: block;
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*flex-wrap: wrap;*/
+}
+.hr{
+    border: none;
+    margin: 1.5rem 0;
+    width: 100%;
+    height: 1.5px;
+    background: rgba(230,229,227,0.6);
+}
+.dropzone{
+    display: flex;
+    background: #f6f7ff;
+    cursor: pointer;
+    position: absolute;
+    width: 40%;
+    min-height: 250px;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.dropzone:hover{
+    border: 3px dotted #d0d0d0;
+    margin: -2px;
+}
+section{
+    display: block;
+}
+.renderAudio{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #f6f7ff;
+    padding: 20px 0;
+}
+.containerAudio{
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+audio{
+    outline: none;
+    color: black;
+}
+.identifiedText{
+    margin:-2px;
+    background-color: #f6f7ff;
+    width: 50%;
+    height: 80px;
+    border-radius: 5px;
+    padding: 10px;
+    opacity: 0.7;
+}
+.identifiedText:hover{
+    opacity: 1;
+    cursor: copy;
+}
+.ant-btn-primary {
+    background-color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: .9rem;
+    border-radius: 50px;
+    border: 1px solid rgba(0,0,0,.1);
+    color: black;
+    padding: .5rem 1rem;
+    min-width: 14rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.ant-btn-primary{
+
+}
+img{
+    vertical-align: middle;
+    border-style: none;
+    height: 153.61px;
+    width: 153.61px;
+}
+.getText{
+    margin-top: 1.5rem 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.submitText{
+    width: 50%;
+}
+

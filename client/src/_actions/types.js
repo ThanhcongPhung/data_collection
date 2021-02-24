@@ -11,3 +11,6 @@ export const GET_RANDOM = 'get_random_room';
 //for message
 export const GET_MESSAGES = 'get_message';
 export const AFTER_POST_MESSAGE = 'after_post_message';
+
+//for audio
+export const GET_AUDIOS = 'get_audio';
