@@ -6,7 +6,7 @@ import {StopIcon,MicIcon} from '../../../ui/icons';
 export default function RecordButton(props) {
     return (
         <div style={{margin: '4rem auto'}}>
-            <div className="primary-button">
+          <div className="primary-button">
                 <ReactRecord
                     record={props.isRecording}
                     onData={() => {}}

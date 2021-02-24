@@ -145,12 +145,16 @@ function LandingPage(props) {
               <a href="https://www.w3schools.com/" className="guide" target="_blank">Guide</a>
             </div>
             <div className="column-cta">
-              <div className="primary-button">
-                <button className="record" type="button">
-                  <MicIcon/>
-                </button>
-                <div className="primary-button background"/>
-              </div>
+              <ReadyButton
+                  readyStatus={readyStatus}
+                  readySignal={readySignal}
+                  cancelReadySignal={cancelReadySignal}/>
+              {/*<div className="primary-button">*/}
+              {/*  <button className="record" type="button">*/}
+              {/*    <MicIcon/>*/}
+              {/*  </button>*/}
+              {/*  <div className="primary-button background"/>*/}
+              {/*</div>*/}
             </div>
           </div>
           <div className="box1">
@@ -197,10 +201,10 @@ function LandingPage(props) {
           {/*</Row>*/}
           <Row style={{marginBottom: "10px", marginTop: "10px"}}>
             <Col style={{textAlign: "center"}}>
-              <ReadyButton
-                  readyStatus={readyStatus}
-                  readySignal={readySignal}
-                  cancelReadySignal={cancelReadySignal}/>
+              {/*<ReadyButton*/}
+              {/*    readyStatus={readyStatus}*/}
+              {/*    readySignal={readySignal}*/}
+              {/*    cancelReadySignal={cancelReadySignal}/>*/}
             </Col>
           </Row>
           <Row>
