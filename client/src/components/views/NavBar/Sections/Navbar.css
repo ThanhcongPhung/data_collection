@@ -85,3 +85,23 @@
     padding: 10px 20px;
   }
 }
+.avatar{
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  box-sizing: border-box;
+  width: 130px;
+  background-color: rgb(255, 255, 255);
+  justify-content: center;
+}
+.avatar-user{
+  margin-left: 5px;
+}
+.name-user{
+  justify-content: center;
+  align-items: end;
+  margin-left: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-weight: bold;
+}
