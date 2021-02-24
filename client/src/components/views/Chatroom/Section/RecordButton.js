@@ -6,7 +6,7 @@ import {StopIcon,MicIcon} from '../../../ui/icons';
 export default function RecordButton(props) {
     return (
         <div style={{margin: '4rem auto'}}>
-            <div className="primary-button">
+          <div className="primary-button">
                 <ReactRecord
                     record={props.isRecording}
                     onData={() => {}}
@@ -17,10 +17,10 @@ export default function RecordButton(props) {
                         props.setAudio(blobObject);
                     }}>
                     {props.isRecording ?
-                        <button onClick={() => props.setIsRecording(false)} className="primary-button button" type="button">
+                        <button onClick={() => props.setIsRecording(false)} className="record" type="button">
                             <StopIcon/>
                         </button> :
-                        <button onClick={() => props.setIsRecording(true)} className="primary-button button" type="button">
+                        <button onClick={() => props.setIsRecording(true)} className="record" type="button">
                             <MicIcon/>
                         </button>}
                 </ReactRecord>

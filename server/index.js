@@ -4,10 +4,16 @@ const path = require("path");
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-
 const config = require("./config/key");
-
+const fs = require('fs');
 const mongoose = require("mongoose");
+const multer = require('multer');
+const axios = require('axios')
+const https = require('https')
+
+app.use(express.json());
+app.use(cors());
+
 const connect = mongoose.connect(config.mongoURI,
     {
       useNewUrlParser: true, useUnifiedTopology: true,
@@ -15,6 +21,78 @@ const connect = mongoose.connect(config.mongoURI,
     })
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
+
+// Importing AWSPresigner
+const {
+  generateGetUrl,
+  generatePutUrl
+} = require('./AWSPresigner');
+
+app.get('/generate-get-url', (req, res) => {
+  // Both Key and ContentType are defined in the client side.
+  // Key refers to the remote name of the file.
+  const { Key } = req.query;
+  generateGetUrl(Key)
+      .then(getURL => {
+        res.send(getURL);
+      })
+      .catch(err => {
+        res.send(err);
+      });
+});
+
+// PUT URL
+app.get('/generate-put-url', (req,res)=>{
+  // Both Key and ContentType are defined in the client side.
+  // Key refers to the remote name of the file.
+  // ContentType refers to the MIME content type, in this case image/jpeg
+  const { Key, ContentType } =  req.query;
+  console.log(req.query)
+  generatePutUrl(Key, ContentType).then(putURL => {
+    console.log(putURL)
+    res.send({putURL,Key});
+  })
+      .catch(err => {
+        res.send(err);
+      });
+});
+
+// var storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, `${Date.now()}_${file.originalname}`)
+//   },
+// })
+
+
+// var upload = multer({storage: storage}).single("file")
+app.post("/api/uploadfiles", (req, res) => {
+  console.log("data from client: "+ req.body);
+})
+
+
+
+// var file= fs.createWriteStream('s3://data-collection-20202')
+// var data = s3.getObject(params).createReadStream().pipe(file);
+// const options={
+//   headers:{
+//     'api-key': 'azjQBAy8CcTBAiRUn82D6KcG2BlonQfu'
+//   }
+// }
+// axios.post(url,data,options)
+//     .then(response=>{
+//       console.log(response.data)
+//     })
+// upload(req, res, err => {
+//   if(err) {
+//     return res.json({ success: false, err })
+//   }
+//   return res.json({ success: true, url: res.req.file.path });
+// })
+// });
+
 
 
 require("./models/Message")
@@ -33,6 +111,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/chatroom', require("./routes/chatroom"));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/message', require('./routes/message'));
+app.use('/api/audio', require('./routes/audio'));
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
 app.use('/uploads', express.static('uploads'));

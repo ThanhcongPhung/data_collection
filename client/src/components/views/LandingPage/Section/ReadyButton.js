@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Button, Row, Col } from 'antd'
-
+import {StopIcon,MicIcon} from '../../../ui/icons';
 export default function ReadyButton(props) {
   
   const [ timer, setTimer ] = useState(0)
@@ -39,16 +39,17 @@ export default function ReadyButton(props) {
 
   return (
     <>
-      <Row>
-        <Col style={{textAlign: "center"}}>
-          {!props.readyStatus ? (
-            <Button onClick={ready}>Sẵn sàng</Button>
-          ): (
-            <Button onClick={cancelReady}>Dừng tìm kiếm</Button>
-          )}
-        </Col>
-      </Row>
-      
+      <div className="primary-button">
+        {!props.readyStatus ?
+            <button onClick={ready} className="record" type="button">
+              <MicIcon/>
+            </button> :
+            <button onClick={cancelReady} className="record" type="button">
+              <StopIcon/>
+            </button>
+        }
+        <div className="primary-button background"/>
+      </div>
       {
         props.readyStatus ? (
           <Row>

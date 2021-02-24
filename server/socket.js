@@ -1,9 +1,9 @@
-const { text } = require('body-parser');
+const {text} = require('body-parser');
 
 var sockets = {}
-const { Message } = require("./models/Message");
+const {Message} = require("./models/Message");
 
-sockets.init = function(server) {
+sockets.init = function (server) {
   // socket.io setup
   const io = require('socket.io')(server, {cors: {origin: "http://localhost:3000"}});
   const jwt = require('jsonwebtoken');
@@ -37,10 +37,19 @@ sockets.init = function(server) {
 
     socket.on('disconnect', () => {
       console.log("Disconnected: " + socket.id)
+      let index = audioQueue.findIndex(item => item.socketID === socket.id)
+      if (index !== -1) {
+        audioQueue.splice(index, 1);
+      } else {
+        index = textQueue.findIndex(item => item.socketID === socket.id)
+        if (index != -1) {
+          textQueue.splice(index, 1);
+        }
+      }
     });
 
     // when receive ready signal from user
-    socket.on('ready', ({ socketID, userID, username, inputType }) => {
+    socket.on('ready', ({socketID, userID, username, inputType}) => {
       let userInfo = {
         socketID: socketID,
         userID: userID,
@@ -70,7 +79,7 @@ sockets.init = function(server) {
         // result = { client: , servant: , roomType: , accepted: 0 }
         result.accepted = 0
         promptQueue.push(result)
-        
+
         // send prompt to both users for confirm ready.
         io.to(result.client.socketID).emit('match', {
           client: result.client,
@@ -82,11 +91,11 @@ sockets.init = function(server) {
           servant: result.servant,
           roomType: result.roomType,
         })
-      } 
+      }
     })
 
     // when both users confirm the second prompt, create a room and send them the information of the room.
-    socket.on('confirm prompt', ({ socketID, userID, username, inputType }) => {
+    socket.on('confirm prompt', ({socketID, userID, username, inputType}) => {
       let userInfo = {
         socketID: socketID,
         userID: userID,
@@ -104,15 +113,15 @@ sockets.init = function(server) {
         } else {
           // create a room for two, send them id.
           createRoom(pair.client.userID, pair.servant.userID, pair.roomType)
-          .then(roomID => {
-            // tell both users that the room is ready
-            io.to(pair.client.socketID).emit('prompt successful', ({
-              roomID: roomID,
-            }))
-            io.to(pair.servant.socketID).emit('prompt successful', ({
-              roomID: roomID,
-            }))
-          })
+              .then(roomID => {
+                // tell both users that the room is ready
+                io.to(pair.client.socketID).emit('prompt successful', ({
+                  roomID: roomID,
+                }))
+                io.to(pair.servant.socketID).emit('prompt successful', ({
+                  roomID: roomID,
+                }))
+              })
         }
       } else {
         // return error here!!! Need to handle error!!!
@@ -121,7 +130,7 @@ sockets.init = function(server) {
     })
 
     // when the user deny or miss the second ready prompt
-    socket.on('cancel prompt', ({ socketID, userID, username, inputType }) => {
+    socket.on('cancel prompt', ({socketID, userID, username, inputType}) => {
       let userInfo = {
         socketID: socketID,
         userID: userID,
@@ -146,7 +155,7 @@ sockets.init = function(server) {
           addToQueue(audioQueue, theOtherUser)
           addToQueue(textQueue, theOtherUser)
         }
-        
+
         io.to(theOtherUser.socketID).emit('requeue', ({}))
       } else {
         // return error here!!! Need to handle error!!!
@@ -155,7 +164,7 @@ sockets.init = function(server) {
     })
 
     // cancel ready status before the second confirmation (before "match" signal).
-    socket.on('cancel ready', ({ socketID, userID, username, inputType }) => {
+    socket.on('cancel ready', ({socketID, userID, username, inputType}) => {
       let userInfo = {
         socketID: socketID,
         userID: userID,
@@ -167,34 +176,45 @@ sockets.init = function(server) {
       console.log(`The user ${username} whose ID is ${userID} has cancelled their ready status`);
     })
 
-    socket.on('joinRoom', ({ chatroomID, username }) => {
+    socket.on('joinRoom', ({chatroomID, username}) => {
       socket.join(chatroomID);
       console.log(`The user ${username} has joined chatroom: ${chatroomID}`);
+      io.to(chatroomID).emit('joinRoom announce', {
+        username: username,
+      });
     });
 
-    socket.on('leaveRoom', ({ chatroomID, username }) => {
+    socket.on('leaveRoom', ({chatroomID, username}) => {
       socket.leave(chatroomID);
       console.log(`The user ${username} has left chatroom: ${chatroomID}`)
+      io.to(chatroomID).emit('leaveRoom announce', {
+        username: username,
+      });
     });
 
     // Just receive a signal
-    socket.on('chatroomAudio', ({ chatroomID, sender, link }) => {
+    socket.on('chatroomAudio', ({chatroomID, sender, link}) => {
       // sending to individual socketid (private message)
       io.to(chatroomID).emit('newAudioURL', {
         userID: socket.userId,
         sender: sender,
         audioLink: link,
       });
-      console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " +  link)
+      console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " + link)
     });
     socket.on("Input Chat message", msg => {
       try {
-        var message = new Message({ message: msg.chatMes, sender:msg.userId,intent: msg.intent, chatroomID:msg.chatroomID });
-        message.save(function (err,doc) {
-          if(err) return console.error(doc)
+        var message = new Message({
+          message: msg.chatMes,
+          sender: msg.userId,
+          intent: msg.intent,
+          chatroomID: msg.chatroomID
+        });
+        message.save(function (err, doc) {
+          if (err) return console.error(doc)
           Message.find({"_id": doc._id})
               .populate("sender")
-              .exec((err,doc)=>{
+              .exec((err, doc) => {
                 return io.emit("Output Chat Message", doc);
               })
           console.log(doc)
@@ -228,7 +248,7 @@ const matching = (audioQueue, textQueue, userInfo) => {
     // if there's, create a room, then remove those two mofo out of the queue
     removeFromQueue(audioQueue, userInfo)
     removeFromQueue(textQueue, userInfo)
-    
+
     matchingPartner = audioQueue.shift()
     removeFromQueue(textQueue, matchingPartner)
 
@@ -250,10 +270,10 @@ const matching = (audioQueue, textQueue, userInfo) => {
 const checkExist = (queue, userInfo) => {
   let result = -1
   queue.map((pair, index) => {
-    if(compareObject(pair.client, userInfo) || compareObject(pair.servant, userInfo)) {
+    if (compareObject(pair.client, userInfo) || compareObject(pair.servant, userInfo)) {
       result = index
       // PROBLEM!!! how to break from this (map) loop?
-    } 
+    }
   })
 
   return result
@@ -264,7 +284,7 @@ const compareObject = (obj1, obj2) => {
   return JSON.stringify(obj1) === JSON.stringify(obj2)
 }
 
-const { Chatroom } = require("./models/Chatroom");
+const {Chatroom} = require("./models/Chatroom");
 
 const createRoom = async (userID1, userID2, roomType) => {
 // user1 - client, user2 - servant
@@ -293,7 +313,7 @@ const generateName = () => {
 
 const generateTask = () => {
   // IMPLEMENT!!!
-  return "A sample task " 
+  return "A sample task "
 }
 
 module.exports = sockets;

@@ -4,7 +4,7 @@
   padding: 0 20px;
   border-bottom: solid 1px #e8e8e8;
   overflow: auto;
-  box-shadow: 0 0 30px #f3f1f1;
+  /*box-shadow: 0 0 30px #f3f1f1;*/
   background-color: white;
 }
 
@@ -84,4 +84,24 @@
   .menu__logo a {
     padding: 10px 20px;
   }
+}
+.avatar{
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  box-sizing: border-box;
+  width: 130px;
+  background-color: rgb(255, 255, 255);
+  justify-content: center;
+}
+.avatar-user{
+  margin-left: 5px;
+}
+.name-user{
+  justify-content: center;
+  align-items: end;
+  margin-left: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-weight: bold;
 }
