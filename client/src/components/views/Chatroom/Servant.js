@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Row, Col, Input, Button} from 'antd';
+import {Row, Col, Input} from 'antd';
 import {dropdowns} from './Section/Data';
 import './Chatroom.css'
 
@@ -92,15 +92,14 @@ export default function Servant(props) {
     }
   }
   let history = useHistory()
-  function leaveRoom() {
-    if(socket){
-      socket.emit('leave room');
-
-      // chatroomID = '';
-      // history.push('/');
-    }
-
-  }
+  // function leaveRoom() {
+  //   if(socket){
+  //     socket.emit('leave room');
+  //
+  //     // chatroomID = '';
+  //     // history.push('/');
+  //   }
+  // }
   return (
       <div className="chatroom">
         {/*<Button onClick={leaveRoom}>Leave</Button>*/}

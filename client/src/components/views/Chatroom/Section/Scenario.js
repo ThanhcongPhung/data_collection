@@ -1,17 +1,8 @@
-import React, {useState} from 'react'
-import {Col, Row} from "antd";
-import Checkbox2 from "./Client/Checkbox2";
-import {locations} from "./Data";
+import React from 'react'
+
 
 export default function Scenario() {
-  const [Filters, setFilters] = useState({
-    locations: [],
-  })
-  const handleFilters = (filters, category) => {
-    const newFilters = {...Filters}
-    newFilters[category] = filters
-    setFilters(newFilters)
-  }
+
   return (
       <section className="scenario">
         <h2 style={{fontSize:"30px"}}>Kịch bản hội thoại</h2>

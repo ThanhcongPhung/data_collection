@@ -11,7 +11,7 @@ import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer"
 import AudioImport from "./views/ImportAudio/AudioImport";
 import { BACKEND_URL } from './Config'
-import Servant from "./views/Chatroom/Servant";
+
 
 // Second parameter for route:
 //null   Anyone Can go inside
@@ -58,7 +58,6 @@ function App(props) {
   const LandingPageWithSocket = () => (<LandingPage socket={socket} />)
   const LoginPageWithSocket = () => (<LoginPage setupSocket={setupSocket} />)
   const ChatroomWithSocket = () => (<Chatroom socket={socket} />)
-  const ServantWithSocket = ()=>(<Servant socket={socket}/>)
 
   return (
     <Suspense fallback={(<div>Loading...</div>)}>
@@ -70,7 +69,6 @@ function App(props) {
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           {/* content-type: 0 - audio, 1 - text message */}
           <Route exact path="/chatroom/:content_type/:id" component={Auth(ChatroomWithSocket, true)} />
-          <Route exact path="/servant/:id" component={Auth(ServantWithSocket, true)} />
           <Route exact path="/audioImport" component={Auth(AudioImport, null)} />
         </Switch>
       </div>

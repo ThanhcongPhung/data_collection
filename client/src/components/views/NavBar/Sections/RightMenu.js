@@ -5,10 +5,8 @@ import axios from 'axios';
 import {USER_SERVER} from '../../../Config';
 import {withRouter, Link} from 'react-router-dom';
 import {useSelector} from "react-redux";
-import {UserOutlined} from '@ant-design/icons';
 
 const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
 
 function RightMenu(props) {
   const user = useSelector(state => state.user)
@@ -37,12 +35,17 @@ function RightMenu(props) {
   } else {
     return (
         <Menu mode={props.mode}>
-          <SubMenu title={<div className="avatar">
-            <div className="avatar-user">
-              <Avatar size={40} src={user.userData && user.userData.image}/>
-            </div>
-            <div className="name-user">{user.userData && user.userData.name}</div>
-          </div>}>
+          <SubMenu title={
+            <div className="user-menu">
+              <button className="avatar">
+                <div className="avatar-user">
+                  <Avatar size={44} src={user.userData && user.userData.image}/>
+                  <span className="name-user" title={user.userData && user.userData.name}>
+                    {user.userData && user.userData.name}
+                  </span>
+                </div>
+              </button>
+            </div>}>
             <Menu.Item key="logout"><a onClick={logoutHandler}>Logout</a></Menu.Item>
           </SubMenu>
         </Menu>

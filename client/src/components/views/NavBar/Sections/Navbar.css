@@ -85,17 +85,23 @@
     padding: 10px 20px;
   }
 }
-.avatar{
+button.avatar{
   display: flex;
   flex-direction: row;
   position: relative;
   box-sizing: border-box;
-  width: 130px;
+  width: 100%;
   background-color: rgb(255, 255, 255);
   justify-content: center;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+
 }
 .avatar-user{
   margin-left: 5px;
+  display: flex;
+  align-items: center;
 }
 .name-user{
   justify-content: center;
@@ -103,5 +109,20 @@
   margin-left: 5px;
   font-size: 14px;
   box-sizing: border-box;
-  font-weight: bold;
+  font-weight: 600;
+  letter-spacing: .4px;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  font-family: "Open Sans",sans-serif;
+}
+.left-menu{
+  justify-content: space-evenly;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-family: "Open Sans", sans-serif;
+  padding: 0 1rem;
+  display: block;
+  color: #24292e;
 }

@@ -3,12 +3,10 @@ import {useSelector} from "react-redux";
 import {Redirect} from 'react-router-dom';
 
 import {Col, Row} from "antd";
-import {OldPlayIcon, MicIcon} from '../../ui/icons';
+import {OldPlayIcon} from '../../ui/icons';
 
 import RoomList from './Section/RoomList';
-import RandomRoomButton from './Section/RandomRoomButton';
 import ReadyButton from './Section/ReadyButton';
-import ContentSelection from './Section/ContentSelection';
 import ConfirmModal from './Section/ConfirmModal';
 import './LandingPage.css';
 
@@ -200,29 +198,16 @@ function LandingPage(props) {
           {/*  </Col>*/}
           {/*</Row>*/}
           <Row style={{marginBottom: "10px", marginTop: "10px"}}>
-            <Col style={{textAlign: "center"}}>
-              {/*<ReadyButton*/}
-              {/*    readyStatus={readyStatus}*/}
-              {/*    readySignal={readySignal}*/}
-              {/*    cancelReadySignal={cancelReadySignal}/>*/}
-            </Col>
-          </Row>
-          <Row>
-            <Col style={{textAlign: "center"}}>
-              {readyStatus}
-            </Col>
-          </Row>
-          <Row>
-            <div className="app">
-
+            <div className="room-list">
               <RoomList pageSize="3"/>
-
-              {/*{<RandomRoomButton/>*!/*/}
             </div>
           </Row>
-
+          {/*<Row>*/}
+          {/*  <Col style={{textAlign: "center"}}>*/}
+          {/*    {readyStatus}*/}
+          {/*  </Col>*/}
+          {/*</Row>*/}
         </div>
-
       </>
   )
 }

@@ -4,17 +4,12 @@ import {Row, Col, Tooltip,Input} from 'antd';
 import Wave from '../Wave';
 import RecordButton from '../RecordButton';
 import SendButton from '../SendButton';
-import Checkbox from '../Client/Checkbox';
-import Dropdown from '../Servant/Dropdown';
-import {dropdowns} from '../Data';
-import {locations} from '../Data'
+
 const { TextArea } = Input;
 export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
   const audioRef = useRef(null);
-  const [Filters, setFilters] = useState({
-    locations: [],
-  })
+
 
   let socket = props.socket;
   const chatroomID = props.chatroomID;
@@ -82,12 +77,6 @@ export default function AudioRecordingScreen(props) {
 
   function onShare() {
     console.log("Shared");
-  }
-
-  const handleFilters = (filters, category) => {
-    const newFilters = {...Filters}
-    newFilters[category] = filters
-    setFilters(newFilters)
   }
 
   const renderAudio = (audio) => {

@@ -122,6 +122,12 @@ a.guide{
     flex: 2;
     background-size: 100%;
 }
+.room-list{
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 
 

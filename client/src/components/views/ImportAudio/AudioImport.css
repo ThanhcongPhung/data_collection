@@ -93,7 +93,7 @@ audio{
     opacity: 1;
     cursor: copy;
 }
-.ant-btn-primary {
+button.getText{
     background-color: white;
     font-weight: 600;
     white-space: nowrap;
@@ -107,6 +107,43 @@ audio{
     align-items: center;
     justify-content: center;
     text-align: center;
+}
+button.getText:hover{
+    border: 1px solid black;
+}
+button.submitAudio{
+    background-color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: .9rem;
+    border-radius: 50px;
+    border: 1px solid rgba(0,0,0,.1);
+    color: black;
+    padding: .5rem 1rem;
+    min-width: 14rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+button.submitAudio:hover{
+    background-color: #629FF4;
+    color: white;
+}
+.ant-btn-primary {
+    /*background-color: white;*/
+    /*font-weight: 600;*/
+    /*white-space: nowrap;*/
+    /*font-size: .9rem;*/
+    /*border-radius: 50px;*/
+    /*border: 1px solid rgba(0,0,0,.1);*/
+    /*color: black;*/
+    /*padding: .5rem 1rem;*/
+    /*min-width: 14rem;*/
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    /*text-align: center;*/
 }
 .ant-btn-primary{
 

@@ -3,7 +3,6 @@ import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import './AudioImport.css';
 import {Button} from 'antd';
-import DisplayAudio from './DisplayAudio';
 import {Input} from 'antd';
 import { BACKEND_URL } from '../../Config'
 
@@ -120,8 +119,8 @@ export default function AudioImport() {
                   src={audio}>
                 <track kind="captions"/>
               </audio>
-              <Button onClick={getTranscript(file)} type="primary">Get Text</Button>
-              <Button onClick={submitFile} type="primary" disable={!value}>Submit Audio</Button>
+              <button onClick={getTranscript(file)} type="primary" className="getText">Get Text</button>
+              <button onClick={submitFile} type="primary" className="submitAudio">Submit Audio</button>
             </div>
           </section>
       )
