@@ -1,14 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Row, Col} from 'antd';
 import './Section/RecordButton.css';
 import './Chatroom.css'
 import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import {getRoom} from '../../../_actions/chatroom_actions'
-import {getAudios} from '../../../_actions/audio_actions';
-import TextChatScreen from './Section/Sub-container/TextChatScreen';
+
 
 export default function Chatroom(props) {
   const canvasRef = useRef(null);
@@ -16,12 +14,10 @@ export default function Chatroom(props) {
   const room_content_type = window.location.href.split("/")[4]
   const chatroomID = window.location.href.split("/")[5]
   const user = useSelector(state => state.user);
-  const message = useSelector(state => state.message);
   const audios = useSelector(state => state.audio);
   let userID = user.userData ? user.userData._id : "";
   let username = user.userData ? user.userData.name : "";
   const [userRole, setUserRole] = useState("");
-  const [audioHistory, setAudioHistory] = useState([]);
 
   const dispatch = useDispatch();
 

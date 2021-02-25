@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 const Icon = (path: string, title = '') => ({ children, ...props }: any) => (
-    <img src={path} title={title} {...props} />
+    <img src={path} title={title} {...props} alt="This is"/>
 );
 
 
@@ -29,7 +29,15 @@ export const OldPlayIcon = (props: any) => (
       </g>
     </svg>
 );
-
+export const MenuIcon = ({ className = '', ...props }: any) => (
+    <svg className={'menu-icon ' + className} width="10" height="10" {...props}>
+      <rect className="left" x="4" y="0" width="2" height="2" />
+      <rect className="right" x="4" y="0" width="2" height="2" />
+      <rect x="4" y="4" width="2" height="2" />
+      <rect className="left" x="4" y="8" width="2" height="2" />
+      <rect className="right" x="4" y="8" width="2" height="2" />
+    </svg>
+);
 export const StopIcon = uniqueIcon(id => (
     <svg width="28" height="28" viewBox="0 0 28 28">
       <defs>

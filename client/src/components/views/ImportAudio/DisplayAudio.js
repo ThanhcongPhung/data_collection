@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
-import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import './AudioImport.css';
-import {Button} from 'antd';
 
 export default function DisplayAudio() {
   const [message, setMessage] = useState('');
