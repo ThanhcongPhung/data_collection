@@ -11,6 +11,9 @@ function LeftMenu(props) {
         <Menu.Item key="dataset">
           <Link to="/audioImport" className="left-menu">Contribute</Link>
         </Menu.Item>
+        <Menu.Item key="validate">
+          <Link to="/validateData" className="left-menu">Validate</Link>
+        </Menu.Item>
       </Menu>
   )
 }
