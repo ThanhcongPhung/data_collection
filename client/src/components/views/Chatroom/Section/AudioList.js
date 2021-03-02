@@ -9,7 +9,7 @@ export default function AudioList(props) {
 
   useEffect(()=>{
     dispatch(getAudios(props.chatroomID));
-  })
+  },[props.chatroomID])
 
   return (
       <section className="audioHistory">

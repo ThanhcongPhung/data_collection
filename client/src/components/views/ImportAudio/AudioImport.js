@@ -5,6 +5,7 @@ import './AudioImport.css';
 import {Button} from 'antd';
 import {Input} from 'antd';
 import { BACKEND_URL } from '../../Config'
+import axios from "axios";
 
 const {TextArea} = Input;
 export default function AudioImport() {
@@ -82,27 +83,32 @@ export default function AudioImport() {
     setFile(null);
     setAudio(null);
   }
-  const getTranscript = (file) => {
-    const url = 'https://api.fpt.ai/hmi/asr/general';
-    // console.log(file)
-    const reader = new FileReader();
-    let fileBin = reader.readAsDataURL(file);
-    // console.log(fileBin)
-    // let formData = new FormData();
-    // formData.append("file", file)
-    //
-    // const config = {
-    //   method: 'POST',
-    //   headers: {'api-key': 'azjQBAy8CcTBAiRUn82D6KcG2BlonQfu'},
-    //   body: JSON.stringify({data: fileBin})
-    // }
-    // fetch(url, config)
-    //     .then(response=>{
-    //       console.log(response.json())
-    // if(response.status===0){
-    //   console.log(response.hypotheses);
-    // }
-    // })
+  const getTranscript = async (file) => {
+    const url = "https://cdn.vbee.vn/api/v1/uploads/file";
+    let formData = new FormData();
+    formData.append("destination", "congpt/import")
+    formData.append("name","abc")
+    formData.append("file",file)
+    try {
+      await axios.post(
+          url,
+          formData,
+      ).then(res => {
+        if(res.data.status===1){
+          let body={
+            link: res.data.result.link
+          }
+          axios.post(`${BACKEND_URL}/api/getText`,body)
+              .then(res=>{
+                console.log(res)
+                setValue(res.data)
+              })
+        }
+        console.log(res)
+      })
+    } catch(error){
+      alert(error)
+    }
   }
   const convertFileSize = (size) => {
     var sizeInMB = (size / (1024 * 1024)).toFixed(3);
@@ -119,7 +125,7 @@ export default function AudioImport() {
                   src={audio}>
                 <track kind="captions"/>
               </audio>
-              <button onClick={getTranscript(file)} type="primary" className="getText">Get Text</button>
+              <button onClick={()=>getTranscript(file)} type="primary" className="getText">Get Text</button>
               <button onClick={submitFile} type="primary" className="submitAudio">Submit Audio</button>
             </div>
           </section>
@@ -171,12 +177,11 @@ export default function AudioImport() {
                 <hr className="hr"></hr>
               </div>
               <div className="getText">
-                <div className="identifiedText">Identified Text</div>
                 <div className="submitText">
                   <TextArea
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
-                      placeholder="Coppy text into here"
+                      placeholder="&quot;Identified Text&quot;"
                       autoSize={{minRows: 3, maxRows: 5}}
                   />
                 </div>
