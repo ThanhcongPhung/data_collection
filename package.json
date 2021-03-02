@@ -36,10 +36,12 @@
     "react-record": "^1.0.5",
     "react-redux": "^5.0.7",
     "react-router-dom": "^5.2.0",
+    "request": "^2.88.2",
     "saslprep": "^1.0.3",
     "socket.io": "^3.0.4",
     "socket.io-client": "^3.0.4",
     "supports-color": "^7.1.0",
+    "tmp": "^0.2.1",
     "web-push": "^3.4.4"
   },
   "devDependencies": {

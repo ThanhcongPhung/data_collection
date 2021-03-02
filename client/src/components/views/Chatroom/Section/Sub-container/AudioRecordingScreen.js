@@ -1,14 +1,17 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {ShareIcon, RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui/icons';
-import {Row, Col, Tooltip,Input} from 'antd';
+import {Row, Col, Tooltip, Input} from 'antd';
 import Wave from '../Wave';
-import RecordButton from '../RecordButton';
 import SendButton from '../SendButton';
+import Recorder from '../../../Speak/Recorder'
+import axios from "axios";
+import {BACKEND_URL} from "../../../../Config";
 
-const { TextArea } = Input;
+const {TextArea} = Input;
 export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
   const audioRef = useRef(null);
+  const [value, setValue] = useState('')
 
 
   let socket = props.socket;
@@ -17,6 +20,7 @@ export default function AudioRecordingScreen(props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [blob, setBlob] = useState(null);
 
   useEffect(() => {
     const canvasObj = canvasRef.current;
@@ -58,25 +62,43 @@ export default function AudioRecordingScreen(props) {
     setIsPlaying(status);
   };
 
-  const getAudioFormat = (() => {
-    const preferredFormat = 'audio/ogg; codecs=opus';
-    const audio = document.createElement('audio');
-    const format = audio.canPlayType(preferredFormat)
-        ? preferredFormat
-        : 'audio/wav';
-    return function getAudioFormat() {
-      return format;
-    };
-  })
-
   const text = <span>prompt text</span>;
 
   function onRerecord() {
     setAudio(null);
   }
 
-  function onShare() {
-    console.log("Shared");
+  const onShare = async (blob) =>{
+    const url = "https://cdn.vbee.vn/api/v1/uploads/file";
+    let formData = new FormData();
+    let rightNow = new Date();
+    let res = rightNow.toISOString().slice(0,10).replace(/-/g,"");
+    let name = `spkyut_${res}_${Date.now()}`
+    console.log(blob)
+    const file = new File([blob],"abc.wav",{type:"audio/wav"})
+    console.log(file)
+    formData.append("destination", "congpt/record")
+    formData.append("name","abc")
+    formData.append("file",file)
+    try {
+      await axios.post(
+          url,
+          formData,
+      ).then(res => {
+        if(res.data.status===1){
+          let body={
+            link: res.data.result.link
+          }
+          axios.post(`${BACKEND_URL}/api/getText`,body)
+              .then(res=>{
+                console.log(res)
+                setValue(res.data)
+              })
+        }
+      })
+    } catch(error){
+      alert(error)
+    }
   }
 
   const renderAudio = (audio) => {
@@ -86,7 +108,7 @@ export default function AudioRecordingScreen(props) {
             <div className="pill done">
               <div className="pill done contents">
                 <audio preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
-                  <source src={audio.blobURL} type={getAudioFormat()}/>
+                  <source src={audio} type="audio/wav"/>
                 </audio>
                 <Tooltip
                     title={text}
@@ -115,7 +137,7 @@ export default function AudioRecordingScreen(props) {
                         </button>
                       </Tooltip>
                       <Tooltip arrow title={text}>
-                        <button className="share" type="button" onClick={onShare}>
+                        <button className="share" type="button" onClick={()=>onShare(blob)}>
                           <span className="padder">
                             <ShareIcon/>
                           </span>
@@ -136,38 +158,35 @@ export default function AudioRecordingScreen(props) {
           <div className="primary-buttons">
             <canvas className="primary-buttons canvas" ref={canvasRef}
                     style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
-            <RecordButton
-                isRecording={isRecording}
-                setAudio={setAudio}
-                setIsRecording={setIsRecording}/>
+            <Recorder isRecording={isRecording}
+                      setAudio={setAudio}
+                      setBlob={setBlob}
+                      setIsRecording={setIsRecording}
+            />
           </div>
         </Row>
         <Row>
           <Row>
             <Col>
               <div className="identifiedTextRecord">
-                &quot;Identified Text&quot;
-                {/*<Text>I&quot;ve seen the movie.</Text>*/}
-                {/*{props.userRole === "client" ?*/}
-                {/*    <Checkbox*/}
-                {/*        list={locations}*/}
-                {/*        handleFilters={filters => handleFilters(filters, "locations")}*/}
-                {/*    /> :*/}
-                {/*    <Dropdown list={dropdowns}/>*/}
-                {/*}*/}
+                <TextArea
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder="&quot;Identified Text&quot;"
+                    autoSize={{minRows: 3, maxRows: 5}}
+                />
               </div>
-
             </Col>
           </Row>
           <Row>
             <div className="submit-button">
               {renderAudio(audio)}
-              <SendButton
-                  audio={audio}
-                  sendAudioSignal={sendAudioSignal}
-                  userID={user.userData ? user.userData._id : ""}
-                  roomID={chatroomID}
-              />
+              {/*<SendButton*/}
+              {/*    audio={audio}*/}
+              {/*    sendAudioSignal={sendAudioSignal}*/}
+              {/*    userID={user.userData ? user.userData._id : ""}*/}
+              {/*    roomID={chatroomID}*/}
+              {/*/>*/}
             </div>
           </Row>
         </Row>
