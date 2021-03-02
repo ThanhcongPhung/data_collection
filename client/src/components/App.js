@@ -10,6 +10,7 @@ import RegisterPage from "./views/RegisterPage/RegisterPage.js";
 import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer"
 import AudioImport from "./views/ImportAudio/AudioImport";
+import ValidateData from "./views/ValidateData/ValidateData"
 import { BACKEND_URL } from './Config'
 
 
@@ -70,6 +71,7 @@ function App(props) {
           {/* content-type: 0 - audio, 1 - text message */}
           <Route exact path="/chatroom/:content_type/:id" component={Auth(ChatroomWithSocket, true)} />
           <Route exact path="/audioImport" component={Auth(AudioImport, null)} />
+          <Route exact path="/validateData" component={Auth(ValidateData, null)} />
         </Switch>
       </div>
       <Footer />
