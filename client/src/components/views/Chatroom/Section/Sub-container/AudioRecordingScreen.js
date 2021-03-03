@@ -5,7 +5,6 @@ import Wave from '../Wave';
 import SendButton from '../SendButton';
 import Recorder from '../../../Speak/Recorder'
 import axios from "axios";
-import {BACKEND_URL} from "../../../../Config";
 
 const {TextArea} = Input;
 export default function AudioRecordingScreen(props) {
@@ -89,7 +88,7 @@ export default function AudioRecordingScreen(props) {
           let body={
             link: res.data.result.link
           }
-          axios.post(`${BACKEND_URL}/api/getText`,body)
+          axios.post('/api/getText',body)
               .then(res=>{
                 console.log(res)
                 setValue(res.data)

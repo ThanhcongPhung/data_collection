@@ -4,7 +4,6 @@ import Axios from 'axios';
 import './AudioImport.css';
 import {Button} from 'antd';
 import {Input} from 'antd';
-import { BACKEND_URL } from '../../Config'
 import axios from "axios";
 
 const {TextArea} = Input;
@@ -22,23 +21,9 @@ export default function AudioImport() {
       const file = files[0];
       setFile(file);
       setAudio(URL.createObjectURL(file))
-      // console.log(typeof files)
       const reader = new FileReader();
       reader.onload = function (event) {
-        const url = 'https://api.fpt.ai/hmi/asr/general';
-        const config = {
-          method: 'POST',
-          headers: {'api-key': 'azjQBAy8CcTBAiRUn82D6KcG2BlonQfu'},
-          body: JSON.stringify({data: event.target.result})
-        }
-        // fetch(url, config)
-        //     .then(response=> {
-        //       console.log(response.json())
-        //     })
-        // The file's text will be printed here
-        // setContent(event.target.result)
         // console.log(event.target.result)
-        // console.log(typeof event.target.result)
       };
       reader.readAsText(file,'utf8')
 
@@ -48,38 +33,7 @@ export default function AudioImport() {
   const submitFile = (e) => {
     e.preventDefault();
     setMessage('Uploading...')
-    const contentType = file.type;
-    const fileName = `${Date.now()}_${file.name}`;
-    const options = {
-      params: {
-        Key: fileName,
-        ContentType: contentType
-      },
-      headers: {
-        'Content-Type': contentType
-      }
-    };
-    const generatePutUrl = `${BACKEND_URL}/generate-put-url`;
-    Axios.get(generatePutUrl, options).then(res => {
-      const {
-        data: {putURL,Key}
-      } = res;
-      // console.log(putURL)
-      Axios.put(putURL, file, options)
-          .then(res => {
-            setMessage('Upload Successful')
-            console.log(res)
-            setTimeout(() => {
-              setMessage('');
-              document.querySelector('#upload-audio').value = '';
 
-            }, 2000)
-          })
-          .catch(err => {
-            setMessage('Sorry, something went wrong')
-            console.log('err', err);
-          })
-    })
     setFile(null);
     setAudio(null);
   }
@@ -98,7 +52,7 @@ export default function AudioImport() {
           let body={
             link: res.data.result.link
           }
-          axios.post(`${BACKEND_URL}/api/getText`,body)
+          axios.post('/api/getText',body)
               .then(res=>{
                 console.log(res)
                 setValue(res.data)
