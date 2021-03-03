@@ -26,7 +26,7 @@ router.post('/',(req,res)=>{
     console.log('File: ', path);
     console.log('File descriptor: ', fd);
 
-    let process = spawn('python',["./sample_asr_python_grpc/main.py",path] );
+    let process = spawn('python',["./sample_asr_python_grpc/main.py"] );
 
     process.stdout.on('data', function(data) {
       res.send(data.toString());
