@@ -5,7 +5,9 @@ const {Message} = require("./models/Message");
 
 sockets.init = function (server) {
   // socket.io setup
-  const io = require('socket.io')(server, {cors: {origin: "http://localhost:3000"}});
+  const io = require('socket.io')(server, {
+    path: '/socket',
+  });
   const jwt = require('jsonwebtoken');
 
   // socket logic go here

@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 app.use(express.json());
 app.use(cors());
 
-const connect = mongoose.connect(config.mongoURI,
+mongoose.connect(config.mongoURI,
     {
       useNewUrlParser: true, useUnifiedTopology: true,
       useCreateIndex: true, useFindAndModify: false
@@ -27,7 +27,7 @@ const {
 app.get('/generate-get-url', (req, res) => {
   // Both Key and ContentType are defined in the client side.
   // Key refers to the remote name of the file.
-  const { Key } = req.query;
+  const {Key} = req.query;
   generateGetUrl(Key)
       .then(getURL => {
         res.send(getURL);
@@ -38,15 +38,15 @@ app.get('/generate-get-url', (req, res) => {
 });
 
 // PUT URL
-app.get('/generate-put-url', (req,res)=>{
+app.get('/generate-put-url', (req, res) => {
   // Both Key and ContentType are defined in the client side.
   // Key refers to the remote name of the file.
   // ContentType refers to the MIME content type, in this case image/jpeg
-  const { Key, ContentType } =  req.query;
+  const {Key, ContentType} = req.query;
   console.log(req.query)
   generatePutUrl(Key, ContentType).then(putURL => {
     console.log(putURL)
-    res.send({putURL,Key});
+    res.send({putURL, Key});
   })
       .catch(err => {
         res.send(err);
@@ -68,7 +68,7 @@ app.use('/api/chatroom', require("./routes/chatroom"));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/message', require('./routes/message'));
 app.use('/api/audio', require('./routes/audio'));
-app.use('/api/getText',require('./routes/getText'));
+app.use('/api/getText', require('./routes/getText'));
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
 app.use('/uploads', express.static('uploads'));

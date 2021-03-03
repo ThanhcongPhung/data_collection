@@ -11,7 +11,6 @@ import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer"
 import AudioImport from "./views/ImportAudio/AudioImport";
 import ValidateData from "./views/ValidateData/ValidateData"
-import { BACKEND_URL } from './Config'
 
 
 // Second parameter for route:
@@ -33,11 +32,12 @@ function App(props) {
       }
     })
 
-    socket = io(BACKEND_URL, {
+    socket = io("/", {
       query: {
         token: w_auth,
       },
-      transports:['websocket','polling','flashsocket']
+      transports:['websocket','polling','flashsocket'],
+      path: '/socket',
     });
 
     socket.on('disconnect', () => {
