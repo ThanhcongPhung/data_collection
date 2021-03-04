@@ -12,7 +12,7 @@ import Footer from "./views/Footer/Footer"
 import AudioImport from "./views/ImportAudio/AudioImport";
 import ValidateData from "./views/ValidateData/ValidateData"
 
-
+const ENDPOINT = 'http://localhost:5000/';
 // Second parameter for route:
 //null   Anyone Can go inside
 //true   only logged in user can go inside
@@ -32,12 +32,12 @@ function App(props) {
       }
     })
 
-    socket = io("/", {
+    socket = io(ENDPOINT, {
       query: {
         token: w_auth,
       },
       transports:['websocket','polling','flashsocket'],
-      path: '/socket',
+      // path: '/socket',
     });
 
     socket.on('disconnect', () => {
@@ -54,7 +54,7 @@ function App(props) {
 
   useEffect(() => {
     setupSocket()
-  }, [])
+  }, [ENDPOINT])
 
   const LandingPageWithSocket = () => (<LandingPage socket={socket} />)
   const LoginPageWithSocket = () => (<LoginPage setupSocket={setupSocket} />)

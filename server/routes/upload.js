@@ -68,13 +68,14 @@ router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err) =
 })
 
 
-const saveAudioMongo = async (userID, chatroomID, link, text) => {
+const saveAudioMongo = async (userID, chatroomID, audioLink, textLink,transcript) => {
 
   const audio = await Audio.create({
     user: userID,
     room: chatroomID,
-    link: link,
-    text: text
+    audioLink: audioLink,
+    textLink: textLink,
+    transcript: transcript
   })
 
   return audio._id
@@ -101,4 +102,26 @@ const updateRoomInfo = (roomID, audioID) => {
         return err
       });
 }
+router.post('/saveAudio', (req, res, err) => {
+
+
+  const userID = req.body.userID;
+  const roomID = req.body.roomID;
+  const audioLink = req.body.audioLink;
+  const textLink = req.body.textLink;
+  const transcript = req.body.transcript;
+  try {
+    // save the audio information
+    saveAudioMongo(userID, roomID, audioLink, textLink,transcript)
+        .then(audioID => {
+          // update audio history in room
+          err = updateRoomInfo(roomID, audioID);
+          if (err) throw err
+        })
+    return res.status(200).send({success: true, link: audioLink, transcript: transcript})
+  } catch (error) {
+    console.log("Dead")
+    res.status(500).send({success: false, error})
+  }
+})
 module.exports = router;

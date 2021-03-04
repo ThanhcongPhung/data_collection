@@ -11,14 +11,16 @@ const audioSchema = new mongoose.Schema({
     ref: 'Chatroom',
     required: true,
   },
-  link: {
+  audioLink: {
     type: String,
-    required: true,
     unique: true,
   },
-  text:{
+  textLink: {
     type: String,
-    required:true,
+    unique: true,
+  },
+  transcript:{
+    type: String,
   },
 },{timestamps:true});
 
