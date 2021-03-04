@@ -5,8 +5,9 @@
 }
 
 .chatroom {
-    background-image: linear-gradient(0deg, #fff 20%, #f3f2f1);
+    /*background-image: linear-gradient(to top,white 20%,#f3f2f1);*/
     display: flex;
+    background: none;
     flex-direction: row;
 }
 .left-screen{
@@ -21,7 +22,11 @@
 .ant-popover-arrow {
     color: black;
 }
-
+.messages {
+    padding: 5% 0;
+    overflow: auto;
+    flex: auto;
+}
 .primary-buttons {
     margin-top: 2vh;
     display: flex;
@@ -141,25 +146,7 @@ button.share:hover path{
     background-color: #f9f9f9;
     border: 2px solid #dedede;
 }
-/* width */
-::-webkit-scrollbar {
-    width: 10px;
-}
 
-/* Track */
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
 
 .scenario{
     /*background-color: white;*/
@@ -168,8 +155,9 @@ button.share:hover path{
     /*justify-content: center;*/
     align-items: center;
     min-height: 200px;
-    border: 3px dashed #d0d0d0;
-    background-color: rgba(164,202,182,0.5);
+    /*border: 3px dashed #d0d0d0;*/
+    /*background-image: linear-gradient(to top,white 20%,#f3f2f1);*/
+    background: none;
 }
 .scenarioText{
     padding-right: 20px;
@@ -178,16 +166,17 @@ button.share:hover path{
 }
 
 .audioHistory{
-    background-color: white;
-    display: flex;
-    flex-direction: column;
+    /*!*background-image: linear-gradient(to top,white 20%,#f3f2f1);*!*/
+    /*background: none;*/
+    /*display: flex;*/
+    /*flex-direction: row;*/
 
-    /*justify-content: center;*/
-    align-items: center;
-    min-height: 350px;
-    /*height: 500px;*/
-    border-left: 3px dashed #d0d0d0;
-    border-bottom: 3px dashed #d0d0d0;
+    /*!*justify-content: center;*!*/
+    /*align-items: center;*/
+    /*min-height: 350px;*/
+    /*!*height: 500px;*!*/
+    /*!*border-left: 3px dashed #d0d0d0;*!*/
+    /*!*border-bottom: 3px dashed #d0d0d0;*!*/
 }
 .listAudio{
     /*border: 1px solid #d0d0d0;*/
@@ -197,18 +186,6 @@ button.share:hover path{
     /*padding-left: 20px;*/
     margin-top: 1rem;
     margin-bottom: 1rem;
-}
-.listAudio::-webkit-scrollbar{
-    width: 10px;
-}
-.listAudio::-webkit-scrollbar-track{
-    background: #f1f1f1;
-}
-.listAudio::-webkit-scrollbar-thumb{
-    background: #888;
-}
-.listAudio::-webkit-scrollbar-thumb:hover{
-    background: #555;
 }
 
 .hr1{
@@ -228,4 +205,71 @@ audio.audioPlay{
     min-height: 100px;
     font-size: 20px;
     padding: 10px;
+}
+.messageBox {
+    background: #F3F3F3;
+    border-radius: 20px;
+    padding: 5px 20px;
+    color: white;
+    display: inline-block;
+    max-width: 80%;
+}
+
+.messageText {
+    width: 100%;
+    letter-spacing: 0;
+    float: left;
+    font-size: 1.1em;
+    word-wrap: break-word;
+}
+
+.messageText img {
+    vertical-align: middle;
+}
+
+.messageContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 5%;
+    margin-top: 3px;
+}
+
+.sentText {
+    display: flex;
+    align-items: center;
+    font-family: Helvetica;
+    color: #828282;
+    letter-spacing: 0.3px;
+}
+
+.pl-10 {
+    padding-left: 10px;
+}
+
+.pr-10 {
+    padding-right: 10px;
+}
+
+.justifyStart {
+    justify-content: flex-start;
+}
+
+.justifyEnd {
+    justify-content: flex-end;
+}
+
+.colorWhite {
+    color: white;
+}
+
+.colorDark {
+    color: #353535;
+}
+
+.backgroundBlue {
+    background: #2979FF;
+}
+
+.backgroundLight {
+    background: #F3F3F3;
 }

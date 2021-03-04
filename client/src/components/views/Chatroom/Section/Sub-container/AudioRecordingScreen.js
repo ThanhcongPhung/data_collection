@@ -16,11 +16,13 @@ export default function AudioRecordingScreen(props) {
   let socket = props.socket;
   const chatroomID = props.chatroomID;
   const user = props.user;
+  const audioName = props.audioName;
+  const [fileName,setFileName]=useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [blob, setBlob] = useState(null);
-
+  const [audioLink,setAudioLink] = useState('')
   useEffect(() => {
     const canvasObj = canvasRef.current;
     let wave = new Wave(canvasObj);
@@ -36,15 +38,19 @@ export default function AudioRecordingScreen(props) {
   });
 
 
-  const sendAudioSignal = (link) => {
+  const sendAudioSignal = (link,transcript) => {
     if (socket) {
-      let sender = user.userData.name
+      let sender = user.userData.name;
+      let ava = user.userData.image;
       socket.emit("chatroomAudio", {
         chatroomID,
         sender,
+        ava,
         link,
+        transcript
       })
     }
+    setValue(null);
     setAudio(null);
   }
 
@@ -61,23 +67,24 @@ export default function AudioRecordingScreen(props) {
     setIsPlaying(status);
   };
 
-  const text = <span>prompt text</span>;
-
+  const text1 = <span>Play audio</span>;
+  const text2 = <span>Re recorder</span>;
+  const text3 = <span>Get Transcript</span>
   function onRerecord() {
     setAudio(null);
+    setValue(null);
   }
 
-  const onShare = async (blob) =>{
+  const onGetText = async (blob) =>{
     const url = "https://cdn.vbee.vn/api/v1/uploads/file";
     let formData = new FormData();
-    let rightNow = new Date();
-    let res = rightNow.toISOString().slice(0,10).replace(/-/g,"");
-    let name = `spkyut_${res}_${Date.now()}`
-    console.log(blob)
-    const file = new File([blob],"abc.wav",{type:"audio/wav"})
+
+    const file = new File([blob],`${audioName}`,{type:"audio/wav"})
+    let name = audioName.split(".");
+    setFileName(name[0])
     console.log(file)
     formData.append("destination", "congpt/record")
-    formData.append("name","abc")
+    formData.append("name",name[0])
     formData.append("file",file)
     try {
       await axios.post(
@@ -85,6 +92,7 @@ export default function AudioRecordingScreen(props) {
           formData,
       ).then(res => {
         if(res.data.status===1){
+          setAudioLink(res.data.result.link)
           let body={
             link: res.data.result.link
           }
@@ -110,7 +118,7 @@ export default function AudioRecordingScreen(props) {
                   <source src={audio} type="audio/wav"/>
                 </audio>
                 <Tooltip
-                    title={text}
+                    title={text1}
                     arrow
                     open={isPlaying}
                     theme="grey-tooltip">
@@ -128,15 +136,15 @@ export default function AudioRecordingScreen(props) {
                     <div className="placeholder"/>
                 ) : (
                     <>
-                      <Tooltip arrow title={text}>
+                      <Tooltip arrow title={text2}>
                         <button className="redo" type="button" onClick={onRerecord}>
                           <span className="padder">
                             <RedoIcon/>
                           </span>
                         </button>
                       </Tooltip>
-                      <Tooltip arrow title={text}>
-                        <button className="share" type="button" onClick={()=>onShare(blob)}>
+                      <Tooltip arrow title={text3}>
+                        <button className="share" type="button" onClick={()=>onGetText(blob)}>
                           <span className="padder">
                             <ShareIcon/>
                           </span>
@@ -180,12 +188,15 @@ export default function AudioRecordingScreen(props) {
           <Row>
             <div className="submit-button">
               {renderAudio(audio)}
-              {/*<SendButton*/}
-              {/*    audio={audio}*/}
-              {/*    sendAudioSignal={sendAudioSignal}*/}
-              {/*    userID={user.userData ? user.userData._id : ""}*/}
-              {/*    roomID={chatroomID}*/}
-              {/*/>*/}
+              <SendButton
+                  audioLink={audioLink}
+                  fileName={fileName}
+                  audio={audio}
+                  sendAudioSignal={sendAudioSignal}
+                  userID={user.userData ? user.userData._id : ""}
+                  roomID={chatroomID}
+                  value={value}
+              />
             </div>
           </Row>
         </Row>

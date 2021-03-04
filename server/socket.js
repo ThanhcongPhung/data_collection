@@ -6,7 +6,7 @@ const {Message} = require("./models/Message");
 sockets.init = function (server) {
   // socket.io setup
   const io = require('socket.io')(server, {
-    path: '/socket',
+    // path: '/socket',
   });
   const jwt = require('jsonwebtoken');
 
@@ -195,12 +195,14 @@ sockets.init = function (server) {
     });
 
     // Just receive a signal
-    socket.on('chatroomAudio', ({chatroomID, sender, link}) => {
+    socket.on('chatroomAudio', ({chatroomID, sender, ava,link,transcript}) => {
       // sending to individual socketid (private message)
       io.to(chatroomID).emit('newAudioURL', {
         userID: socket.userId,
         sender: sender,
+        ava: ava,
         audioLink: link,
+        transcript:transcript,
       });
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " + link)
     });

@@ -79,7 +79,6 @@ def handler(signum, frame):
     IS_STOP = True
 
 if __name__ == "__main__":
-#     signal.signal(signal.SIGINT, handler)
-#     start_asr()
-       print("test")
+    signal.signal(signal.SIGINT, handler)
+    start_asr()
 

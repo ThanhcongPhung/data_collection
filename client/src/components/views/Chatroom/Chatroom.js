@@ -18,7 +18,7 @@ export default function Chatroom(props) {
   let userID = user.userData ? user.userData._id : "";
   let username = user.userData ? user.userData.name : "";
   const [userRole, setUserRole] = useState("");
-
+  const [audioHistory,setAudioHistory] = useState([])
   const dispatch = useDispatch();
 
   useEffect(()=>{
@@ -27,7 +27,6 @@ export default function Chatroom(props) {
           if (userID === response.payload.roomFound.user1) setUserRole("client");
           if (userID === response.payload.roomFound.user2) setUserRole("servant");
         })
-    // dispatch(getAudios(chatroomID))
   })
 
 
@@ -53,10 +52,10 @@ export default function Chatroom(props) {
   useEffect(() => {
     if (socket) {
       socket.on('newAudioURL', (data) => {
-        // console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
-        // let newHistory = [...audioHistory]
-        // newHistory.push(data.audioLink)
-        // setAudioHistory(newHistory)
+        console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
+        let newHistory = [...audioHistory]
+        newHistory.push(data)
+        setAudioHistory(newHistory);
       })
 
       socket.on('joinRoom announce', (data) => {
@@ -70,51 +69,33 @@ export default function Chatroom(props) {
   })
 
   return (
-      <div className="chatroom">
-        <section className="left-screen">
-          <AudioRecordingScreen
-              canvasRef={canvasRef}
-              socket={socket}
-              user={user}
-              roomContentType={room_content_type}
-              chatroomID={chatroomID}
-              userRole={userRole}
-          />
-        </section>
+      <div className="contribution">
+        <div className="chatroom">
+          <section className="left-screen">
+            <AudioRecordingScreen
+                audioName={`VN${chatroomID}_${userID}_${Date.now()}.wav`}
+                canvasRef={canvasRef}
+                socket={socket}
+                user={user}
+                roomContentType={room_content_type}
+                chatroomID={chatroomID}
+                userRole={userRole}
+            />
+          </section>
 
-        <section className="right-screen">
-          <Scenario/>
-          <AudioList
-              dispath={dispatch}
-              audio={audios}
-              chatroomID={chatroomID}
-          />
-        </section>
-
+          <section className="right-screen">
+            <Scenario/>
+            <hr className="hr1"/>
+            <AudioList
+                audioHistory={audioHistory}
+                dispath={dispatch}
+                userName={username}
+                audio={audios}
+                chatroomID={chatroomID}
+            />
+          </section>
+        </div>
       </div>
-      // <div className="chatroom">
-      //   {/*<Row>*/}
-      //   {/*  <Col style={{textAlign: "center"}}>*/}
-      //   {/*    <p>You are the {userRole}</p>*/}
-      //   {/*  </Col>*/}
-      //   {/*</Row>*/}
-      //   <Row>
-      //     {room_content_type === '0' ?
-      //         <AudioRecordingScreen
-      //             canvasRef={canvasRef}
-      //             socket={socket}
-      //             user={user}
-      //             roomContentType={room_content_type}
-      //             chatroomID={chatroomID}
-      //             userRole={userRole}
-      //         /> :
-      //         <TextChatScreen socket={socket} user={user} chatroomID={chatroomID}
-      //                         dispatch={dispatch} message={message} userRole={userRole}/>}
-      //     <Col span={4}>
-      //       <Scenario/>
-      //       {room_content_type === '0' ? <AudioList audioList={audioHistory}/> : ""}
-      //     </Col>
-      //   </Row>
-      // </div>
+
   )
 }
