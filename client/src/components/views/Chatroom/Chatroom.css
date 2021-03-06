@@ -28,7 +28,7 @@
     flex: auto;
 }
 .primary-buttons {
-    margin-top: 2vh;
+    /*margin-top: 2vh;*/
     display: flex;
     justify-content: center;
     align-items: center;
