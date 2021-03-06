@@ -169,7 +169,7 @@ function LandingPage(props) {
                 <button className="listen" type="button">
                   <OldPlayIcon/>
                 </button>
-                <div className="primary-button backgroundplay"/>
+                <div className="primary-button backgroundPlay"/>
               </div>
             </div>
           </div>

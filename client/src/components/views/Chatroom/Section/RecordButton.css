@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 18px;
+    /*margin: 0 18px;*/
     outline: none;
     /*background-image: linear-gradient(0deg, #fff 20%, #f3f2f1);*/
 }
@@ -21,7 +21,7 @@
     /*background-image: linear-gradient(to left, #88d1f1, #b1b5e5);*/
     background: linear-gradient(90deg,#f89096,#b1b4e5);
 }
-.backgroundplay{
+.backgroundPlay{
     position: absolute;
     margin: 0 auto;
     border-radius: 50%;
@@ -30,7 +30,7 @@
     filter: blur(7.6px);
     transition: opacity .2s linear;
     opacity: 0.7;
-    background-image: linear-gradient(to left, #88d1f1, #b1b5e5);
+    background-image: linear-gradient(90deg, #88d1f1, #b1b5e5);
 }
 
 button.record {

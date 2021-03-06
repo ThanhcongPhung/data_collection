@@ -29,6 +29,98 @@ export const OldPlayIcon = (props: any) => (
       </g>
     </svg>
 );
+export const ThumbsUpIcon = (props: any) => (
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <defs>
+        <path
+            id="thumbs-up-path"
+            d="M21.367 8.2c-.506-.6-1.215-1.1-2.025-1.2h-5.165V4c0-2.2-1.823-4-4.05-4-.405 0-.81.2-.912.6L5.468 9h-2.43C1.316 9 0 10.3 0 12v7c0 1.7 1.316 3 3.038 3h14.481c1.519 0 2.734-1.1 3.038-2.5l1.418-9c.1-.8-.102-1.6-.608-2.3zM5.063 20H3.038c-.608 0-1.013-.4-1.013-1v-7c0-.6.405-1 1.013-1h2.025v9zm13.469-.8c-.102.5-.507.8-1.013.8H7.089v-9.8l3.645-8.1c.81.3 1.418 1 1.418 1.9v4c0 .6.405 1 1.013 1h5.974c.304 0 .507.2.71.4.202.2.202.5.202.7l-1.52 9.1z"
+        />
+      </defs>
+      <g fill="none" fillRule="evenodd" transform="translate(1 1)">
+        <mask id="thumbs-up" fill="#fff">
+          <use xlinkHref="#thumbs-up-path" />
+        </mask>
+        <g fill="#4A4A4A" mask="url(#thumbs-up)">
+          <path d="M-1-1h24v24H-1z" />
+        </g>
+      </g>
+    </svg>
+);
+export const ThumbsDownIcon = (props: any) => (
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <defs>
+        <path
+            id="thumbs-down-path"
+            d="M22 2.913C21.797 1.205 20.38 0 18.658 0H4.48C2.96 0 1.745 1.105 1.442 2.511L.024 11.553c-.203 1.607.911 3.214 2.532 3.415h5.266v3.014c0 2.21 1.823 4.018 4.05 4.018.406 0 .81-.2.912-.603l3.747-8.438h2.026c1.721 0 3.14-1.206 3.342-2.913V3.014c.101 0 .101-.1.101-.1zm-7.09 8.94l-3.645 8.138c-.81-.302-1.418-1.005-1.418-1.909v-4.018c0-.603-.405-1.005-1.012-1.005H3.062h-.203c-.506-.1-.911-.602-.81-1.105l1.418-9.04c.101-.503.506-.905 1.013-.905h10.43v9.845zm5.065-1.908c-.102.603-.71 1.105-1.317 1.105h-1.722V2.01h1.722c.608 0 1.215.501 1.317 1.104v6.831z"
+        />
+      </defs>
+      <g fill="none" fillRule="evenodd" transform="translate(1 1)">
+        <mask id="thumbs-down-mask" fill="#fff">
+          <use xlinkHref="#thumbs-down-path" />
+        </mask>
+        <g fill="#4A4A4A" mask="url(#thumbs-down-mask)">
+          <path d="M-1-1h24v24H-1z" />
+        </g>
+      </g>
+    </svg>
+);
+export const PenIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <defs>
+        <path
+            id="pen-a"
+            d="M19.7 5.3l-5-5c-.4-.4-1-.4-1.4 0l-13 13c-.2.2-.3.4-.3.7v5c0 .6.4 1 1 1h5c.3 0 .5-.1.7-.3l13-13c.4-.4.4-1 0-1.4zM5.6 18H2v-3.6l12-12L17.6 6l-12 12z"
+        />
+      </defs>
+      <g fill="none" fillRule="evenodd" transform="translate(2 2)">
+        <mask id="pen-b" fill="#fff">
+          <use xlinkHref="#pen-a" />
+        </mask>
+        <use fill="#000" fillRule="nonzero" xlinkHref="#pen-a" />
+        <g fill="#4A4A4A" mask="url(#pen-b)">
+          <path d="M-2-2h24v24H-2z" />
+        </g>
+      </g>
+    </svg>
+);
+export const TrashIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <defs>
+        <path
+            id="trash-a"
+            d="M21 5h-4V4c0-1.7-1.3-3-3-3h-4C8.3 1 7 2.3 7 4v1H3c-.6 0-1 .4-1 1s.4 1 1 1h1v13c0 1.7 1.3 3 3 3h10c1.7 0 3-1.3 3-3V7h1c.6 0 1-.4 1-1s-.4-1-1-1zM9 4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v1H9V4zm9 16c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V7h12v13zm-7-9v6c0 .6-.4 1-1 1s-1-.4-1-1v-6c0-.6.4-1 1-1s1 .4 1 1zm4 0v6c0 .6-.4 1-1 1s-1-.4-1-1v-6c0-.6.4-1 1-1s1 .4 1 1z"
+        />
+      </defs>
+      <g fill="none" fillRule="evenodd">
+        <mask id="trash-b" fill="#fff">
+          <use xlinkHref="#trash-a" />
+        </mask>
+        <g fill="#4A4A4A" mask="url(#trash-b)">
+          <path d="M0 0h24v24H0z" />
+        </g>
+      </g>
+    </svg>
+);
+export const SkipIcon = uniqueIcon(id => (
+    <svg width="22" height="22" viewBox="0 0 22 22">
+      <defs>
+        <path
+            id={'skip-path' + id}
+            d="M12.558 6.142l-4.583 4.583a.832.832 0 0 1-.642.275.832.832 0 0 1-.641-.275.886.886 0 0 1 0-1.283L10.633 5.5 6.692 1.558a.886.886 0 0 1 0-1.283.886.886 0 0 1 1.283 0l4.583 4.583a.886.886 0 0 1 0 1.284zM6.142 4.858L1.558.275a.886.886 0 0 0-1.283 0 .886.886 0 0 0 0 1.283L4.217 5.5.275 9.442a.886.886 0 0 0 0 1.283.832.832 0 0 0 .642.275.832.832 0 0 0 .641-.275l4.584-4.583a.886.886 0 0 0 0-1.284z"
+        />
+      </defs>
+      <g fill="none" fillRule="evenodd" transform="translate(4.583 5.5)">
+        <mask id={'skip-mask' + id} fill="#fff">
+          <use xlinkHref={'#skip-path' + id} />
+        </mask>
+        <use fill="#000" fillRule="nonzero" xlinkHref={'#skip-path' + id} />
+        <g fill="#000" mask={`url(#skip-mask${id})`}>
+          <path d="M-4.583-5.5h22v22h-22z" />
+        </g>
+      </g>
+    </svg>
+));
 export const MenuIcon = ({ className = '', ...props }: any) => (
     <svg className={'menu-icon ' + className} width="10" height="10" {...props}>
       <rect className="left" x="4" y="0" width="2" height="2" />
