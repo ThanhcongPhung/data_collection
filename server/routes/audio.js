@@ -14,5 +14,12 @@ router.get("/:roomID", (req, res) => {
         res.status(200).send(audios)
       })
 })
-
+// GET ALL
+router.get("/",(req, res) => {
+  Audio.find()
+      .exec((err,audios)=>{
+        if(err) return res.status(400).send(err);
+        res.status(200).send(audios)
+      })
+});
 module.exports = router;

@@ -12,7 +12,7 @@ import Footer from "./views/Footer/Footer"
 import AudioImport from "./views/ImportAudio/AudioImport";
 import ValidateData from "./views/ValidateData/ValidateData"
 
-const ENDPOINT = 'http://localhost:5000/';
+
 // Second parameter for route:
 //null   Anyone Can go inside
 //true   only logged in user can go inside
@@ -21,7 +21,7 @@ const ENDPOINT = 'http://localhost:5000/';
 let socket
 
 function App(props) {
-
+  const ENDPOINT = 'http://localhost:5000/';
   const setupSocket =  async () => {
     var w_auth
     document.cookie.split(";").map(info => {

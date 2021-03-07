@@ -14,3 +14,4 @@ export const AFTER_POST_MESSAGE = 'after_post_message';
 
 //for audio
 export const GET_AUDIOS = 'get_audio';
+export const GET_ALL_AUDIO = 'get_all_audio';
