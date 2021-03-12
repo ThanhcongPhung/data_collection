@@ -71,7 +71,8 @@ def start_asr():
             if response.results[0].alternatives:
                 text = response.results[0].alternatives[0].transcript.strip()
                 if response.results[0].is_final:
-                    print(text)
+#                     print(text)
+                    sys.stdout.buffer.write(text.encode('utf8'))
                     return response.results[0].is_final
 
 def handler(signum, frame):

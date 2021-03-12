@@ -121,6 +121,42 @@ export const SkipIcon = uniqueIcon(id => (
       </g>
     </svg>
 ));
+export const VolumeIcon = (props: any) => (
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <defs>
+        <path
+            id="volume-path"
+            d="M10.388.108c-.3-.198-.799-.099-1.099.1L4.595 3.982H.999c-.6 0-.999.397-.999.993v5.96c0 .595.4.993.999.993h3.596l4.694 3.774c.2.1.4.199.6.199.1 0 .3 0 .4-.1.299-.198.599-.496.599-.894V1.002c.1-.397-.1-.695-.5-.894zM8.99 12.822L5.594 10.14c-.2-.1-.4-.199-.6-.199H1.998V5.968h2.996c.2 0 .4-.099.6-.198L8.99 3.088v9.734zm6.193-9.039c2.297 2.285 2.297 6.059 0 8.443-.2.198-.5.298-.7.298-.2 0-.499-.1-.699-.298a.956.956 0 0 1 0-1.39c1.599-1.59 1.599-4.073 0-5.662a.956.956 0 0 1 0-1.39c.4-.398 1.1-.398 1.399 0zm3.596 11.919c-.2.199-.5.298-.7.298-.2 0-.499-.1-.699-.298a.956.956 0 0 1 0-1.39c3.496-3.477 3.496-9.138 0-12.615a.956.956 0 0 1 0-1.39.97.97 0 0 1 1.399 0c4.295 4.172 4.295 11.124 0 15.395z"
+        />
+      </defs>
+      <g fill="none" fillRule="evenodd" transform="translate(0 4)">
+        <mask id="volume-mask" fill="#fff">
+          <use xlinkHref="#volume-path" />
+        </mask>
+        <g fill="#4A4A4A" mask="url(#volume-mask)">
+          <path d="M-1-4h24v24H-1z" />
+        </g>
+      </g>
+    </svg>
+);
+export const CheckIcon = uniqueIcon((id, props) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" {...props}>
+      <defs>
+        <path
+            id={'check-path' + id}
+            d="M17.7 1.7l-11 11c-.2.2-.4.3-.7.3-.3 0-.5-.1-.7-.3l-5-5c-.4-.4-.4-1 0-1.4.4-.4 1-.4 1.4 0L6 10.6 16.3.3c.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4z"
+        />
+      </defs>
+      <g fill="none" fillRule="evenodd" transform="translate(3 6)">
+        <mask id={'check-mask' + id} fill="#fff">
+          <use xlinkHref={'#check-path' + id} />
+        </mask>
+        <g fill="#4A4A4A" mask={'url(#check-mask' + id + ')'}>
+          <path d="M-3-6h24v24H-3z" />
+        </g>
+      </g>
+    </svg>
+));
 export const MenuIcon = ({ className = '', ...props }: any) => (
     <svg className={'menu-icon ' + className} width="10" height="10" {...props}>
       <rect className="left" x="4" y="0" width="2" height="2" />

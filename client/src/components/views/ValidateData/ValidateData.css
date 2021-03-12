@@ -77,6 +77,9 @@
     background: none;
     color: black;
     position: relative;
+    align-items: center;
+    justify-content: center;
+    /*text-align: center;*/
     /*transform: scale(1) translateX(0%);*/
     /*opacity: 1;*/
 }
@@ -112,7 +115,7 @@ button.vote-button{
     width: 100px;
     height: 46px;
 }
-button.vote-button,path{
+button.vote-button path{
     /*transition: all .2s linear;*/
 }
 .yes{
@@ -120,10 +123,31 @@ button.vote-button,path{
             rgba(89,203,193,.3);
 
 }
+
+.yes:hover,
+.yes:active{
+    background: #59cbb7;
+    box-shadow: 0 5px 10px
+    rgba(89,203,193,.7);
+    color:white;
+
+}
+.yes:hover path{
+    fill: white;
+}
 .no{
     box-shadow: 0 5px 10px
-    rgba(255,79,94,.2);
-
+        rgba(255,79,94,.2);
+}
+.no:hover,
+.no:active path{
+    background: #ff4f5e;
+    box-shadow: 0 5px 10px
+        rgba(255,79,94,.6);
+    color:white;
+}
+.no:hover path{
+    fill: white;
 }
 button.edit-button{
     position: absolute;
@@ -168,6 +192,7 @@ button.edit-button path{
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
 }
 button.skip{
     display: flex;
@@ -189,4 +214,23 @@ button.skip{
 }
 button.skip:hover{
     border: 1px solid black;
+}
+.voted-list{
+    position: relative;
+    width: max-content;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+.contents{
+    height: 100%;
+    align-items: center;
+    display: flex!important;
+}
+/*.contents svg path{*/
+/*    fill: #959595;*/
+/*}*/
+.contents svg path{
+    /*fill:#59cbb7*/
 }
