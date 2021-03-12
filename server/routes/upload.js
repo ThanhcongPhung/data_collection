@@ -5,9 +5,25 @@ const multer = require('multer')
 const {Audio} = require("./../models/Audio");
 const {Chatroom} = require("./../models/Chatroom");
 const {User} = require("./../models/User")
-const DOMAIN_NAME = "http://localhost:5000/public/audio"
+const DOMAIN_NAME = "http://localhost:5000"
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './server/public')
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}_${file.originalname}`)
+  },
+  // fileFilter: (req, file, cb) => {
+  //   const ext = path.extname(file.originalname)
+  //   if (ext !== '.jpg' && ext !== '.png' && ext !== '.mp4') {
+  //     return cb(res.status(400).end('only jpg, png, mp4 is allowed'), false);
+  //   }
+  //   cb(null, true)
+  // }
+})
+var upload = multer({ storage: storage }).single('soundBlob')
 
-router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err) => {
+router.post('/file', upload, (req, res, err) => {
 
   // the err ^^^^^^ there doesn't seem to be err but rather something else... But either way it works for now, the thing up there doesn't matter that much.
 
@@ -19,28 +35,6 @@ router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err) =
     switch (err.code) {
       case 'LIMIT_FILE_SIZE':
         return new Error("Exceed file limit size");
-        // case 'LIMIT_PART_COUNT':
-        //   return next(
-        //     new CustomError(errorCodes.LIMIT_PART_COUNT, err.message),
-        //   );
-        // case 'LIMIT_FILE_COUNT':
-        //   return next(
-        //     new CustomError(errorCodes.LIMIT_FILE_COUNT, err.message),
-        //   );
-        // case 'LIMIT_FIELD_KEY':
-        //   return next(new CustomError(errorCodes.LIMIT_FIELD_KEY, err.message));
-        // case 'LIMIT_FIELD_VALUE':
-        //   return next(
-        //     new CustomError(errorCodes.LIMIT_FIELD_VALUE, err.message),
-        //   );
-        // case 'LIMIT_FIELD_COUNT':
-        //   return next(
-        //     new CustomError(errorCodes.LIMIT_FIELD_COUNT, err.message),
-        //   );
-        // case 'LIMIT_UNEXPECTED_FILE':
-        //   return next(
-        //     new CustomError(errorCodes.LIMIT_UNEXPECTED_FILE, err.message),
-        //   );
       default:
         return next(new Error("Can't upload the file\n"));
     }
@@ -50,17 +44,20 @@ router.post('/file', uploadService.upload.single('soundBlob'), (req, res, err) =
   }
 
   try {
-    let path_components = req.file.path.split('\\')
-    let audio_link = `${DOMAIN_NAME}/${path_components[path_components.length - 4]}/${path_components[path_components.length - 3]}/${path_components[path_components.length - 2]}/${path_components[path_components.length - 1]}`
+    console.log(req.file)
+    let path_components = req.file.path.split('/')
+    console.log(path_components)
+    let audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}`
+    const textLink = "asdasdsa";
     let text = "text";
     // save the audio information
-    saveAudioMongo(userID, roomID, audio_link, text)
+    saveAudioMongo(userID, roomID, audio_link, textLink,text)
         .then(audioID => {
           // update audio history in room
           err = updateRoomInfo(roomID, audioID);
           if (err) throw err
         })
-    return res.status(200).send({success: true, link: audio_link})
+    return res.status(200).send({success: true, link: audio_link,transcript: text})
   } catch (error) {
     console.log("Dead")
     res.status(500).send({success: false, error})

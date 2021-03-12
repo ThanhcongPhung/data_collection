@@ -89,7 +89,8 @@
 }
 .pill.done{
     background: white;
-    border: 2px solid #e7e5e2;
+    /*border: 2px solid #e7e5e2;*/
+    border:none;
 }
 .pill.done.contents{
     display: flex !important;
@@ -101,9 +102,11 @@
     /*border-inline-start: 1px solid #f3f2f1;*/
     /*padding: 0 16px;*/
 }
-/*.play{*/
-/*    fill:#59cbb7;*/
-/*}*/
+.pill.active{
+    border: 2px solid #e7e5e2;
+    background: white;
+}
+
 .padder{
     display: inline-block;
     border-inline-start: 1px solid #f3f2f1;
@@ -130,7 +133,11 @@ button.redo:hover path{
 button.share:hover path{
     fill: #629ff4;
 }
-.pill.num{
+.num{
+    /*background: #959595;*/
+    /*color: #fff;*/
+    background: #f3f2f1;
+    border: 1px solid #f5f4f3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -139,9 +146,13 @@ button.share:hover path{
     height: 32px;
     border-radius: 50%;
     font-weight: 600;
-
-    color: #4a4a4a;
+    margin-left: 20px;
+    /*color: #4a4a4a;*/
 }
+.pill.done{
+    background: white;
+}
+
 .infinite-container{
     background-color: #f9f9f9;
     border: 2px solid #dedede;

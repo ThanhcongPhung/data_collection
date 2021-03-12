@@ -1,16 +1,26 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './ValidateData.css';
-import {ThumbsDownIcon, OldPlayIcon, StopIcon, ThumbsUpIcon, PenIcon, PlayOutlineIcon, SkipIcon} from "../../ui/icons";
-import {Input} from 'antd';
+import {
+  ThumbsDownIcon,
+  OldPlayIcon,
+  StopIcon,
+  ThumbsUpIcon,
+  PenIcon,
+  PlayOutlineIcon,
+  SkipIcon,
+  VolumeIcon, CheckIcon
+} from "../../ui/icons";
+import {Input, Modal} from 'antd';
 import Wave from '../Chatroom/Section/Wave';
 import {useDispatch, useSelector} from "react-redux";
 import {getAllAudio} from '../../../_actions/audio_actions'
+import ChatCard from "../Chatroom/Section/Sub-container/ChatCard";
 
 
 const {TextArea} = Input;
 
 export default function ValidateData() {
-  const [value, setValue] = useState('Kato and Roeser started feuding, resulting in Roeser leaving the band.')
+  const [value, setValue] = useState('');
   const canvasRef = useRef(null);
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -18,9 +28,31 @@ export default function ValidateData() {
   const [hasPlayed, setHasPlayed] = useState(false);
   const [editText, setEditText] = useState(false);
   const [clips, setClips] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [vote , setVote] =useState(false)
+  const [allowedState, setAllowState ] = useState([5])
+  // const allowedState = [
+  //   { id: 1, value: "Alabama" },
+  //   { id: 2, value: "Georgia" },
+  //   { id: 3, value: "Tennessee" },
+  //   { id: 4, value: "Tennessee" },
+  //   { id: 5, value: "Tennessee" }
+  // ];
   // const allAudio = useSelector(state => state.audio);
   const dispatch = useDispatch();
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   useEffect(() => {
     dispatch(getAllAudio()).then(result => {
       const audios = result.payload;
@@ -31,31 +63,52 @@ export default function ValidateData() {
   }, [])
 
   useEffect(() => {
-    setAudio(clips[selectedIndex] && clips[selectedIndex].audioLink);
-    setValue(clips[selectedIndex] && clips[selectedIndex].transcript)
+    const activeAudio = clips[selectedIndex]
+    setAudio(activeAudio && activeAudio.audioLink)
+    // setAudio(clips[selectedIndex] && clips[selectedIndex].audioLink);
+    setValue(activeAudio && activeAudio.transcript)
   })
   const _ToggleNext = () => {
     if (selectedIndex === clips.length - 1) {
       return;
     }
+    stop();
+    setHasPlayed(false)
+    setEditText(false)
     setSelectedIndex(selectedIndex + 1);
   }
-  const toggleIsPlaying = () => {
-    const {current: audio} = audioRef;
 
-    let status = !isPlaying;
-    if (status) {
-      audio.play();
-    } else {
-      audio.pause();
-      setHasPlayed(true)
-      audio.currentTime = 0;
+  const play = () => {
+    const {current: audio} = audioRef;
+    if (isPlaying) {
+      stop()
+      return;
     }
-    setIsPlaying(status);
+    audio.play()
+    setIsPlaying(true)
+  }
+  const stop = () => {
+    const {current: audio} = audioRef;
+    audio.pause();
+    audio.currentTime = 0;
+    setIsPlaying(false)
+  }
+  const hasPlayed1 = () => {
+    setHasPlayed(true)
+    setIsPlaying(false)
+  }
+  const voteYes = (object) => {
+    if(!hasPlayed){
+      return;
+    }
+    console.log(object)
+    let newHistory = [...allowedState]
+    newHistory.push(object)
+    setAllowState(newHistory);
+    _ToggleNext()
   };
-  const vote = () => {
-    console.log("voted")
-  };
+
+
 
   useEffect(() => {
     const canvasObj = canvasRef.current;
@@ -72,7 +125,6 @@ export default function ValidateData() {
   });
   return (
       <div className="contribution">
-        {console.log(clips)}
         <div className="contribution-wrapper">
           <div className="cards-pill">
             <div className="cards-and-instruction">
@@ -80,66 +132,102 @@ export default function ValidateData() {
               <div className="cards">
                 <div className="card">
                   <div className="card-dimension">
-                    {editText ? (
-                        <TextArea
-                            className="text-area"
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
-                            placeholder="&quot;Identified Text&quot;"
-                            autoSize={{minRows: 4, maxRows: 4}}
-                        />
-                    ) : (
                         <div style={{margin: "auto", width: "100%"}}>
                           {value}
                         </div>
-                    )}
                   </div>
-                  <button className="edit-button" onClick={() => setEditText(true)} type="button">
-                    <PenIcon/>
-                  </button>
+                  {/*<button className="edit-button" onClick={() => setEditText(true)} type="button">*/}
+                  {/*  <PenIcon/>*/}
+                  {/*</button>*/}
                 </div>
 
               </div>
+              <div className="button-footer">
+                <button className="skip" type="button" onClick={_ToggleNext}>
+                  <span style={{marginRight: "15px"}}>Skip</span>
+                  <SkipIcon/>
+                </button>
+              </div>
             </div>
-            <div>
-              listclips
+
+            <div className="voted-list">
+              {allowedState.map((message, i) =>
+                  <div key={i}>
+                    <div className="pill active">
+                      <div className="contents">
+                        <VolumeIcon/>
+                      </div>
+                      <div className="num">{i+1}</div>
+                    </div>
+                    {/*<div className="pill done">*/}
+                    {/*  <div className="contents">*/}
+                    {/*    <CheckIcon/>*/}
+                    {/*  </div>*/}
+                    {/*  <div className="num">{i+1}</div>*/}
+                    {/*</div>*/}
+                    {/*<div className="pill pending">*/}
+                    {/*  <div className="contents"/>*/}
+                    {/*  <div className="num">{i}</div>*/}
+                    {/*</div>*/}
+                  </div>
+              )}
             </div>
+
           </div>
+
           <div className="button-listen">
             <div className="primary-buttons">
               <canvas className="primary-buttons canvas" ref={canvasRef}
                       style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
-              <button className={"vote-button " + (hasPlayed ? 'yes' : '')} onClick={vote} type="button"
+              <button className={"vote-button " + (hasPlayed ? 'yes' : '')} onClick={()=>voteYes(clips[selectedIndex])} type="button"
                       disabled={!hasPlayed}>
                 <ThumbsUpIcon/>
                 <span style={{marginLeft: "10px"}}>Yes</span>
               </button>
               <div style={{margin: '4rem'}}>
                 <div className="primary-button">
-                  <audio preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
-                    <source src="https://cdn.vbee.vn/congpt/record/VN603fbfde355cf8859abb9645_5fe549f6a531803af45fe8be_1614872498996.wav" type="audio/wav"/>
-                  </audio>
-                  <button className="listen" onClick={toggleIsPlaying} type="button">
+                  <audio
+                      src="http://localhost:5000/public/1615517370192_test.wav"
+                      // src={audio}
+                      preload="auto"
+                      onEnded={hasPlayed1}
+                      ref={audioRef}
+                  />
+                  <button className="listen" onClick={play} type="button">
                     {isPlaying ? <StopIcon/> : <OldPlayIcon/>}
                   </button>
                   <div className="primary-button backgroundPlay"/>
                 </div>
               </div>
-              <button className={"vote-button " + (hasPlayed ? 'no' : '')} type="button" onClick={vote}
+              <button className={"vote-button " + (hasPlayed ? 'no' : '')} type="button" onClick={showModal}
                       disabled={!hasPlayed}>
                 <ThumbsDownIcon/>
                 <span style={{marginLeft: "10px"}}>No</span>
               </button>
             </div>
-            <div className="button-footer">
-              <button className="skip" type="button" onClick={_ToggleNext}>
-                <span style={{marginRight: "15px"}}>Skip</span>
-                <SkipIcon/>
-              </button>
-
-            </div>
           </div>
         </div>
+        <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+          <TextArea
+              className="text-area"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="&quot;Identified Text&quot;"
+              autoSize={{minRows: 4, maxRows: 4}}
+          />
+          {/*<audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>*/}
+          {/*  <source src={audio} type="audio/wav"/>*/}
+          {/*</audio>*/}
+          <button
+              className="play"
+              type="button"
+              onClick={play}
+          >
+                    <span className="padder">
+                        {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
+                    </span>
+          </button>
+        </Modal>
       </div>
 
   )

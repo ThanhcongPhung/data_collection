@@ -17,7 +17,7 @@ const audioSchema = new mongoose.Schema({
   },
   textLink: {
     type: String,
-    unique: true,
+    // unique: true,
   },
   transcript:{
     type: String,

@@ -192,6 +192,7 @@ export default function AudioRecordingScreen(props) {
                   audioLink={audioLink}
                   fileName={fileName}
                   audio={audio}
+                  blob={blob}
                   sendAudioSignal={sendAudioSignal}
                   userID={user.userData ? user.userData._id : ""}
                   roomID={chatroomID}

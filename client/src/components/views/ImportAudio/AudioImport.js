@@ -13,19 +13,26 @@ export default function AudioImport() {
   const [message, setMessage] = useState('');
   const [content, setContent] = useState(null);
   const [value, setValue] = useState('')
-
+  const [fileWav,setFileWav]=useState([])
 
   const onDrop = (files) => {
 
     if (files && files.length > 0) {
-      const file = files[0];
-      setFile(file);
-      setAudio(URL.createObjectURL(file))
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        // console.log(event.target.result)
-      };
-      reader.readAsText(file,'utf8')
+      // const file = files[0];
+      // setFile(file);
+      // setAudio(URL.createObjectURL(file))
+      // const reader = new FileReader();
+      // reader.onload = function (event) {
+      //   // console.log(event.target.result)
+      // };
+      // reader.readAsText(file,'utf8')
+      // let newHistory = [...fileWav]
+      // files.map((i)=>{
+      //   if(i.type ==="audio/wav"){
+      //     newHistory.push(i)
+      //   }
+      // })
+      setFileWav(files);
 
     }
 
@@ -37,33 +44,63 @@ export default function AudioImport() {
     setFile(null);
     setAudio(null);
   }
-  const getTranscript = async (file) => {
-    const url = "https://cdn.vbee.vn/api/v1/uploads/file";
+  const getTranscript = async (fileWav) => {
+
     let formData = new FormData();
-    formData.append("destination", "congpt/import")
-    formData.append("name","abc")
-    formData.append("file",file)
+    console.log(fileWav.length)
+    for(let i = 0; i< fileWav.length;i++){
+      formData.append("files",fileWav[i],fileWav[i].name)
+    }
+
     try {
       await axios.post(
-          url,
-          formData,
+          '/api/getText/audioImport',
+          formData
       ).then(res => {
-        if(res.data.status===1){
-          let body={
-            link: res.data.result.link
-          }
-          axios.post('/api/getText',body)
-              .then(res=>{
-                console.log(res)
-                setValue(res.data)
-              })
-        }
         console.log(res)
+        // if(res.data.status===1){
+        //   let body={
+        //     link: res.data.result.link
+        //   }
+        //   axios.post('/api/getText',body)
+        //       .then(res=>{
+        //         console.log(res)
+        //         setValue(res.data)
+        //       })
+        // }
+        // console.log(res)
       })
     } catch(error){
       alert(error)
     }
   }
+  // const getTranscript = async (file) => {
+  //   const url = "https://cdn.vbee.vn/api/v1/uploads/file";
+  //   let formData = new FormData();
+  //   formData.append("destination", "congpt/import")
+  //   formData.append("name","abc")
+  //   formData.append("file",file)
+  //   try {
+  //     await axios.post(
+  //         url,
+  //         formData,
+  //     ).then(res => {
+  //       if(res.data.status===1){
+  //         let body={
+  //           link: res.data.result.link
+  //         }
+  //         axios.post('/api/getText',body)
+  //             .then(res=>{
+  //               console.log(res)
+  //               setValue(res.data)
+  //             })
+  //       }
+  //       console.log(res)
+  //     })
+  //   } catch(error){
+  //     alert(error)
+  //   }
+  // }
   const convertFileSize = (size) => {
     var sizeInMB = (size / (1024 * 1024)).toFixed(3);
     return sizeInMB;
@@ -122,6 +159,8 @@ export default function AudioImport() {
                     )}
                   </Dropzone>
               }
+              <button onClick={()=>getTranscript(fileWav)} type="primary" className="getText">Get Text</button>
+
             </section>
             <section style={{marginTop: "23%",position:'relative'}}>
               <div className="title-and-search">

@@ -39,20 +39,20 @@
     background: rgba(230,229,227,0.6);
 }
 .dropzone{
-    display: flex;
-    background: #f6f7ff;
-    cursor: pointer;
-    position: absolute;
-    width: 40%;
-    min-height: 250px;
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    /*display: flex;*/
+    /*background: #f6f7ff;*/
+    /*cursor: pointer;*/
+    /*position: absolute;*/
+    /*width: 40%;*/
+    /*min-height: 250px;*/
+    /*box-sizing: border-box;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    /*flex-direction: column;*/
 }
 .dropzone:hover{
-    border: 3px dotted #d0d0d0;
-    margin: -2px;
+    /*border: 3px dotted #d0d0d0;*/
+    /*margin: -2px;*/
 }
 section{
     display: block;
@@ -155,7 +155,7 @@ img{
     width: 153.61px;
 }
 .getText{
-    margin-top: 1.5rem 0;
+    /*margin-top: 1.5rem 0;*/
     display: flex;
     flex-direction: row;
     justify-content: space-between;
