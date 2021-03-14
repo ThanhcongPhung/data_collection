@@ -5,7 +5,7 @@ import axios from 'axios'
 export default function Test(props) {
 
   const data = props ? props.audio : null;
-  const blob = props ? props.blob :null;
+  const blob = props ? props.blob : null;
   const userID = props ? props.userID : "";
   const roomID = props ? props.roomID : "";
   const textValue = props ? props.value : "No content";
@@ -13,27 +13,24 @@ export default function Test(props) {
   const audioLink = props ? props.audioLink : "";
 
   const uploadAudio = async () => {
-    let formdata = new FormData()
-    formdata.append('soundBlob', blob, fileName)
-    formdata.append('userID', userID)
-    formdata.append('roomID', roomID)
 
-    const requestConfig = {
-      headers: new Headers({
-        enctype: "multipart/form-data"
-      })
+    let body = {
+      roomID: roomID,
+      userID: userID,
+      audioLink: audioLink,
+      transcript: textValue,
     }
+
     console.log(blob)
     try {
       await axios.post(
-          '/api/upload/file',
-          formdata,
-          requestConfig,
+          '/api/upload/saveAudio',
+          body
       ).then(res => {
-        props.sendAudioSignal(res.data.link);
+        props.sendAudioSignal(res.data.link, res.data.transcript)
         console.log(res.data.link);
       })
-    } catch(error){
+    } catch (error) {
       alert(error);
     }
     // const url = "https://cdn.vbee.vn/api/v1/uploads/file";
@@ -72,12 +69,12 @@ export default function Test(props) {
   }
 
   const insertButton = data !== null ? (
-    <button className="buttons" onClick={uploadAudio}>Gửi</button>
+      <button className="buttons" onClick={uploadAudio}>Gửi</button>
   ) : ""
 
   return (
-    <>
-      {insertButton}
-    </>    
+      <>
+        {insertButton}
+      </>
   )
 }

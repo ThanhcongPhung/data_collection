@@ -27,6 +27,7 @@
 }
 .title-and-search{
     display: block;
+    margin-top: 1rem;
     /*display: flex;*/
     /*flex-direction: row;*/
     /*flex-wrap: wrap;*/

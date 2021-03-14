@@ -75,35 +75,54 @@ export default function AudioRecordingScreen(props) {
     setValue(null);
   }
 
-  const onGetText = async (blob) =>{
-    const url = "https://cdn.vbee.vn/api/v1/uploads/file";
-    let formData = new FormData();
+  // const onGetText = async (blob) =>{
+  //   const url = "https://cdn.vbee.vn/api/v1/uploads/file";
+  //   let formData = new FormData();
+  //
+  //   const file = new File([blob],`${audioName}`,{type:"audio/wav"})
+  //   let name = audioName.split(".");
+  //   setFileName(name[0])
+  //   console.log(file)
+  //   formData.append("destination", "congpt/record")
+  //   formData.append("name",name[0])
+  //   formData.append("file",file)
+  //   try {
+  //     await axios.post(
+  //         url,
+  //         formData,
+  //     ).then(res => {
+  //       if(res.data.status===1){
+  //         setAudioLink(res.data.result.link)
+  //         let body={
+  //           link: res.data.result.link
+  //         }
+  //         axios.post('/api/getText',body)
+  //             .then(res=>{
+  //               console.log(res)
+  //               setValue(res.data)
+  //             })
+  //       }
+  //     })
+  //   } catch(error){
+  //     alert(error)
+  //   }
+  // }
+  const onGetText = async (blob) => {
 
+    let formData = new FormData();
     const file = new File([blob],`${audioName}`,{type:"audio/wav"})
-    let name = audioName.split(".");
-    setFileName(name[0])
     console.log(file)
-    formData.append("destination", "congpt/record")
-    formData.append("name",name[0])
-    formData.append("file",file)
+    formData.append("files", file, file.name)
     try {
       await axios.post(
-          url,
-          formData,
+          '/api/getText/audioImport',
+          formData
       ).then(res => {
-        if(res.data.status===1){
-          setAudioLink(res.data.result.link)
-          let body={
-            link: res.data.result.link
-          }
-          axios.post('/api/getText',body)
-              .then(res=>{
-                console.log(res)
-                setValue(res.data)
-              })
-        }
+        setValue(res.data.files[0].transcript)
+        setAudioLink(res.data.files[0].audio_link)
       })
-    } catch(error){
+
+    } catch (error) {
       alert(error)
     }
   }

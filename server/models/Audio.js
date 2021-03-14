@@ -4,20 +4,16 @@ const audioSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    // required: true,
   },
   room: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Chatroom',
-    required: true,
+    // required: true,
   },
   audioLink: {
     type: String,
     unique: true,
-  },
-  textLink: {
-    type: String,
-    // unique: true,
   },
   transcript:{
     type: String,

@@ -48,10 +48,9 @@ router.post('/file', upload, (req, res, err) => {
     let path_components = req.file.path.split('/')
     console.log(path_components)
     let audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}`
-    const textLink = "asdasdsa";
     let text = "text";
     // save the audio information
-    saveAudioMongo(userID, roomID, audio_link, textLink,text)
+    saveAudioMongo(userID, roomID, audio_link, text)
         .then(audioID => {
           // update audio history in room
           err = updateRoomInfo(roomID, audioID);
@@ -65,13 +64,12 @@ router.post('/file', upload, (req, res, err) => {
 })
 
 
-const saveAudioMongo = async (userID, chatroomID, audioLink, textLink,transcript) => {
+const saveAudioMongo = async (userID, chatroomID, audioLink,transcript) => {
 
   const audio = await Audio.create({
     user: userID,
     room: chatroomID,
     audioLink: audioLink,
-    textLink: textLink,
     transcript: transcript
   })
 
@@ -105,11 +103,10 @@ router.post('/saveAudio', (req, res, err) => {
   const userID = req.body.userID;
   const roomID = req.body.roomID;
   const audioLink = req.body.audioLink;
-  const textLink = req.body.textLink;
   const transcript = req.body.transcript;
   try {
     // save the audio information
-    saveAudioMongo(userID, roomID, audioLink, textLink,transcript)
+    saveAudioMongo(userID, roomID, audioLink,transcript)
         .then(audioID => {
           // update audio history in room
           err = updateRoomInfo(roomID, audioID);
