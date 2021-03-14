@@ -8,20 +8,14 @@ const multer = require('multer')
 const formidable = require('formidable');
 const {join} = require('path');
 
+const DOMAIN_NAME = "http://localhost:5000"
+const spawn = require("child_process").spawn;
+
 const bluebird = require('bluebird')
 const fs = bluebird.promisifyAll(require('fs'));
 
-// var storage = multer.diskStorage({
-//   destination: function (re  q, file, cb) {
-//     cb(null, './public')
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.fieldname + '-' + Date.now())
-//   }
-// })
-
-let download = function(uri, filename, callback){
-  request.head(uri, function(err, res, body){
+let download = function (uri, filename, callback) {
+  request.head(uri, function (err, res, body) {
     console.log('content-type:', res.headers['content-type']);
     console.log('content-length:', res.headers['content-length']);
 
@@ -29,24 +23,23 @@ let download = function(uri, filename, callback){
   });
 };
 
-router.post('/',(req,res)=>{
+router.post('/', (req, res) => {
   console.log(req.body.link)
-  const spawn = require("child_process").spawn;
 
   tmp.file(function _tempFileCreated(err, path, fd, cleanupCallback) {
     if (err) throw err;
 
-    download(req.body.link, path , function(){
+    download(req.body.link, path, function () {
       console.log('done');
     });
     console.log('File: ', path);
     console.log('File descriptor: ', fd);
 
-    let process = spawn('python',["./sample_asr_python_grpc/main.py",path] );
+    let process = spawn('python', ["./sample_asr_python_grpc/main.py", path]);
 
-    process.stdout.on('data', function(data) {
+    process.stdout.on('data', function (data) {
       res.send(data.toString());
-    } )
+    })
 
     cleanupCallback();
   });
@@ -74,7 +67,6 @@ async function checkCreateUploadFolder(uploadFolder) {
 }
 
 function checkFileType(file) {
-  console.log(file.type)
   const type = file.type.split("/").pop()
   const validTypes = ['wav', 'plain', 'zip']
   if (validTypes.indexOf(type) === -1) {
@@ -86,9 +78,8 @@ function checkFileType(file) {
 
 router.post('/audioImport', async (req, res) => {
   const form = formidable.IncomingForm();
-  // console.log(__dirname)
-  const uploadFolder = './public/upload';
-  const extractDir = './public/upload/extract';
+  const uploadFolder = './server/public/upload';
+  const extractDir = './server/public/upload/extract';
 
   form.multiples = true;
   form.maxFileSize = 50 * 1024 * 1024; //50MB
@@ -97,37 +88,67 @@ router.post('/audioImport', async (req, res) => {
   if (!folderExist) {
     return res.json({ok: false, msg: 'There was an error when create the folder upload'})
   }
-  // console.log(form)
   form.parse(req, async (err, fields, files) => {
-    let myUploadedFiles = []
     if (err) {
       console.log("error parsing the file")
       return res.json({ok: false, msg: 'error parsing the file'})
     }
-    // console.log(files)
     if (!files.files.length) {
       const file = files.files;
-      // console.log(file.type)
       const type = file.type.split("/").pop()
       console.log(type);
       const isValid = await checkFileType(file)
-      console.log(file.name)
       const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
-      console.log(fileName)
-      myUploadedFiles.push(fileName)
+      // myUploadedFiles.push(fileName)
 
       if (!isValid) {
         return res.json({ok: false, msg: 'The file receive is invalid'})
       }
+      let myUploadedFiles = []
       try {
         await fs.renameSync(file.path, join(uploadFolder, fileName));
+        const filePath = join(uploadFolder, fileName)
+        let path_components = filePath.split('/')
+        // console.log(path_components)
+        const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
+        // console.log(audio_link)
+        let process = spawn('python', ["./sample_asr_python_grpc/main.py", filePath]);
+        let transcript = ''
+        process.stdout.on('data', function (data) {
+          // console.log(data.toString())
+          data = data.toString()
+          transcript += data;
+          console.log(transcript)
+        })
+        process.stderr.on('data', function (data) {
+          console.log('stderr: ' + data);
+          data = data.toString();
+          transcript += data;
+        });
+        process.on('close', function (code) {
+          console.log('closing code: ' + code);
+          console.log('Full output of script: ', transcript);
+          const listAudio = {
+            id: Date.now(),
+            audio_link: audio_link,
+            transcript: transcript,
+            audio_name: path_components[3]
+          }
+          myUploadedFiles.push(listAudio)
+          res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
+
+        });
+
       } catch (e) {
         console.log('Error uploading the file')
-        try {await fs.unlinkSync(file.path)} catch (e) {}
+        try {
+          await fs.unlinkSync(file.path)
+        } catch (e) {
+        }
         return res.json({ok: false, msg: 'Error uploading the file'})
       }
-
     } else {
+      let myUploadedFiles = []
       for (let i = 0; i < files.files.length; i++) {
         const file = files.files[i]
         if (!checkFileType(file)) {
@@ -135,9 +156,21 @@ router.post('/audioImport', async (req, res) => {
           return res.json({ok: false, msg: 'The sent file is not a valid type'})
         }
         const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
-        myUploadedFiles.push(fileName)
         try {
           await fs.renameSync(file.path, join(uploadFolder, fileName))
+          const filePath = join(uploadFolder, fileName)
+          let path_components = filePath.split('/')
+          const fileType = filePath.split('.')
+
+          if (fileType[1] === 'wav') {
+            const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
+            const listAudio = {
+              audio_link: audio_link,
+              transcript: "",
+              audio_name: path_components[3]
+            }
+            myUploadedFiles.push(listAudio)
+          }
         } catch (e) {
           console.log('Error uploading the file')
           try {
@@ -147,8 +180,9 @@ router.post('/audioImport', async (req, res) => {
           return res.json({ok: false, msg: 'Error uploading the file'})
         }
       }
+      res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
     }
-    res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
+    // res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
   })
 })
 

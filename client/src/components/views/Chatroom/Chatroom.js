@@ -26,8 +26,10 @@ export default function Chatroom(props) {
         .then(async (response) => {
           if (userID === response.payload.roomFound.user1) setUserRole("client");
           if (userID === response.payload.roomFound.user2) setUserRole("servant");
+          const audios = response.payload.roomFound.audioList;
+          console.log(audios.length)
         })
-  })
+  },[audios])
 
 
 
