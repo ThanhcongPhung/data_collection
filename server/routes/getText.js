@@ -76,6 +76,38 @@ function checkFileType(file) {
   return true;
 }
 
+
+function transcript(path, audio_link, audio_name) {
+  return new Promise(function (resolve, reject) {
+    let process = spawn('python', ["./sample_asr_python_grpc/main.py", path]);
+    let transcript = ''
+    process.stdout.on('data', function (data) {
+      // console.log(data.toString())
+      data = data.toString()
+      transcript += data;
+      const listAudio = {
+        audio_link: audio_link,
+        transcript: transcript,
+        audio_name: audio_name
+      }
+      resolve(listAudio)
+
+      // console.log(transcript)
+    })
+    process.stderr.on('data', function (data) {
+      // console.log('stderr: ' + data);
+      data = data.toString();
+      transcript += data;
+      reject(data)
+    });
+    // process.on('close', function (code) {
+    //   // console.log('closing code: ' + code);
+    //   resolve(code)
+    //   // console.log('Full output of script: ', transcript);
+    // });
+  })
+}
+
 router.post('/audioImport', async (req, res) => {
   const form = formidable.IncomingForm();
   const uploadFolder = './server/public/upload';
@@ -100,11 +132,11 @@ router.post('/audioImport', async (req, res) => {
       const isValid = await checkFileType(file)
       const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
       // myUploadedFiles.push(fileName)
+      let promises = []
 
       if (!isValid) {
         return res.json({ok: false, msg: 'The file receive is invalid'})
       }
-      let myUploadedFiles = []
       try {
         await fs.renameSync(file.path, join(uploadFolder, fileName));
         const filePath = join(uploadFolder, fileName)
@@ -112,32 +144,14 @@ router.post('/audioImport', async (req, res) => {
         // console.log(path_components)
         const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
         // console.log(audio_link)
-        let process = spawn('python', ["./sample_asr_python_grpc/main.py", filePath]);
-        let transcript = ''
-        process.stdout.on('data', function (data) {
-          // console.log(data.toString())
-          data = data.toString()
-          transcript += data;
-          console.log(transcript)
-        })
-        process.stderr.on('data', function (data) {
-          console.log('stderr: ' + data);
-          data = data.toString();
-          transcript += data;
-        });
-        process.on('close', function (code) {
-          console.log('closing code: ' + code);
-          console.log('Full output of script: ', transcript);
-          const listAudio = {
-            id: Date.now(),
-            audio_link: audio_link,
-            transcript: transcript,
-            audio_name: path_components[3]
-          }
-          myUploadedFiles.push(listAudio)
-          res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
+        let myUploadedFiles = []
+        promises.push(transcript(filePath, audio_link, path_components[3]))
 
-        });
+        Promise.all(promises)
+            .then((data) => {
+              res.json({ok: true, msg: 'Files uploaded successfully!', files: data})
+            })
+            .catch(err => console.log(err));
 
       } catch (e) {
         console.log('Error uploading the file')
@@ -149,6 +163,7 @@ router.post('/audioImport', async (req, res) => {
       }
     } else {
       let myUploadedFiles = []
+      let promises = []
       for (let i = 0; i < files.files.length; i++) {
         const file = files.files[i]
         if (!checkFileType(file)) {
@@ -170,7 +185,10 @@ router.post('/audioImport', async (req, res) => {
               audio_name: path_components[3]
             }
             myUploadedFiles.push(listAudio)
+            console.log(filePath)
+            promises.push(transcript(filePath, audio_link, path_components[3]))
           }
+
         } catch (e) {
           console.log('Error uploading the file')
           try {
@@ -180,7 +198,12 @@ router.post('/audioImport', async (req, res) => {
           return res.json({ok: false, msg: 'Error uploading the file'})
         }
       }
-      res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
+      Promise.all(promises)
+          .then((data) => {
+            res.json({ok: true, msg: 'Files uploaded successfully!', files: data})
+          })
+          .catch(err => console.log(err));
+      // res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
     }
     // res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
   })

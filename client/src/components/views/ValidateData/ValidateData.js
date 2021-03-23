@@ -10,6 +10,7 @@ import {
   SkipIcon,
   VolumeIcon, CheckIcon
 } from "../../ui/icons";
+
 import {Input, Modal} from 'antd';
 import Wave from '../Chatroom/Section/Wave';
 import {useDispatch, useSelector} from "react-redux";
@@ -23,35 +24,31 @@ export default function ValidateData() {
   const [value, setValue] = useState('');
   const canvasRef = useRef(null);
   const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState('');
   const [hasPlayed, setHasPlayed] = useState(false);
   const [editText, setEditText] = useState(false);
   const [clips, setClips] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   // const [vote , setVote] =useState(false)
-  const [allowedState, setAllowState ] = useState([5])
-  // const allowedState = [
-  //   { id: 1, value: "Alabama" },
-  //   { id: 2, value: "Georgia" },
-  //   { id: 3, value: "Tennessee" },
-  //   { id: 4, value: "Tennessee" },
-  //   { id: 5, value: "Tennessee" }
-  // ];
-  // const allAudio = useSelector(state => state.audio);
+  const [allowedState, setAllowState] = useState([5])
+
   const dispatch = useDispatch();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const showModal = () => {
-    setIsModalVisible(true);
+    setIsModalVisible(true)
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
+  const handleOk = (object) => {
+    console.log(object)
+    setIsModalVisible(false)
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleCancel = e => {
+    console.log(e);
+    setIsModalVisible(false)
+
   };
   useEffect(() => {
     dispatch(getAllAudio()).then(result => {
@@ -98,7 +95,7 @@ export default function ValidateData() {
     setIsPlaying(false)
   }
   const voteYes = (object) => {
-    if(!hasPlayed){
+    if (!hasPlayed) {
       return;
     }
     console.log(object)
@@ -107,8 +104,6 @@ export default function ValidateData() {
     setAllowState(newHistory);
     _ToggleNext()
   };
-
-
 
   useEffect(() => {
     const canvasObj = canvasRef.current;
@@ -123,6 +118,12 @@ export default function ValidateData() {
       }
     }
   });
+  const handleChange = (event) => {
+    console.log(event.target.value)
+    let newSrr = [...clips]
+    newSrr[selectedIndex].transcript = event.target.value;
+    setClips(newSrr)
+  };
   return (
       <div className="contribution">
         <div className="contribution-wrapper">
@@ -132,13 +133,10 @@ export default function ValidateData() {
               <div className="cards">
                 <div className="card">
                   <div className="card-dimension">
-                        <div style={{margin: "auto", width: "100%"}}>
-                          {value}
-                        </div>
+                    <div style={{margin: "auto", width: "100%"}}>
+                      {value}
+                    </div>
                   </div>
-                  {/*<button className="edit-button" onClick={() => setEditText(true)} type="button">*/}
-                  {/*  <PenIcon/>*/}
-                  {/*</button>*/}
                 </div>
 
               </div>
@@ -147,6 +145,37 @@ export default function ValidateData() {
                   <span style={{marginRight: "15px"}}>Skip</span>
                   <SkipIcon/>
                 </button>
+              </div>
+              <div className="button-listen">
+                <div className="primary-buttons">
+                  <canvas className="primary-buttons canvas" ref={canvasRef}
+                          style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
+                  <button className={"vote-button " + (hasPlayed ? 'yes' : '')}
+                          onClick={() => voteYes(clips[selectedIndex])} type="button"
+                          disabled={!hasPlayed}>
+                    <ThumbsUpIcon/>
+                    <span style={{marginLeft: "10px"}}>Yes</span>
+                  </button>
+                  <div style={{margin: '4rem'}}>
+                    <div className="primary-button">
+                      <audio
+                          src={audio}
+                          preload="auto"
+                          onEnded={hasPlayed1}
+                          ref={audioRef}
+                      />
+                      <button className="listen" onClick={play} type="button">
+                        {isPlaying ? <StopIcon/> : <OldPlayIcon/>}
+                      </button>
+                      <div className="primary-button backgroundPlay"/>
+                    </div>
+                  </div>
+                  <button className={"vote-button " + (hasPlayed ? 'no' : '')} type="button" onClick={showModal}>
+                    {/*disabled={!hasPlayed}>*/}
+                    <ThumbsDownIcon/>
+                    <span style={{marginLeft: "10px"}}>No</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -157,7 +186,7 @@ export default function ValidateData() {
                       <div className="contents">
                         <VolumeIcon/>
                       </div>
-                      <div className="num">{i+1}</div>
+                      <div className="num">{i + 1}</div>
                     </div>
                     {/*<div className="pill done">*/}
                     {/*  <div className="contents">*/}
@@ -172,62 +201,63 @@ export default function ValidateData() {
                   </div>
               )}
             </div>
-
           </div>
 
-          <div className="button-listen">
-            <div className="primary-buttons">
-              <canvas className="primary-buttons canvas" ref={canvasRef}
-                      style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
-              <button className={"vote-button " + (hasPlayed ? 'yes' : '')} onClick={()=>voteYes(clips[selectedIndex])} type="button"
-                      disabled={!hasPlayed}>
-                <ThumbsUpIcon/>
-                <span style={{marginLeft: "10px"}}>Yes</span>
-              </button>
-              <div style={{margin: '4rem'}}>
-                <div className="primary-button">
-                  <audio
-                      src="http://localhost:5000/public/1615517370192_test.wav"
-                      // src={audio}
-                      preload="auto"
-                      onEnded={hasPlayed1}
-                      ref={audioRef}
-                  />
-                  <button className="listen" onClick={play} type="button">
-                    {isPlaying ? <StopIcon/> : <OldPlayIcon/>}
-                  </button>
-                  <div className="primary-button backgroundPlay"/>
-                </div>
-              </div>
-              <button className={"vote-button " + (hasPlayed ? 'no' : '')} type="button" onClick={showModal}
-                      disabled={!hasPlayed}>
-                <ThumbsDownIcon/>
-                <span style={{marginLeft: "10px"}}>No</span>
-              </button>
-            </div>
-          </div>
+          {/*<div className="button-listen">*/}
+          {/*  <div className="primary-buttons">*/}
+          {/*    <canvas className="primary-buttons canvas" ref={canvasRef}*/}
+          {/*            style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>*/}
+          {/*    <button className={"vote-button " + (hasPlayed ? 'yes' : '')} onClick={()=>voteYes(clips[selectedIndex])} type="button"*/}
+          {/*            disabled={!hasPlayed}>*/}
+          {/*      <ThumbsUpIcon/>*/}
+          {/*      <span style={{marginLeft: "10px"}}>Yes</span>*/}
+          {/*    </button>*/}
+          {/*    <div style={{margin: '4rem'}}>*/}
+          {/*      <div className="primary-button">*/}
+          {/*        <audio*/}
+          {/*            src="http://localhost:5000/public/1615517370192_test.wav"*/}
+          {/*            // src={audio}*/}
+          {/*            preload="auto"*/}
+          {/*            onEnded={hasPlayed1}*/}
+          {/*            ref={audioRef}*/}
+          {/*        />*/}
+          {/*        <button className="listen" onClick={play} type="button">*/}
+          {/*          {isPlaying ? <StopIcon/> : <OldPlayIcon/>}*/}
+          {/*        </button>*/}
+          {/*        <div className="primary-button backgroundPlay"/>*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*    <button className={"vote-button " + (hasPlayed ? 'no' : '')} type="button" onClick={showModal}*/}
+          {/*            disabled={!hasPlayed}>*/}
+          {/*      <ThumbsDownIcon/>*/}
+          {/*      <span style={{marginLeft: "10px"}}>No</span>*/}
+          {/*    </button>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
         </div>
-        <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <Modal
+            title="Sửa lại phụ đề"
+            visible={isModalVisible}
+            onOk={()=>handleOk(clips[selectedIndex])}
+            onCancel={handleCancel}
+            // okButtonProps={{ disabled: true }}
+            // cancelButtonProps={{ disabled: true }}
+        >
           <TextArea
-              className="text-area"
               value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="&quot;Identified Text&quot;"
-              autoSize={{minRows: 4, maxRows: 4}}
+              onChange={handleChange}
+              placeholder="&quot;Không có phụ đề&quot;"
           />
-          {/*<audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>*/}
-          {/*  <source src={audio} type="audio/wav"/>*/}
-          {/*</audio>*/}
           <button
               className="play"
               type="button"
-              onClick={play}
-          >
-                    <span className="padder">
+              onClick={play}>
+            <span className="padder">
                         {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
-                    </span>
+            </span>
           </button>
         </Modal>
+
       </div>
 
   )

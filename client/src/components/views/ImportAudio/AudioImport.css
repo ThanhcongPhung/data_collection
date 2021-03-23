@@ -28,9 +28,16 @@
 .title-and-search{
     display: block;
     margin-top: 1rem;
+
     /*display: flex;*/
     /*flex-direction: row;*/
     /*flex-wrap: wrap;*/
+}
+.abc{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
 }
 .hr{
     border: none;

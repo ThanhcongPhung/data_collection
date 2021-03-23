@@ -135,7 +135,7 @@ function LandingPage(props) {
         <div className="container">
           <div className="box">
             <div className="column-title">
-              <h1 style={{fontSize: "48px", fontWeight: "normal"}}>Speak</h1>
+              <h1 style={{fontSize: "48px", fontWeight: "normal"}}>Thu âm</h1>
               <h1 style={{fontSize: "20px", fontWeight: "normal"}}>Donate your voice</h1>
               <p className="content-hover">Recording voice clips is an integral
                 part of building our open dataset; some would say it's the fun part too.
@@ -157,7 +157,7 @@ function LandingPage(props) {
           </div>
           <div className="box1">
             <div className="column-title">
-              <h1 style={{fontSize: "48px", fontWeight: "normal"}}>Listen</h1>
+              <h1 style={{fontSize: "48px", fontWeight: "normal"}}>Xác thực</h1>
               <h1 style={{fontSize: "20px", fontWeight: "normal"}}>Help us validate data</h1>
               <p className="content-hover">Validating donated clips is equally important to the Common Voice mission.
                 Take a listen and help us create quality open source voice data.
