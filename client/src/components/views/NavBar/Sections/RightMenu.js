@@ -25,10 +25,10 @@ function RightMenu(props) {
     return (
         <Menu mode={props.mode}>
           <Menu.Item key="mail">
-            <Link to="/login">Signin</Link>
+            <Link to="/login">Đăng nhập</Link>
           </Menu.Item>
           <Menu.Item key="app">
-            <Link to="/register">Signup</Link>
+            <Link to="/register">Đăng kí</Link>
           </Menu.Item>
         </Menu>
     )
@@ -46,7 +46,7 @@ function RightMenu(props) {
                 </div>
               </button>
             </div>}>
-            <Menu.Item key="logout"><a onClick={logoutHandler}>Logout</a></Menu.Item>
+            <Menu.Item key="logout"><a onClick={logoutHandler}>Đăng xuất</a></Menu.Item>
           </SubMenu>
         </Menu>
     )

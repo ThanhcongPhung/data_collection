@@ -70,8 +70,8 @@ function App(props) {
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           {/* content-type: 0 - audio, 1 - text message */}
           <Route exact path="/chatroom/:content_type/:id" component={Auth(ChatroomWithSocket, true)} />
-          <Route exact path="/audioImport" component={Auth(AudioImport, null)} />
-          <Route exact path="/validateData" component={Auth(ValidateData, null)} />
+          <Route exact path="/audioImport" component={Auth(AudioImport, true)} />
+          <Route exact path="/validateData" component={Auth(ValidateData, true)} />
         </Switch>
       </div>
       <Footer />
