@@ -5,72 +5,143 @@ const multer = require('multer')
 const {Audio} = require("./../models/Audio");
 const {Chatroom} = require("./../models/Chatroom");
 const {User} = require("./../models/User")
+const formidable = require('formidable');
+const {join} = require('path');
 const DOMAIN_NAME = "http://localhost:5000"
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './server/public')
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}_${file.originalname}`)
-  },
-  // fileFilter: (req, file, cb) => {
-  //   const ext = path.extname(file.originalname)
-  //   if (ext !== '.jpg' && ext !== '.png' && ext !== '.mp4') {
-  //     return cb(res.status(400).end('only jpg, png, mp4 is allowed'), false);
-  //   }
-  //   cb(null, true)
+const bluebird = require('bluebird')
+const fs = bluebird.promisifyAll(require('fs'));
+const spawn = require("child_process").spawn;
+
+async function checkCreateUploadFolder(uploadFolder) {
+  try {
+    await fs.statSync(uploadFolder)
+  } catch (e) {
+    if (e && e.code === 'ENOENT') {
+      try {
+        await fs.mkdirSync(uploadFolder)
+
+      } catch (e) {
+        console.error('Error create the upload folder')
+        return false
+      }
+    } else {
+      console.error('Error create the upload folder')
+      return false
+    }
+  }
+  return true;
+}
+
+function transcript(path, audio_link, audio_name) {
+  return new Promise(function (resolve, reject) {
+    let process = spawn('python', ["./sample_asr_python_grpc/main.py", path]);
+    let transcript = ''
+    process.stdout.on('data', function (data) {
+      data = data.toString()
+      transcript += data;
+      const listAudio = {
+        audio_link: audio_link,
+        transcript: transcript,
+        audio_name: audio_name
+      }
+      resolve(listAudio)
+
+    })
+    process.stderr.on('data', function (data) {
+      data = data.toString();
+      transcript += data;
+      reject(data)
+    });
+
+  })
+}
+router.post('/file', async (req, res) => {
+  const form = formidable.IncomingForm();
+  const uploadFolder = './server/public/record';
+  // the err ^^^^^^ there doesn't seem to be err but rather something else... But either way it works for now, the thing up there doesn't matter that much.
+  form.uploadDir = uploadFolder;
+  const folderExist = await checkCreateUploadFolder(uploadFolder)
+  if (!folderExist) {
+    return res.json({ok: false, msg: 'There was an error when create the folder upload'})
+  }
+  form.parse(req, async (err, fields, files) =>{
+    if (err) {
+      console.log("error parsing the file")
+      return res.json({ok: false, msg: 'error parsing the file'})
+    }
+    const file = files.file;
+    const user = fields.userID;
+    const room = fields.userID;
+    // console.log(file)
+    const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
+    try {
+      await fs.renameSync(file.path, join(uploadFolder, fileName));
+      const filePath = join(uploadFolder, fileName)
+      let path_components = filePath.split('/')
+      console.log(path_components)
+      const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
+      console.log(filePath)
+
+      transcript(filePath,audio_link,path_components[3])
+          .then((data)=>{
+            saveAudioMongo(user, room, data.audio_link, data.transcript,"Conversation",1,null,false)
+                  .then(audioID => {
+                    // update audio history in room
+                    err = updateRoomInfo(room, audioID);
+                    if (err) {
+                      res.status(500).send(err)
+                      throw err
+                    }
+
+                    res.status(200).send({link: audio_link, transcript: data.transcript})
+                  })
+          })
+          .catch(err=>{console.log(err)})
+    } catch (e) {
+      console.log('Error uploading the file')
+      try {
+        await fs.unlinkSync(file.path)
+      } catch (e) {
+      }
+      return res.json({ok: false, msg: 'Error uploading the file'})
+    }
+
+  })
+
+
+  // try {
+  //   console.log(req.file)
+  //   let path_components = req.file.path.split('/')
+  //   console.log(path_components)
+  //   let audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}`
+  //   let text = "text";
+  //   // save the audio information
+  //   saveAudioMongo(userID, roomID, audio_link, text)
+  //       .then(audioID => {
+  //         // update audio history in room
+  //         err = updateRoomInfo(roomID, audioID);
+  //         if (err) throw err
+  //       })
+  //   return res.status(200).send({success: true, link: audio_link, transcript: text})
+  // } catch (error) {
+  //   console.log("Dead")
+  //   res.status(500).send({success: false, error})
   // }
 })
-var upload = multer({ storage: storage }).single('soundBlob')
-
-router.post('/file', upload, (req, res, err) => {
-
-  // the err ^^^^^^ there doesn't seem to be err but rather something else... But either way it works for now, the thing up there doesn't matter that much.
-
-  const userID = req.body.userID;
-  const roomID = req.body.roomID;
-
-  if (err instanceof multer.MulterError) {
-    console.log(`err: ${err}`)
-    switch (err.code) {
-      case 'LIMIT_FILE_SIZE':
-        return new Error("Exceed file limit size");
-      default:
-        return next(new Error("Can't upload the file\n"));
-    }
-  } else if (err) {
-    console.log(err)
-    console.log(err())
-  }
-
-  try {
-    console.log(req.file)
-    let path_components = req.file.path.split('/')
-    console.log(path_components)
-    let audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}`
-    let text = "text";
-    // save the audio information
-    saveAudioMongo(userID, roomID, audio_link, text)
-        .then(audioID => {
-          // update audio history in room
-          err = updateRoomInfo(roomID, audioID);
-          if (err) throw err
-        })
-    return res.status(200).send({success: true, link: audio_link,transcript: text})
-  } catch (error) {
-    console.log("Dead")
-    res.status(500).send({success: false, error})
-  }
-})
 
 
-const saveAudioMongo = async (userID, chatroomID, audioLink,transcript) => {
+const saveAudioMongo = async (userID, chatroomID, audioLink, transcript,audioStyle,recordDevice,fixBy,isValidate) => {
 
   const audio = await Audio.create({
     user: userID,
     room: chatroomID,
     audioLink: audioLink,
-    transcript: transcript
+    transcript: transcript,
+    audioStyle: audioStyle,
+    recordDevice: recordDevice,
+    fixBy: fixBy,
+    isValidate: isValidate
+
   })
 
   return audio._id
@@ -106,7 +177,7 @@ router.post('/saveAudio', (req, res, err) => {
   const transcript = req.body.transcript;
   try {
     // save the audio information
-    saveAudioMongo(userID, roomID, audioLink,transcript)
+    saveAudioMongo(userID, roomID, audioLink, transcript)
         .then(audioID => {
           // update audio history in room
           err = updateRoomInfo(roomID, audioID);

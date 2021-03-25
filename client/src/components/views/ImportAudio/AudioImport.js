@@ -5,9 +5,12 @@ import {Alert, Spin, Table, Tooltip} from 'antd';
 import {Input} from 'antd';
 import axios from "axios";
 import {OldPlayIcon, PlayOutlineIcon, RedoIcon, ShareIcon, StopIcon} from "../../ui/icons";
+import {useSelector} from "react-redux";
 
 const {TextArea} = Input;
 export default function AudioImport() {
+  const user = useSelector(state => state.user)
+  let userID = user.userData ? user.userData._id : "";
 
   const [fileWav, setFileWav] = useState([])
   const [fileList, setFileList] = useState(([]))
@@ -64,8 +67,21 @@ export default function AudioImport() {
   }
 
 
-  const submitFile = (e) => {
-    console.log("submit")
+  const submitFile = (fileList) => {
+    const body = {
+      user: userID,
+      audioStyle: "Conversation",
+      audioList: fileList,
+    }
+    console.log(body)
+    axios.post('api/audio/import', body)
+        .then(res => {
+              if (res.data.ok) {
+                console.log("oke")
+                setFileList(null)
+              }
+            }
+        )
   }
   const getTranscript = async (fileWav) => {
 
@@ -136,9 +152,8 @@ export default function AudioImport() {
               <div className="title-and-search">
                 <div className="abc">
                   <h1 style={{marginRight: "1.5rem"}}>Danh sách tệp</h1>
-                  <button onClick={submitFile} type="primary" className="getText" disabled={fileList.length === 0}>Tải
-                    lên
-                  </button>
+                  <button onClick={()=>submitFile(fileList)} type="primary" className="getText">Tải lên</button>
+
                 </div>
                 <hr className="hr"></hr>
               </div>
