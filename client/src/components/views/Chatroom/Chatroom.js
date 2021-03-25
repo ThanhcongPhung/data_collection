@@ -6,6 +6,7 @@ import Scenario from './Section/Scenario';
 import AudioList from './Section/AudioList';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import {getRoom} from '../../../_actions/chatroom_actions'
+import ChatCard from "./Section/Sub-container/ChatCard";
 
 
 export default function Chatroom(props) {
@@ -20,6 +21,7 @@ export default function Chatroom(props) {
   const [userRole, setUserRole] = useState("");
   const [audioHistory,setAudioHistory] = useState([])
   const dispatch = useDispatch();
+  const divRef = useRef(null);
 
   useEffect(()=>{
     dispatch(getRoom(chatroomID))
@@ -30,7 +32,9 @@ export default function Chatroom(props) {
           console.log(audios.length)
         })
   },[audios])
-
+  useEffect(() => {
+    divRef.current.scrollIntoView({behavior: 'smooth'});
+  });
 
 
   useEffect(() => {
@@ -59,6 +63,10 @@ export default function Chatroom(props) {
         newHistory.push(data)
         setAudioHistory(newHistory);
       })
+    }
+  })
+  useEffect(() => {
+    if (socket) {
 
       socket.on('joinRoom announce', (data) => {
         console.log(`User ${data.username} has joined the room`)
@@ -68,12 +76,24 @@ export default function Chatroom(props) {
         console.log(`User ${data.username} has left the room`)
       })
     }
-  })
+  },[socket])
 
   return (
       <div className="contribution">
         <div className="chatroom">
           <section className="left-screen">
+            <div className="infinite-container">
+              <AudioList
+                  audioHistory={audioHistory}
+                  dispath={dispatch}
+                  userName={username}
+                  audio={audios}
+                  chatroomID={chatroomID}
+              />
+              <div
+                  ref={divRef}
+                  style={{float: "left", clear: "both"}}/>
+            </div>
             <AudioRecordingScreen
                 audioName={`VN${chatroomID}_${userID}_${Date.now()}.wav`}
                 canvasRef={canvasRef}
@@ -84,17 +104,9 @@ export default function Chatroom(props) {
                 userRole={userRole}
             />
           </section>
-
           <section className="right-screen">
             <Scenario/>
             <hr className="hr1"/>
-            <AudioList
-                audioHistory={audioHistory}
-                dispath={dispatch}
-                userName={username}
-                audio={audios}
-                chatroomID={chatroomID}
-            />
           </section>
         </div>
       </div>

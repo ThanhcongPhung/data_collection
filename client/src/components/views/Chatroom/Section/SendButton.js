@@ -2,70 +2,62 @@ import React from 'react'
 import axios from 'axios'
 
 
-export default function Test(props) {
+export default function SendButton(props) {
 
   const data = props ? props.audio : null;
   const blob = props ? props.blob : null;
   const userID = props ? props.userID : "";
   const roomID = props ? props.roomID : "";
-  const textValue = props ? props.value : "No content";
-  const fileName = props ? props.fileName : "test.wav";
+  // const textValue = props ? props.value : "No content";
+  const audioName = props ? props.audioName : "test.wav";
   const audioLink = props ? props.audioLink : "";
 
   const uploadAudio = async () => {
 
-    let body = {
-      roomID: roomID,
-      userID: userID,
-      audioLink: audioLink,
-      transcript: textValue,
-    }
-
+    // let body = {
+    //   roomID: roomID,
+    //   userID: userID,
+    //   audioLink: audioLink,
+    //   transcript: textValue,
+    // }
+    //
     console.log(blob)
+
+    const file = new File([blob],`${audioName}`,{type:'audio/wav'})
+    console.log(file)
+    let formData = new FormData()
+    formData.append("file",file)
+    formData.append('userID',userID)
+    formData.append('roomID',roomID)
+
+
     try {
       await axios.post(
-          '/api/upload/saveAudio',
-          body
+          '/api/upload/file',
+          formData,
       ).then(res => {
-        props.sendAudioSignal(res.data.link, res.data.transcript)
-        console.log(res.data.link);
+        console.log(res)
+        props.sendAudioSignal(res.data.link,res.data.transcript)
+
+        // if(res.data.status===1){
+        //   console.log(res.data.result.link)
+        //   let body={
+        //     roomID: roomID,
+        //     userID: userID,
+        //     audioLink: audioLink,
+        //     textLink: res.data.result.link,
+        //     transcript: textValue,
+        //   }
+        //   axios.post('/api/upload/saveAudio',body)
+        //       .then(res=>{
+        //         console.log(res)
+        //         props.sendAudioSignal(res.data.link,res.data.transcript)
+        //       })
+        // }
       })
-    } catch (error) {
-      alert(error);
+    } catch(error){
+        alert(error)
     }
-    // const url = "https://cdn.vbee.vn/api/v1/uploads/file";
-    // const blob = new Blob([textValue], {type: "text/plain;charset=utf-8"});
-    // const file = new File([blob],`${fileName}.txt`,{type:'text/plain;charset=utf-8'})
-    // console.log(file)
-    // let formData = new FormData()
-    // formData.append("destination", "congpt/record")
-    // formData.append("name",fileName)
-    // formData.append("file",file)
-    //
-    // try {
-    //   await axios.post(
-    //       url,
-    //       formData,
-    //   ).then(res => {
-    //     if(res.data.status===1){
-    //       console.log(res.data.result.link)
-    //       let body={
-    //         roomID: roomID,
-    //         userID: userID,
-    //         audioLink: audioLink,
-    //         textLink: res.data.result.link,
-    //         transcript: textValue,
-    //       }
-    //       axios.post('/api/upload/saveAudio',body)
-    //           .then(res=>{
-    //             console.log(res)
-    //             props.sendAudioSignal(res.data.link,res.data.transcript)
-    //           })
-    //     }
-    //   })
-    // } catch(error){
-    //     alert(error)
-    // }
   }
 
   const insertButton = data !== null ? (

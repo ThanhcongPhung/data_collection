@@ -162,13 +162,6 @@ export default function AudioRecordingScreen(props) {
                           </span>
                         </button>
                       </Tooltip>
-                      <Tooltip arrow title={text3}>
-                        <button className="share" type="button" onClick={()=>onGetText(blob)}>
-                          <span className="padder">
-                            <ShareIcon/>
-                          </span>
-                        </button>
-                      </Tooltip>
                     </>
                 )}
               </div>
@@ -192,24 +185,25 @@ export default function AudioRecordingScreen(props) {
           </div>
         </Row>
         <Row>
-          <Row>
-            <Col>
-              <div className="identifiedTextRecord">
-                <TextArea
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder="&quot;Identified Text&quot;"
-                    autoSize={{minRows: 3, maxRows: 5}}
-                />
-              </div>
-            </Col>
-          </Row>
+            {/*<Row>*/}
+            {/*  <Col>*/}
+            {/*    <div className="identifiedTextRecord">*/}
+            {/*      <TextArea*/}
+            {/*          value={value}*/}
+            {/*          onChange={(e) => setValue(e.target.value)}*/}
+            {/*          placeholder="&quot;Identified Text&quot;"*/}
+            {/*          autoSize={{minRows: 3, maxRows: 5}}*/}
+            {/*      />*/}
+            {/*    </div>*/}
+            {/*  </Col>*/}
+            {/*</Row>*/}
           <Row>
             <div className="submit-button">
               {renderAudio(audio)}
               <SendButton
                   audioLink={audioLink}
-                  fileName={fileName}
+                  audioName={audioName}
+                  // fileName={fileName}
                   audio={audio}
                   blob={blob}
                   sendAudioSignal={sendAudioSignal}

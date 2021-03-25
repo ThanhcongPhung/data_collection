@@ -4,7 +4,7 @@ const audioSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    // required: true,
+    required: true,
   },
   room: {
     type: mongoose.Schema.Types.ObjectId,
@@ -15,10 +15,25 @@ const audioSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  transcript:{
+  transcript: {
     type: String,
   },
-},{timestamps:true});
+  audioStyle: {
+    type: String,
+  },
+  //0: import,1:record
+  recordDevice: {
+    type: Number,
+  },
+  fixBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  //true: validated,false: no
+  isValidate: {
+    type: Boolean,
+  }
+}, {timestamps: true});
 
 const Audio = mongoose.model('Audio', audioSchema);
 
