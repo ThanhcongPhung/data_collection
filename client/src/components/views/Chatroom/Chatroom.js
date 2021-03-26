@@ -30,8 +30,28 @@ export default function Chatroom(props) {
           if (userID === response.payload.roomFound.user2) setUserRole("servant");
           const audios = response.payload.roomFound.audioList;
           console.log(audios.length)
+          let tempAudioList = [];
+          audios.map(audio => {
+            const audio_ob= {
+              // userID: audio.user._id,
+              sender: audio.username,
+              // ava: audio.user.image,
+              audioLink: audio.audioLink,
+              transcript:audio.transcript,
+            }
+            // tempTranscriptList.push({
+            //   audioID: audio._id,
+            //   content: audio.transcript,
+            //   yours: userID === audio.user,
+            //   fixBy: audio.fixBy ? audio.fixBy.name : "ASR Bot"
+            // });
+            return tempAudioList.push(audio_ob);
+            // return tempAudioList = [audio.link, ...tempAudioList];
+          })
+          setAudioHistory(tempAudioList);
+
         })
-  },[audios])
+  },[chatroomID])
   useEffect(() => {
     divRef.current.scrollIntoView({behavior: 'smooth'});
   });
@@ -97,6 +117,7 @@ export default function Chatroom(props) {
             <AudioRecordingScreen
                 audioName={`VN${chatroomID}_${userID}_${Date.now()}.wav`}
                 canvasRef={canvasRef}
+                username={username}
                 socket={socket}
                 user={user}
                 roomContentType={room_content_type}

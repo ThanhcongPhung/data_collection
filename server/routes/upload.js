@@ -55,6 +55,7 @@ function transcript(path, audio_link, audio_name) {
 
   })
 }
+
 router.post('/file', async (req, res) => {
   const form = formidable.IncomingForm();
   const uploadFolder = './server/public/record';
@@ -64,14 +65,15 @@ router.post('/file', async (req, res) => {
   if (!folderExist) {
     return res.json({ok: false, msg: 'There was an error when create the folder upload'})
   }
-  form.parse(req, async (err, fields, files) =>{
+  form.parse(req, async (err, fields, files) => {
     if (err) {
       console.log("error parsing the file")
       return res.json({ok: false, msg: 'error parsing the file'})
     }
     const file = files.file;
     const user = fields.userID;
-    const room = fields.userID;
+    const room = fields.roomID;
+    const username = fields.username;
     // console.log(file)
     const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
     try {
@@ -82,21 +84,23 @@ router.post('/file', async (req, res) => {
       const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
       console.log(filePath)
 
-      transcript(filePath,audio_link,path_components[3])
-          .then((data)=>{
-            saveAudioMongo(user, room, data.audio_link, data.transcript,"Conversation",1,null,false)
-                  .then(audioID => {
-                    // update audio history in room
-                    err = updateRoomInfo(room, audioID);
-                    if (err) {
-                      res.status(500).send(err)
-                      throw err
-                    }
+      transcript(filePath, audio_link, path_components[3])
+          .then((data) => {
+            saveAudioMongo(user, room, username, data.audio_link, data.transcript, "Conversation", 1, null, false)
+                .then(audioID => {
+                  // update audio history in room
+                  err = updateRoomInfo(room, audioID);
+                  if (err) {
+                    res.status(500).send(err)
+                    throw err
+                  }
 
-                    res.status(200).send({link: audio_link, transcript: data.transcript})
-                  })
+                  res.status(200).send({link: audio_link, transcript: data.transcript})
+                })
           })
-          .catch(err=>{console.log(err)})
+          .catch(err => {
+            console.log(err)
+          })
     } catch (e) {
       console.log('Error uploading the file')
       try {
@@ -130,11 +134,12 @@ router.post('/file', async (req, res) => {
 })
 
 
-const saveAudioMongo = async (userID, chatroomID, audioLink, transcript,audioStyle,recordDevice,fixBy,isValidate) => {
+const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcript, audioStyle, recordDevice, fixBy, isValidate) => {
 
   const audio = await Audio.create({
     user: userID,
     room: chatroomID,
+    username: username,
     audioLink: audioLink,
     transcript: transcript,
     audioStyle: audioStyle,
