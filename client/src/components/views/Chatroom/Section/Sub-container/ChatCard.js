@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-// import moment from 'moment';
+import moment from 'moment';
 import {Comment, Tooltip, Avatar} from 'antd';
 import {PlayOutlineIcon, RedoIcon, ShareIcon, StopIcon, ThumbsDownIcon, ThumbsUpIcon} from "../../../../ui/icons";
 import ReactEmoji from 'react-emoji';
@@ -15,7 +15,6 @@ export default function ChatCard(props) {
     isSentByCurrentUser = true;
   }
   const [isPlaying, setIsPlaying] = useState(false);
-  const text1 = <span>{message.transcript}</span>;
 
 
   const toggleIsPlaying = () => {
@@ -30,50 +29,35 @@ export default function ChatCard(props) {
     }
     setIsPlaying(status);
   };
+  const editText = ()=>{
+    console.log("edit")
+  }
   const renderAudio = (audio) => {
     return (
-        <div>
+        <div className="message-area">
           <div className="messageBox backgroundBlue">
             <div className="play-audio">
               <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
                 <source src={audio} type="audio/wav"/>
               </audio>
-              <Tooltip
-                  title={text1}
-                  arrow
-                  open={isPlaying}
-                  theme="grey-tooltip">
-                <button
-                    className="play"
-                    type="button"
-                    onClick={toggleIsPlaying}
-                >
+                <button className="play" type="button" onClick={toggleIsPlaying}>
                     <span className="abc">
                         {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
                     </span>
                 </button>
-              </Tooltip>
             </div>
             <div className="react-area">
               <p className="messageText colorWhite">{ReactEmoji.emojify(message.transcript)}</p>
-              <div className="check-button">
-                <button className="check" type="button">
-                  <ThumbsUpIcon/>
-                </button>
-                <button className="check1" type="button">
-                  <ThumbsDownIcon/>
-                </button>
-
-              </div>
-
             </div>
           </div>
-          {/*<h1></h1>*/}
-          {/*<div className="pill">*/}
-          {/*  <div className="pill done">*/}
-
-          {/*  </div>*/}
-          {/*</div>*/}
+          <div className="check-button">
+            <button className="check" type="button">
+              <ThumbsUpIcon/>
+            </button>
+            <button className="check" onClick={editText} type="button">
+              <ThumbsDownIcon/>
+            </button>
+          </div>
         </div>
 
     );
@@ -83,17 +67,31 @@ export default function ChatCard(props) {
       isSentByCurrentUser
           ? (
               <div className="messageContainer justifyEnd">
-                <Comment
-                    author={username}
-                    avatar={
-                      <Avatar
-                          src={message.ava} alt={username}
-                      />
-                    }
-                    content={
-                      renderAudio(message.audioLink)
-                    }
-                />
+                <div className="message-area">
+                  <div className="check-button">
+                    <button className="check" type="button">
+                      <ThumbsUpIcon/>
+                    </button>
+                    <button className="check" onClick={editText} type="button">
+                      <ThumbsDownIcon/>
+                    </button>
+                  </div>
+                  <div className="messageBox backgroundLight">
+                    <div className="play-audio">
+                      <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
+                        <source src={message.audioLink} type="audio/wav"/>
+                      </audio>
+                      <button className="play" type="button" onClick={toggleIsPlaying}>
+                    <span className="abc">
+                        {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
+                    </span>
+                      </button>
+                    </div>
+                    <div className="react-area">
+                      <p className="messageText colorWhite">{ReactEmoji.emojify(message.transcript)}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
           ) :
           (

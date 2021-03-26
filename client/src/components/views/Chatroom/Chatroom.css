@@ -288,12 +288,13 @@ audio.audioPlay{
 }
 
 .backgroundBlue {
-    background: rgb(23,49,182);
-    background: radial-gradient(circle, rgba(23,49,182,1) 72%, rgba(252,70,107,1) 100%);
+    /*background: rgb(23,49,182);*/
+    background: #3E4042;
+    /*background: radial-gradient(circle, rgba(23,49,182,1) 72%, rgba(252,70,107,1) 100%);*/
 }
 
 .backgroundLight {
-    background: #F3F3F3;
+    background: #0084FF;
 }
 
 button.play{
@@ -320,15 +321,28 @@ button.play{
 .check-button{
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+}
+.check{
+    margin: 10px;
+}
+button.check svg path{
+    fill: white;
 }
 
-button.check path{
-    fill: white;
+.message-area{
+    display: flex;
+    flex-direction: row;
+    /*justify-content: space-between;*/
+    /*border: 1px solid var(--c);*/
+    /*--c:black;*/
 }
-button.check1{
-    margin-right:1rem;
+.message-area:hover{
+    --c:#3E4042;
 }
-button.check1 path{
-    fill: white;
+.message-area > .check-button> button.check svg path{
+    /*background-color: var(--c);*/
+    fill: var(--c);
 }
+

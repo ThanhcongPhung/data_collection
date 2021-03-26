@@ -11,7 +11,7 @@ export default function SendButton(props) {
   // const textValue = props ? props.value : "No content";
   const audioName = props ? props.audioName : "test.wav";
   const audioLink = props ? props.audioLink : "";
-
+  const username = props.username;
   const uploadAudio = async () => {
 
     // let body = {
@@ -29,6 +29,7 @@ export default function SendButton(props) {
     formData.append("file",file)
     formData.append('userID',userID)
     formData.append('roomID',roomID)
+    formData.append('username',username)
 
 
     try {

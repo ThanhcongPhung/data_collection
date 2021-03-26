@@ -11,6 +11,10 @@ const audioSchema = new mongoose.Schema({
     ref: 'Chatroom',
     // required: true,
   },
+  username:{
+    type:String,
+    required: false,
+  },
   audioLink: {
     type: String,
     unique: true,
@@ -28,6 +32,7 @@ const audioSchema = new mongoose.Schema({
   fixBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    default:null,
   },
   //true: validated,false: no
   isValidate: {

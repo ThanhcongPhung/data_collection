@@ -14,6 +14,7 @@ export default function AudioList(props) {
 
   return (
       <section className="audioHistory">
+        {/*{console.log(audios.audios)}*/}
         <ScrollToBottom className="messages">
             {/*{audios.audios && audios.audios.map((audio,i) => (*/}
             {/*    <div key={i}><ChatCard key={audio._id} {...audio} /></div>*/}

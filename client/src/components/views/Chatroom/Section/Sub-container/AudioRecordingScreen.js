@@ -16,6 +16,7 @@ export default function AudioRecordingScreen(props) {
   let socket = props.socket;
   const chatroomID = props.chatroomID;
   const user = props.user;
+  const username = props.username;
   const audioName = props.audioName;
   const [fileName,setFileName]=useState('');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -175,6 +176,7 @@ export default function AudioRecordingScreen(props) {
       <div>
         <Row style={{textAlign: "center"}}>
           <div className="primary-buttons">
+
             <canvas className="primary-buttons canvas" ref={canvasRef}
                     style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
             <Recorder isRecording={isRecording}
@@ -182,6 +184,21 @@ export default function AudioRecordingScreen(props) {
                       setBlob={setBlob}
                       setIsRecording={setIsRecording}
             />
+            {/*<div className="submit-button">*/}
+            {/*  {renderAudio(audio)}*/}
+            {/*  <SendButton*/}
+            {/*      username = {username}*/}
+            {/*      audioLink={audioLink}*/}
+            {/*      audioName={audioName}*/}
+            {/*      // fileName={fileName}*/}
+            {/*      audio={audio}*/}
+            {/*      blob={blob}*/}
+            {/*      sendAudioSignal={sendAudioSignal}*/}
+            {/*      userID={user.userData ? user.userData._id : ""}*/}
+            {/*      roomID={chatroomID}*/}
+            {/*      value={value}*/}
+            {/*  />*/}
+            {/*</div>*/}
           </div>
         </Row>
         <Row>
@@ -201,6 +218,7 @@ export default function AudioRecordingScreen(props) {
             <div className="submit-button">
               {renderAudio(audio)}
               <SendButton
+                  username = {username}
                   audioLink={audioLink}
                   audioName={audioName}
                   // fileName={fileName}
