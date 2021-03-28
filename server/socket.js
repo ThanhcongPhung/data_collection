@@ -195,7 +195,7 @@ sockets.init = function (server) {
     });
 
     // Just receive a signal
-    socket.on('chatroomAudio', ({chatroomID, sender, ava,link,transcript}) => {
+    socket.on('chatroomAudio', ({chatroomID, sender, ava,link,transcript,audioID,userID}) => {
       // sending to individual socketid (private message)
       io.to(chatroomID).emit('newAudioURL', {
         userID: socket.userId,
@@ -203,6 +203,7 @@ sockets.init = function (server) {
         ava: ava,
         audioLink: link,
         transcript:transcript,
+        audioID:audioID
       });
       console.log("Receive audio in chatroom " + chatroomID + " from " + sender + ". Here's the audio link: " + link)
     });
@@ -229,6 +230,14 @@ sockets.init = function (server) {
 
 
     });
+    socket.on('update transcript',({chatroomID,sender,newTranscript,audioIndex})=>{
+      console.log(chatroomID+"/"+newTranscript)
+      io.to(chatroomID).emit("change transcript",{
+        username: sender,
+        transcript: newTranscript,
+        index: audioIndex,
+      })
+    })
   });
 }
 

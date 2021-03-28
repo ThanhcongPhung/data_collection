@@ -95,7 +95,7 @@ router.post('/file', async (req, res) => {
                     throw err
                   }
 
-                  res.status(200).send({link: audio_link, transcript: data.transcript})
+                  res.status(200).send({link: audio_link, transcript: data.transcript,audioID:audioID})
                 })
           })
           .catch(err => {

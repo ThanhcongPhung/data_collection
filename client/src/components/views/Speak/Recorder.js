@@ -74,7 +74,7 @@ class Recorder extends Component {
     }
 
     return (
-        <div style={{margin: '4rem auto'}}>
+        <div style={{margin: '3rem'}}>
           <div className="primary-button">
             <button className="record" type="button"
                 onClick={() => {

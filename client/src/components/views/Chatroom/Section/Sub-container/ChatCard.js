@@ -1,22 +1,114 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import moment from 'moment';
 import {Comment, Tooltip, Avatar} from 'antd';
-import {PlayOutlineIcon, RedoIcon, ShareIcon, StopIcon, ThumbsDownIcon, ThumbsUpIcon} from "../../../../ui/icons";
+import {
+  CancelIcon,
+  PlayOutlineIcon,
+  RedoIcon,
+  SendIcon,
+  ShareIcon,
+  StopIcon,
+  ThumbsDownIcon,
+  ThumbsUpIcon
+} from "../../../../ui/icons";
 import ReactEmoji from 'react-emoji';
 import {EditOutlined} from "@ant-design/icons";
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import axios from "axios";
 
 export default function ChatCard(props) {
+  let {sender,audioLink,transcript,audioID,userID}= props.listAudio[props.index]
   let isSentByCurrentUser = false;
   const audioRef = useRef(null);
-
+  const [ edit, setEdit ] = useState(false);
   const username = props.name;
-  const message = props.message;
-  if (message.sender === username) {
+  const setListAudio = props.setListAudio;
+  const textInput = useRef();
+  const socket = props.socket;
+  const audioIndex = props.index
+  const chatroomID = props.chatroomID;
+  // const message = props.message;
+  const [duration,setDuration] = useState(0)
+  const [ expenseTranscript, setExpenseTranscript ] = useState(transcript);
+
+  useEffect(()=>{
+    const {current: audio} = audioRef;
+    audio.onloadedmetadata = () => {
+      setDuration(formatTime(audio.duration.toFixed(0)))
+    }
+  })
+
+  function formatTime(seconds) {
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = seconds % 60
+    return [h, m > 9 ? m : h ? '0' + m : m || '0', s > 9 ? s : '0' + s]
+        .filter(a => a)
+        .join(':')
+  }
+  if (sender === username) {
     isSentByCurrentUser = true;
   }
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const renderEditView = () => {
+    return (
+        <div style={{display:"flex",flexDirection:'column'}}>
+          <input
+              style={{color:"black"}}
+              type="text"
+              ref={textInput}
+              defaultValue={expenseTranscript}
+          />
+          <div className="double-button">
+            <button onClick={() => setEdit(false)} type="button" className="cancel">X</button>
+            <button onClick={() => updateValue()} type="button" className="send"><SendIcon/></button>
+          </div>
+        </div>
+    );
+  };
+  const updateValue = async () => {
+    const value = textInput.current.value;
+    console.log(value)
+    setExpenseTranscript(value);
+    textInput.current.defaultValue = value;
+    let body = {
+      userID: userID,
+      audioID: audioID,
+      transcript: value,
+    }
+  console.log(body)
+    try {
+      await axios.put(
+          '/api/audio/updateTranscript',
+          body,
+      ).then(res => {
+        console.log(res)
 
+        setEdit(false);
+        const listAudio = [ ...props.listAudio ]; // Get a copy of the expenses array
+        // // Replace the current expense item
+        listAudio.splice( props.index, 1, {
+          userID,sender, audioLink,transcript: res.data.audioUpdated.transcript,audioID,
+        });
+        let newTranscript = res.data.audioUpdated.transcript
+        console.log(newTranscript)
+        // // Update the parent state
+        setListAudio(listAudio);
+        if(socket){
+          socket.emit("update transcript",{
+            chatroomID,
+            sender,
+            newTranscript,
+            audioIndex
+          })
+        }
+
+      })
+    } catch(error){
+      alert(error)
+    }
+  };
   const toggleIsPlaying = () => {
     const {current: audio} = audioRef;
 
@@ -30,11 +122,12 @@ export default function ChatCard(props) {
     setIsPlaying(status);
   };
   const editText = ()=>{
-    console.log("edit")
+    setEdit(true)
   }
-  const renderAudio = (audio) => {
+  const renderAudio = (audio,sender) => {
     return (
-        <div className="message-area">
+        <div className="message-area" id="button">
+          <p className="sentText pr-10">{sender}</p>
           <div className="messageBox backgroundBlue">
             <div className="play-audio">
               <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
@@ -47,7 +140,11 @@ export default function ChatCard(props) {
                 </button>
             </div>
             <div className="react-area">
-              <p className="messageText colorWhite">{ReactEmoji.emojify(message.transcript)}</p>
+              {edit ? renderEditView()
+              :
+                  <p className="messageText colorWhite">{ReactEmoji.emojify(expenseTranscript)}</p>
+              }
+
             </div>
           </div>
           <div className="check-button">
@@ -63,6 +160,7 @@ export default function ChatCard(props) {
     );
 
   }
+
   return (
       isSentByCurrentUser
           ? (
@@ -79,7 +177,7 @@ export default function ChatCard(props) {
                   <div className="messageBox backgroundLight">
                     <div className="play-audio">
                       <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
-                        <source src={message.audioLink} type="audio/wav"/>
+                        <source src={audioLink} type="audio/wav"/>
                       </audio>
                       <button className="play" type="button" onClick={toggleIsPlaying}>
                     <span className="abc">
@@ -88,7 +186,11 @@ export default function ChatCard(props) {
                       </button>
                     </div>
                     <div className="react-area">
-                      <p className="messageText colorWhite">{ReactEmoji.emojify(message.transcript)}</p>
+                      {edit ? renderEditView()
+                          :
+                          <p className="messageText colorWhite">{ReactEmoji.emojify(expenseTranscript)}</p>
+                      }
+
                     </div>
                   </div>
                 </div>
@@ -96,17 +198,8 @@ export default function ChatCard(props) {
           ) :
           (
               <div className="messageContainer justifyStart">
-                <Comment
-                    author={message.sender}
-                    avatar={
-                      <Avatar
-                          src={message.ava} alt={message.sender}
-                      />
-                    }
-                    content={
-                      renderAudio(message.audioLink)
-                    }
-                />
+                {renderAudio(audioLink,sender)}
+
               </div>
           )
 

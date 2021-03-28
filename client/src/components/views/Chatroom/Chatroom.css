@@ -5,6 +5,13 @@
 }
 
 .chatroom {
+    max-width: 76rem;
+
+    /*padding-top: 107px;*/
+    /*display: flex;*/
+    /*flex-wrap: wrap;*/
+    margin-right: auto;
+    margin-left: auto;
     /*background-image: linear-gradient(to top,white 20%,#f3f2f1);*/
     display: flex;
     background: none;
@@ -59,8 +66,13 @@
     /*background: white;*/
 }
 
-.buttons {
+button.buttons {
+    display: flex;
     cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 1px;
+    z-index: 2;
     border: none;
     outline: none;
     border-radius: 50px;
@@ -76,10 +88,11 @@
     background: #629ff4;
 }
 .pill{
+    z-index: 2;
     border-radius: 29px;
     box-sizing: border-box;
 
-    width: 170px;
+    width: 130px;
     height: 57px;
 
     flex-shrink: 0;
@@ -344,5 +357,28 @@ button.check svg path{
 .message-area > .check-button> button.check svg path{
     /*background-color: var(--c);*/
     fill: var(--c);
+}
+.double-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+button.send svg path{
+    fill: white;
+}
+button.cancel svg path{
+    fill: white;
+}
+.instruction{
+    margin-top: 20px;
+    min-height: 23px;
+    font-style: italic;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family: Open Sans, sans-serif;
+    font-size: 16px;
 }
 
