@@ -3,10 +3,10 @@ import {useSelector, useDispatch} from 'react-redux';
 import './Section/RecordButton.css';
 import './Chatroom.css'
 import Scenario from './Section/Scenario';
-import AudioList from './Section/AudioList';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import {getRoom} from '../../../_actions/chatroom_actions'
 import ChatCard from "./Section/Sub-container/ChatCard";
+import {MicIcon, ThumbsDownIcon, ThumbsUpIcon} from "../../ui/icons";
 
 
 export default function Chatroom(props) {
@@ -15,43 +15,35 @@ export default function Chatroom(props) {
   const room_content_type = window.location.href.split("/")[4]
   const chatroomID = window.location.href.split("/")[5]
   const user = useSelector(state => state.user);
-  const audios = useSelector(state => state.audio);
   let userID = user.userData ? user.userData._id : "";
   let username = user.userData ? user.userData.name : "";
   const [userRole, setUserRole] = useState("");
-  const [audioHistory,setAudioHistory] = useState([])
+  const [audioHistory, setAudioHistory] = useState(([]))
   const dispatch = useDispatch();
   const divRef = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getRoom(chatroomID))
         .then(async (response) => {
           if (userID === response.payload.roomFound.user1) setUserRole("client");
           if (userID === response.payload.roomFound.user2) setUserRole("servant");
           const audios = response.payload.roomFound.audioList;
-          console.log(audios.length)
           let tempAudioList = [];
           audios.map(audio => {
-            const audio_ob= {
-              // userID: audio.user._id,
+            const audio_obj = {
+              userID: audio.user._id,
               sender: audio.username,
-              // ava: audio.user.image,
               audioLink: audio.audioLink,
-              transcript:audio.transcript,
+              transcript: audio.transcript,
+              audioID: audio._id,
             }
-            // tempTranscriptList.push({
-            //   audioID: audio._id,
-            //   content: audio.transcript,
-            //   yours: userID === audio.user,
-            //   fixBy: audio.fixBy ? audio.fixBy.name : "ASR Bot"
-            // });
-            return tempAudioList.push(audio_ob);
-            // return tempAudioList = [audio.link, ...tempAudioList];
+            return tempAudioList.push(audio_obj);
           })
           setAudioHistory(tempAudioList);
 
         })
-  },[chatroomID])
+  }, [chatroomID])
+
   useEffect(() => {
     divRef.current.scrollIntoView({behavior: 'smooth'});
   });
@@ -78,9 +70,10 @@ export default function Chatroom(props) {
   useEffect(() => {
     if (socket) {
       socket.on('newAudioURL', (data) => {
-        console.log(`Receive signal from ${data.sender} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
+        console.log(`Receive signal from ${data.userID} with the ID of ${data.userID}. Here's the link: ${data.audioLink}`)
         let newHistory = [...audioHistory]
         newHistory.push(data)
+        console.log(newHistory)
         setAudioHistory(newHistory);
       })
     }
@@ -96,20 +89,49 @@ export default function Chatroom(props) {
         console.log(`User ${data.username} has left the room`)
       })
     }
-  },[socket])
+  }, [socket])
+  useEffect(() => {
+    if (socket) {
+      socket.on('change transcript', ({username,transcript,index}) => {
+        let newHistory = [...audioHistory]
+        if(newHistory.length!==0 ){
+          newHistory[index].transcript = transcript
+          newHistory[index].fixBy = username;
+          console.log(newHistory[index].transcript)
+          setAudioHistory(newHistory);
+          console.log(audioHistory)
+        }
+
+      })
+    }
+  },[audioHistory,socket])
 
   return (
       <div className="contribution">
         <div className="chatroom">
           <section className="left-screen">
+            <div className="instruction">
+              Nhấp &nbsp;<ThumbsUpIcon/>&nbsp;   xác nhận phụ đề đúng/
+              Nhấp  &nbsp;<ThumbsDownIcon/>  &nbsp; sửa lại phụ đề
+            </div>
             <div className="infinite-container">
-              <AudioList
-                  audioHistory={audioHistory}
-                  dispath={dispatch}
-                  userName={username}
-                  audio={audios}
-                  chatroomID={chatroomID}
-              />
+              <section className="audioHistory">
+                {/*{console.log([...audioHistory])}*/}
+                <div className="messages">
+                  {audioHistory.map((message, i) =>
+                      <ChatCard
+                          key={i}
+                          name={username}
+                          listAudio={audioHistory}
+                          setListAudio={setAudioHistory}
+                          index={i}
+                          socket={socket}
+                          chatroomID={chatroomID}
+                      />
+                  )}
+
+                </div>
+              </section>
               <div
                   ref={divRef}
                   style={{float: "left", clear: "both"}}/>
@@ -123,6 +145,7 @@ export default function Chatroom(props) {
                 roomContentType={room_content_type}
                 chatroomID={chatroomID}
                 userRole={userRole}
+                userID={userID}
             />
           </section>
           <section className="right-screen">

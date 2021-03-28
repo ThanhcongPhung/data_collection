@@ -46,6 +46,32 @@ router.post("/import", (req,res) => {
       res.json({ok :"ok"})
     }
   });
+})
+
+router.put("/updateTranscript", (req, res) => {
+
+  const audioID = req.body.audioID;
+  const userID = req.body.userID;
+  const transcript  = req.body.transcript;
+  console.log(req.body)
+  Audio.findById(audioID)
+      .then(audio => {
+
+        if(!audio) {
+          console.log("Can't find audio to update transcript!");
+          res.status(404).send({ success: false, message: "Audio not found" });
+          throw "Can't find audio"
+        } else {
+          audio.transcript = transcript;
+          audio.fixBy = userID;
+          return audio.save();
+        }
+      })
+      .then(audioUpdated => res.status(200).send({ success: true, audioUpdated }))
+      .catch(err => {
+        console.log(`Error while updating audio ${audioID} transcript... ${err}`)
+        res.status(500).send({success: false, message: "Something's wrong internally, so sorry..."})
+      })
 
 })
 module.exports = router;

@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-const Icon = (path: string, title = '') => ({ children, ...props }: any) => (
+const Icon = (path: string, title = '') => ({children, ...props}: any) => (
     <img src={path} title={title} {...props} alt="This is"/>
 );
 
 
 let idCounter = 0;
+
 function uniqueIcon(component: (id: number, props: any) => React.ReactNode) {
   return class extends React.Component<any> {
     id = idCounter++;
@@ -15,6 +16,7 @@ function uniqueIcon(component: (id: number, props: any) => React.ReactNode) {
     }
   };
 }
+
 export const PlayIcon = Icon(require('./play.svg'), 'play');
 
 export const OldPlayIcon = (props: any) => (
@@ -39,10 +41,10 @@ export const ThumbsUpIcon = (props: any) => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(1 1)">
         <mask id="thumbs-up" fill="#fff">
-          <use xlinkHref="#thumbs-up-path" />
+          <use xlinkHref="#thumbs-up-path"/>
         </mask>
         <g fill="#4A4A4A" mask="url(#thumbs-up)">
-          <path d="M-1-1h24v24H-1z" />
+          <path d="M-1-1h24v24H-1z"/>
         </g>
       </g>
     </svg>
@@ -57,10 +59,10 @@ export const ThumbsDownIcon = (props: any) => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(1 1)">
         <mask id="thumbs-down-mask" fill="#fff">
-          <use xlinkHref="#thumbs-down-path" />
+          <use xlinkHref="#thumbs-down-path"/>
         </mask>
         <g fill="#4A4A4A" mask="url(#thumbs-down-mask)">
-          <path d="M-1-1h24v24H-1z" />
+          <path d="M-1-1h24v24H-1z"/>
         </g>
       </g>
     </svg>
@@ -75,11 +77,11 @@ export const PenIcon = () => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(2 2)">
         <mask id="pen-b" fill="#fff">
-          <use xlinkHref="#pen-a" />
+          <use xlinkHref="#pen-a"/>
         </mask>
-        <use fill="#000" fillRule="nonzero" xlinkHref="#pen-a" />
+        <use fill="#000" fillRule="nonzero" xlinkHref="#pen-a"/>
         <g fill="#4A4A4A" mask="url(#pen-b)">
-          <path d="M-2-2h24v24H-2z" />
+          <path d="M-2-2h24v24H-2z"/>
         </g>
       </g>
     </svg>
@@ -94,12 +96,33 @@ export const TrashIcon = () => (
       </defs>
       <g fill="none" fillRule="evenodd">
         <mask id="trash-b" fill="#fff">
-          <use xlinkHref="#trash-a" />
+          <use xlinkHref="#trash-a"/>
         </mask>
         <g fill="#4A4A4A" mask="url(#trash-b)">
-          <path d="M0 0h24v24H0z" />
+          <path d="M0 0h24v24H0z"/>
         </g>
       </g>
+    </svg>
+);
+
+export const SendIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <title>send</title>
+      <path
+          d="M6.48 6.794l.49 1.963a1 1 0 0 1-1.94.486l-1-4a1 1 0 0 1 1.393-1.15l15 7a1 1 0 0 1 0 1.813l-15 7a1 1
+          0 0 1-1.385-1.18l2-7A1 1 0 0 1 7 11h4a1 1 0 0 1 0 2H7.754l-1.19 4.167L17.635 12 6.48 6.794z"
+          fill="#000" fillRule="nonzero"/>
+    </svg>
+);
+export const CancelIcon = () => (
+    <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" id="fi_1828774">
+      <path d="m243.1875 182.859375 113.132812-113.132813c12.5-12.5 12.5-32.765624
+      0-45.246093l-15.082031-15.082031c-12.503906-12.503907-32.769531-12.503907-45.25 0l-113.128906
+      113.128906-113.132813-113.152344c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5
+      12.503907-12.5 32.769531 0 45.25l113.152344 113.152344-113.128906 113.128906c-12.503907 12.503907-12.503907
+      32.769531 0 45.25l15.082031 15.082031c12.5 12.5 32.765625 12.5 45.246093 0l113.132813-113.132812
+      113.128906 113.132812c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082031c12.5-12.503906 12.5-32.769531 0-45.25zm0 0">
+      </path>
     </svg>
 );
 export const SkipIcon = uniqueIcon(id => (
@@ -112,11 +135,11 @@ export const SkipIcon = uniqueIcon(id => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(4.583 5.5)">
         <mask id={'skip-mask' + id} fill="#fff">
-          <use xlinkHref={'#skip-path' + id} />
+          <use xlinkHref={'#skip-path' + id}/>
         </mask>
-        <use fill="#000" fillRule="nonzero" xlinkHref={'#skip-path' + id} />
+        <use fill="#000" fillRule="nonzero" xlinkHref={'#skip-path' + id}/>
         <g fill="#000" mask={`url(#skip-mask${id})`}>
-          <path d="M-4.583-5.5h22v22h-22z" />
+          <path d="M-4.583-5.5h22v22h-22z"/>
         </g>
       </g>
     </svg>
@@ -131,10 +154,10 @@ export const VolumeIcon = (props: any) => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(0 4)">
         <mask id="volume-mask" fill="#fff">
-          <use xlinkHref="#volume-path" />
+          <use xlinkHref="#volume-path"/>
         </mask>
         <g fill="#4A4A4A" mask="url(#volume-mask)">
-          <path d="M-1-4h24v24H-1z" />
+          <path d="M-1-4h24v24H-1z"/>
         </g>
       </g>
     </svg>
@@ -149,21 +172,21 @@ export const CheckIcon = uniqueIcon((id, props) => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(3 6)">
         <mask id={'check-mask' + id} fill="#fff">
-          <use xlinkHref={'#check-path' + id} />
+          <use xlinkHref={'#check-path' + id}/>
         </mask>
         <g fill="#4A4A4A" mask={'url(#check-mask' + id + ')'}>
-          <path d="M-3-6h24v24H-3z" />
+          <path d="M-3-6h24v24H-3z"/>
         </g>
       </g>
     </svg>
 ));
-export const MenuIcon = ({ className = '', ...props }: any) => (
+export const MenuIcon = ({className = '', ...props}: any) => (
     <svg className={'menu-icon ' + className} width="10" height="10" {...props}>
-      <rect className="left" x="4" y="0" width="2" height="2" />
-      <rect className="right" x="4" y="0" width="2" height="2" />
-      <rect x="4" y="4" width="2" height="2" />
-      <rect className="left" x="4" y="8" width="2" height="2" />
-      <rect className="right" x="4" y="8" width="2" height="2" />
+      <rect className="left" x="4" y="0" width="2" height="2"/>
+      <rect className="right" x="4" y="0" width="2" height="2"/>
+      <rect x="4" y="4" width="2" height="2"/>
+      <rect className="left" x="4" y="8" width="2" height="2"/>
+      <rect className="right" x="4" y="8" width="2" height="2"/>
     </svg>
 );
 export const StopIcon = uniqueIcon(id => (
@@ -176,10 +199,10 @@ export const StopIcon = uniqueIcon(id => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(2.333 2.333)">
         <mask id={'stop-mask' + id} fill="#fff">
-          <use xlinkHref={'#stop-path' + id} />
+          <use xlinkHref={'#stop-path' + id}/>
         </mask>
         <g fill="#FF4F5E" mask={`url(#stop-mask${id})`}>
-          <path d="M-2.333-2.333h28v28h-28z" />
+          <path d="M-2.333-2.333h28v28h-28z"/>
         </g>
       </g>
     </svg>
@@ -194,11 +217,11 @@ export const MicIcon = uniqueIcon(id => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(5)">
         <mask id={'mic-mask' + id} fill="#fff">
-          <use xlinkHref={'#mic-path' + id} />
+          <use xlinkHref={'#mic-path' + id}/>
         </mask>
-        <use xlinkHref={'#mic-path' + id} />
+        <use xlinkHref={'#mic-path' + id}/>
         <g fill="#FF4F5E" mask={`url(#mic-mask${id})`}>
-          <path d="M-5 0h28v28H-5z" />
+          <path d="M-5 0h28v28H-5z"/>
         </g>
       </g>
     </svg>
@@ -213,10 +236,10 @@ export const PlayOutlineIcon = uniqueIcon(id => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(4 2)">
         <mask id={'play-outline-mask' + id} fill="#fff">
-          <use xlinkHref={'#play-outline-path' + id} />
+          <use xlinkHref={'#play-outline-path' + id}/>
         </mask>
         <g fill="#4A4A4A" mask={`url(#play-outline-mask${id})`}>
-          <path d="M-4-1h24v24H-4z" />
+          <path d="M-4-1h24v24H-4z"/>
         </g>
       </g>
     </svg>
@@ -231,10 +254,10 @@ export const RedoIcon = uniqueIcon(id => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(1 2)">
         <mask id={'redo-mask' + id} fill="#fff">
-          <use xlinkHref={'#redo-path' + id} />
+          <use xlinkHref={'#redo-path' + id}/>
         </mask>
         <g fill="#4A4A4A" mask={`url(#redo-mask${id})`}>
-          <path d="M-1-2h24v24H-1z" />
+          <path d="M-1-2h24v24H-1z"/>
         </g>
       </g>
     </svg>
@@ -249,10 +272,10 @@ export const ShareIcon = uniqueIcon(id => (
       </defs>
       <g fill="none" fillRule="evenodd" transform="translate(3 1)">
         <mask id={'share-mask' + id} fill="#fff">
-          <use xlinkHref={'#share-path' + id} />
+          <use xlinkHref={'#share-path' + id}/>
         </mask>
         <g fill="#4A4A4A" mask={`url(#share-mask${id})`}>
-          <path d="M-3-1h24v24H-3z" />
+          <path d="M-3-1h24v24H-3z"/>
         </g>
       </g>
     </svg>

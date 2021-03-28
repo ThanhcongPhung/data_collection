@@ -38,7 +38,7 @@ export default function SendButton(props) {
           formData,
       ).then(res => {
         console.log(res)
-        props.sendAudioSignal(res.data.link,res.data.transcript)
+        props.sendAudioSignal(res.data.link,res.data.transcript,res.data.audioID)
 
         // if(res.data.status===1){
         //   console.log(res.data.result.link)
@@ -62,7 +62,7 @@ export default function SendButton(props) {
   }
 
   const insertButton = data !== null ? (
-      <button className="buttons" onClick={uploadAudio}>Gửi</button>
+      <button className="buttons" onClick={uploadAudio} type="button">Gửi</button>
   ) : ""
 
   return (

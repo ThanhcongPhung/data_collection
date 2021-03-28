@@ -1,5 +1,13 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {ShareIcon, RedoIcon, PlayOutlineIcon, StopIcon} from '../../../../ui/icons';
+import {
+  ShareIcon,
+  RedoIcon,
+  PlayOutlineIcon,
+  StopIcon,
+  ThumbsUpIcon,
+  OldPlayIcon,
+  ThumbsDownIcon
+} from '../../../../ui/icons';
 import {Row, Col, Tooltip, Input} from 'antd';
 import Wave from '../Wave';
 import SendButton from '../SendButton';
@@ -10,6 +18,7 @@ const {TextArea} = Input;
 export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
   const audioRef = useRef(null);
+  const userID=props.userID;
   const [value, setValue] = useState('')
 
 
@@ -18,12 +27,14 @@ export default function AudioRecordingScreen(props) {
   const user = props.user;
   const username = props.username;
   const audioName = props.audioName;
-  const [fileName,setFileName]=useState('');
+  const [fileName, setFileName] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [blob, setBlob] = useState(null);
-  const [audioLink,setAudioLink] = useState('')
+  const [audioLink, setAudioLink] = useState('')
+
+
   useEffect(() => {
     const canvasObj = canvasRef.current;
     let wave = new Wave(canvasObj);
@@ -39,7 +50,7 @@ export default function AudioRecordingScreen(props) {
   });
 
 
-  const sendAudioSignal = (link,transcript) => {
+  const sendAudioSignal = (link, transcript,audioID) => {
     if (socket) {
       let sender = user.userData.name;
       let ava = user.userData.image;
@@ -48,7 +59,9 @@ export default function AudioRecordingScreen(props) {
         sender,
         ava,
         link,
-        transcript
+        transcript,
+        audioID,
+        userID
       })
     }
     setValue(null);
@@ -70,7 +83,7 @@ export default function AudioRecordingScreen(props) {
 
   const text1 = <span>Play audio</span>;
   const text2 = <span>Re recorder</span>;
-  const text3 = <span>Get Transcript</span>
+
   function onRerecord() {
     setAudio(null);
     setValue(null);
@@ -111,7 +124,7 @@ export default function AudioRecordingScreen(props) {
   const onGetText = async (blob) => {
 
     let formData = new FormData();
-    const file = new File([blob],`${audioName}`,{type:"audio/wav"})
+    const file = new File([blob], `${audioName}`, {type: "audio/wav"})
     console.log(file)
     formData.append("files", file, file.name)
     try {
@@ -175,50 +188,18 @@ export default function AudioRecordingScreen(props) {
   return (
       <div>
         <Row style={{textAlign: "center"}}>
-          <div className="primary-buttons">
-
-            <canvas className="primary-buttons canvas" ref={canvasRef}
-                    style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
-            <Recorder isRecording={isRecording}
-                      setAudio={setAudio}
-                      setBlob={setBlob}
-                      setIsRecording={setIsRecording}
-            />
-            {/*<div className="submit-button">*/}
-            {/*  {renderAudio(audio)}*/}
-            {/*  <SendButton*/}
-            {/*      username = {username}*/}
-            {/*      audioLink={audioLink}*/}
-            {/*      audioName={audioName}*/}
-            {/*      // fileName={fileName}*/}
-            {/*      audio={audio}*/}
-            {/*      blob={blob}*/}
-            {/*      sendAudioSignal={sendAudioSignal}*/}
-            {/*      userID={user.userData ? user.userData._id : ""}*/}
-            {/*      roomID={chatroomID}*/}
-            {/*      value={value}*/}
-            {/*  />*/}
-            {/*</div>*/}
-          </div>
-        </Row>
-        <Row>
-            {/*<Row>*/}
-            {/*  <Col>*/}
-            {/*    <div className="identifiedTextRecord">*/}
-            {/*      <TextArea*/}
-            {/*          value={value}*/}
-            {/*          onChange={(e) => setValue(e.target.value)}*/}
-            {/*          placeholder="&quot;Identified Text&quot;"*/}
-            {/*          autoSize={{minRows: 3, maxRows: 5}}*/}
-            {/*      />*/}
-            {/*    </div>*/}
-            {/*  </Col>*/}
-            {/*</Row>*/}
-          <Row>
-            <div className="submit-button">
+          <div className="button-listen">
+            <div className="primary-buttons">
+              <canvas className="primary-buttons canvas" ref={canvasRef}
+                      style={{width: '100%', position: 'absolute', maxWidth: 'calc(1400px - 40px)'}}/>
               {renderAudio(audio)}
+              <Recorder isRecording={isRecording}
+                        setAudio={setAudio}
+                        setBlob={setBlob}
+                        setIsRecording={setIsRecording}
+              />
               <SendButton
-                  username = {username}
+                  username={username}
                   audioLink={audioLink}
                   audioName={audioName}
                   // fileName={fileName}
@@ -230,8 +211,9 @@ export default function AudioRecordingScreen(props) {
                   value={value}
               />
             </div>
-          </Row>
+          </div>
         </Row>
+
       </div>
   )
 }

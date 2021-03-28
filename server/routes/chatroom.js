@@ -24,7 +24,12 @@ router.get("/", (req, res) => {
 // GET ONE
 router.get("/:roomID", (req, res) => {
   Chatroom.findById(req.params.roomID)
-      .populate('audioList')
+      .populate({
+        path:'audioList',
+        populate:{
+          path:'user',
+        }
+      })
       .exec((err, roomFound) => {
         if (err) res.status(500).send({ success: false, err })
         else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
