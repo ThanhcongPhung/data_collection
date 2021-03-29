@@ -254,7 +254,9 @@ audio.audioPlay{
     float: left;
     font-size: 1.1em;
     word-wrap: break-word;
-    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .messageText img {
@@ -293,21 +295,24 @@ audio.audioPlay{
 }
 
 .colorWhite {
-    color: white;
+    color: black;
 }
 
 .colorDark {
     color: #353535;
 }
-
+.text-username{
+    display: flex;
+    flex-direction: column;
+}
 .backgroundBlue {
     /*background: rgb(23,49,182);*/
-    background: #3E4042;
+    background: #F1F1F1;
     /*background: radial-gradient(circle, rgba(23,49,182,1) 72%, rgba(252,70,107,1) 100%);*/
 }
 
 .backgroundLight {
-    background: #0084FF;
+    background: #EDD1D1;
 }
 
 button.play{
@@ -337,11 +342,11 @@ button.play{
     justify-content: space-between;
     align-items: center;
 }
-.check{
-    margin: 10px;
+button.check{
+    margin: 5px;
 }
 button.check svg path{
-    fill: white;
+    fill: black;
 }
 
 .message-area{
@@ -364,10 +369,10 @@ button.check svg path{
     justify-content: flex-end;
 }
 button.send svg path{
-    fill: white;
+    fill: black;
 }
-button.cancel svg path{
-    fill: white;
+button.cancel{
+    color:black;
 }
 .instruction{
     margin-top: 20px;
@@ -380,5 +385,18 @@ button.cancel svg path{
     display: flex;
     font-family: Open Sans, sans-serif;
     font-size: 16px;
+}
+p.avatar{
+    font-size: 10px;
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*font-family: Helvetica;*/
+    letter-spacing: 0.3px;
+}
+.text-checkButton{
+    display: flex;
+    /*flex-direction: row;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
 }
 

@@ -5,18 +5,23 @@ import {
   OldPlayIcon,
   StopIcon,
   ThumbsUpIcon,
-  PenIcon,
   PlayOutlineIcon,
   SkipIcon,
-  VolumeIcon, CheckIcon
+  VolumeIcon
 } from "../../ui/icons";
 
 import {Input, Modal} from 'antd';
 import Wave from '../Chatroom/Section/Wave';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {getAllAudio} from '../../../_actions/audio_actions'
-import ChatCard from "../Chatroom/Section/Sub-container/ChatCard";
-
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import {TextField} from "@material-ui/core";
+import axios from "axios";
 
 const {TextArea} = Input;
 
@@ -29,27 +34,19 @@ export default function ValidateData() {
   const [hasPlayed, setHasPlayed] = useState(false);
   const [editText, setEditText] = useState(false);
   const [clips, setClips] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [vote , setVote] =useState(false)
   const [allowedState, setAllowState] = useState([5])
+  const [open, setOpen] = useState(false);
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const dispatch = useDispatch();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const showModal = () => {
-    setIsModalVisible(true)
-  };
-
-  const handleOk = (object) => {
-    console.log(object)
-    setIsModalVisible(false)
-  };
-
-  const handleCancel = e => {
-    console.log(e);
-    setIsModalVisible(false)
-
-  };
   useEffect(() => {
     dispatch(getAllAudio()).then(result => {
       const audios = result.payload;
@@ -119,10 +116,31 @@ export default function ValidateData() {
     }
   });
   const handleChange = (event) => {
-    console.log(event.target.value)
     let newSrr = [...clips]
     newSrr[selectedIndex].transcript = event.target.value;
     setClips(newSrr)
+  };
+  const updateValue = async () => {
+    console.log(clips[selectedIndex])
+    let body = {
+      userID: clips[selectedIndex].user,
+      audioID: clips[selectedIndex]._id,
+      transcript: clips[selectedIndex].transcript,
+      isValid: true
+    }
+    console.log(body)
+    try {
+      await axios.put(
+          '/api/audio/updateTranscript',
+          body,
+      ).then(res => {
+        console.log(res)
+        setOpen(false)
+        voteYes(clips[selectedIndex])
+      })
+    } catch(error){
+      alert(error)
+    }
   };
   return (
       <div className="contribution">
@@ -170,7 +188,7 @@ export default function ValidateData() {
                       <div className="primary-button backgroundPlay"/>
                     </div>
                   </div>
-                  <button className={"vote-button " + (hasPlayed ? 'no' : '')} type="button" onClick={showModal}>
+                  <button className={"vote-button " + (hasPlayed ? 'no' : '')} type="button" onClick={handleClickOpen}>
                     {/*disabled={!hasPlayed}>*/}
                     <ThumbsDownIcon/>
                     <span style={{marginLeft: "10px"}}>No</span>
@@ -235,28 +253,68 @@ export default function ValidateData() {
           {/*  </div>*/}
           {/*</div>*/}
         </div>
-        <Modal
-            title="Sửa lại phụ đề"
-            visible={isModalVisible}
-            onOk={()=>handleOk(clips[selectedIndex])}
-            onCancel={handleCancel}
-            // okButtonProps={{ disabled: true }}
-            // cancelButtonProps={{ disabled: true }}
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
         >
-          <TextArea
-              value={value}
-              onChange={handleChange}
-              placeholder="&quot;Không có phụ đề&quot;"
-          />
-          <button
-              className="play"
-              type="button"
-              onClick={play}>
-            <span className="padder">
-                        {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
-            </span>
-          </button>
-        </Modal>
+          <DialogTitle id="alert-dialog-title">{"Sửa lại phụ đề"}</DialogTitle>
+          <DialogContent>
+              <button
+                  className="play"
+                  type="button"
+                  onClick={play}>
+                <span className="padder">
+                            {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
+                </span>
+              </button>
+            {/*  <DialogContentText id="alert-dialog-description">*/}
+            {/*  Let Google help apps determine location. This means sending anonymous location data to*/}
+            {/*  Google, even when no apps are running.*/}
+            {/*</DialogContentText>*/}
+            <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                // label="Phụ đề"
+                type="text"
+                      value={value}
+                      onChange={handleChange}
+                fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Hủy
+            </Button>
+            <Button onClick={updateValue} color="primary" autoFocus>
+              Cập nhật
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/*<Modal*/}
+        {/*    title="Sửa lại phụ đề"*/}
+        {/*    visible={isModalVisible}*/}
+        {/*    onOk={()=>handleOk(clips[selectedIndex])}*/}
+        {/*    onCancel={handleCancel}*/}
+        {/*    // okButtonProps={{ disabled: true }}*/}
+        {/*    // cancelButtonProps={{ disabled: true }}*/}
+        {/*>*/}
+        {/*  <TextArea*/}
+        {/*      value={value}*/}
+        {/*      onChange={handleChange}*/}
+        {/*      placeholder="&quot;Không có phụ đề&quot;"*/}
+        {/*  />*/}
+        {/*  <button*/}
+        {/*      className="play"*/}
+        {/*      type="button"*/}
+        {/*      onClick={play}>*/}
+        {/*    <span className="padder">*/}
+        {/*                {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}*/}
+        {/*    </span>*/}
+        {/*  </button>*/}
+        {/*</Modal>*/}
 
       </div>
 
