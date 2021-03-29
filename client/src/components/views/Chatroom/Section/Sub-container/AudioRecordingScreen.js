@@ -1,20 +1,16 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {
-  ShareIcon,
   RedoIcon,
   PlayOutlineIcon,
   StopIcon,
-  ThumbsUpIcon,
-  OldPlayIcon,
-  ThumbsDownIcon
+
 } from '../../../../ui/icons';
-import {Row, Col, Tooltip, Input} from 'antd';
+import {Row, Tooltip} from 'antd';
 import Wave from '../Wave';
 import SendButton from '../SendButton';
 import Recorder from '../../../Speak/Recorder'
 import axios from "axios";
 
-const {TextArea} = Input;
 export default function AudioRecordingScreen(props) {
   const canvasRef = props.canvasRef;
   const audioRef = useRef(null);
@@ -27,7 +23,6 @@ export default function AudioRecordingScreen(props) {
   const user = props.user;
   const username = props.username;
   const audioName = props.audioName;
-  const [fileName, setFileName] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [isRecording, setIsRecording] = useState(false);

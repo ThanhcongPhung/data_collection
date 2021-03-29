@@ -1,37 +1,46 @@
 import React, {useEffect, useRef, useState} from 'react';
-import moment from 'moment';
-import {Comment, Tooltip, Avatar} from 'antd';
 import {
-  CancelIcon,
   PlayOutlineIcon,
-  RedoIcon,
   SendIcon,
-  ShareIcon,
   StopIcon,
   ThumbsDownIcon,
-  ThumbsUpIcon
+  ThumbsUpIcon, VolumeIcon
 } from "../../../../ui/icons";
 import ReactEmoji from 'react-emoji';
-import {EditOutlined} from "@ant-design/icons";
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import {makeStyles} from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
+import {deepOrange, deepPurple} from '@material-ui/core/colors';
 import axios from "axios";
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+  },
+  purple: {
+    color: theme.palette.getContrastText(deepPurple[500]),
+    backgroundColor: deepPurple[500],
+  },
+}));
 export default function ChatCard(props) {
-  let {sender,audioLink,transcript,audioID,userID}= props.listAudio[props.index]
+  let {sender, audioLink, transcript, audioID, userID} = props.listAudio[props.index]
   let isSentByCurrentUser = false;
   const audioRef = useRef(null);
-  const [ edit, setEdit ] = useState(false);
+  const [edit, setEdit] = useState(false);
   const username = props.name;
   const setListAudio = props.setListAudio;
   const textInput = useRef();
   const socket = props.socket;
   const audioIndex = props.index
   const chatroomID = props.chatroomID;
-  // const message = props.message;
-  const [duration,setDuration] = useState(0)
-  const [ expenseTranscript, setExpenseTranscript ] = useState(transcript);
+  const classes = useStyles();
 
-  useEffect(()=>{
+  const [duration, setDuration] = useState(0)
+  const [expenseTranscript, setExpenseTranscript] = useState(transcript);
+
+  useEffect(() => {
     const {current: audio} = audioRef;
     audio.onloadedmetadata = () => {
       setDuration(formatTime(audio.duration.toFixed(0)))
@@ -46,6 +55,7 @@ export default function ChatCard(props) {
         .filter(a => a)
         .join(':')
   }
+
   if (sender === username) {
     isSentByCurrentUser = true;
   }
@@ -53,9 +63,9 @@ export default function ChatCard(props) {
 
   const renderEditView = () => {
     return (
-        <div style={{display:"flex",flexDirection:'column'}}>
+        <div style={{display: "flex", flexDirection: 'column'}}>
           <input
-              style={{color:"black"}}
+              style={{color: "black"}}
               type="text"
               ref={textInput}
               defaultValue={expenseTranscript}
@@ -76,6 +86,7 @@ export default function ChatCard(props) {
       userID: userID,
       audioID: audioID,
       transcript: value,
+      isValid: false,
     }
   console.log(body)
     try {
@@ -121,44 +132,50 @@ export default function ChatCard(props) {
     }
     setIsPlaying(status);
   };
-  const editText = ()=>{
+  const editText = () => {
     setEdit(true)
   }
-  const renderAudio = (audio,sender) => {
+  const renderAudio = (audio, sender) => {
     return (
-        <div className="message-area" id="button">
-          <p className="sentText pr-10">{sender}</p>
-          <div className="messageBox backgroundBlue">
-            <div className="play-audio">
-              <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
-                <source src={audio} type="audio/wav"/>
-              </audio>
-                <button className="play" type="button" onClick={toggleIsPlaying}>
-                    <span className="abc">
-                        {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
-                    </span>
-                </button>
-            </div>
-            <div className="react-area">
-              {edit ? renderEditView()
-              :
-                  <p className="messageText colorWhite">{ReactEmoji.emojify(expenseTranscript)}</p>
-              }
+        <div className="message-area">
+          <div className="text-username">
+            <span style={{color:"#B0B3B8",fontSize:"0.6875rem"}}>{sender}</span>
+            <div className="text-checkButton">
+              <div className="messageBox backgroundBlue">
+                {/*<div className="play-audio">*/}
+                <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
+                  <source src={audio} type="audio/wav"/>
+                </audio>
+                {/*<button className="play" type="button" onClick={toggleIsPlaying}>*/}
+                {/*    <span className="abc">*/}
+                {/*          {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}*/}
+                {/*    </span>*/}
+                {/*</button>*/}
+                {/*</div>*/}
+                {/*<div className="react-area">*/}
+                  {edit ? renderEditView()
+                      :
+                      <span className="messageText colorWhite">{ReactEmoji.emojify(expenseTranscript)}</span>
+                  }
 
+                {/*</div>*/}
+              </div>
+              <div className="check-button">
+                <button className="check" type="button">
+                  <VolumeIcon/>
+                </button>
+                <button className="check" type="button">
+                  <ThumbsUpIcon/>
+                </button>
+                <button className="check" onClick={editText} type="button">
+                  <ThumbsDownIcon/>
+                </button>
+
+              </div>
             </div>
-          </div>
-          <div className="check-button">
-            <button className="check" type="button">
-              <ThumbsUpIcon/>
-            </button>
-            <button className="check" onClick={editText} type="button">
-              <ThumbsDownIcon/>
-            </button>
           </div>
         </div>
-
     );
-
   }
 
   return (
@@ -173,22 +190,25 @@ export default function ChatCard(props) {
                     <button className="check" onClick={editText} type="button">
                       <ThumbsDownIcon/>
                     </button>
+                    <button className="check" type="button">
+                      <VolumeIcon/>
+                    </button>
                   </div>
                   <div className="messageBox backgroundLight">
-                    <div className="play-audio">
-                      <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
-                        <source src={audioLink} type="audio/wav"/>
-                      </audio>
-                      <button className="play" type="button" onClick={toggleIsPlaying}>
-                    <span className="abc">
-                        {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}
-                    </span>
-                      </button>
-                    </div>
+                    {/*<div className="play-audio">*/}
+                    <audio id="ad" preload="auto" onEnded={toggleIsPlaying} ref={audioRef}>
+                      <source src={audioLink} type="audio/wav"/>
+                    </audio>
+                    {/*  <button className="play" type="button" onClick={toggleIsPlaying}>*/}
+                    {/*<span className="abc">*/}
+                    {/*    {isPlaying ? <StopIcon/> : <PlayOutlineIcon/>}*/}
+                    {/*</span>*/}
+                    {/*  </button>*/}
+                    {/*</div>*/}
                     <div className="react-area">
                       {edit ? renderEditView()
                           :
-                          <p className="messageText colorWhite">{ReactEmoji.emojify(expenseTranscript)}</p>
+                          <span className="messageText colorWhite">{ReactEmoji.emojify(expenseTranscript)}</span>
                       }
 
                     </div>
@@ -198,7 +218,7 @@ export default function ChatCard(props) {
           ) :
           (
               <div className="messageContainer justifyStart">
-                {renderAudio(audioLink,sender)}
+                {renderAudio(audioLink, sender)}
 
               </div>
           )

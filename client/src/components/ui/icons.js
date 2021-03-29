@@ -32,7 +32,7 @@ export const OldPlayIcon = (props: any) => (
     </svg>
 );
 export const ThumbsUpIcon = (props: any) => (
-    <svg width="24" height="24" viewBox="0 0 24 24">
+    <svg width="15" height="15" viewBox="0 0 24 24">
       <defs>
         <path
             id="thumbs-up-path"
@@ -50,7 +50,7 @@ export const ThumbsUpIcon = (props: any) => (
     </svg>
 );
 export const ThumbsDownIcon = (props: any) => (
-    <svg width="24" height="24" viewBox="0 0 24 24">
+    <svg width="15" height="15" viewBox="0 0 24 24">
       <defs>
         <path
             id="thumbs-down-path"
@@ -145,7 +145,7 @@ export const SkipIcon = uniqueIcon(id => (
     </svg>
 ));
 export const VolumeIcon = (props: any) => (
-    <svg width="24" height="24" viewBox="0 0 24 24">
+    <svg width="15" height="15" viewBox="0 0 24 24">
       <defs>
         <path
             id="volume-path"
