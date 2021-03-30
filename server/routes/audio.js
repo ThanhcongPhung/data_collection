@@ -16,7 +16,7 @@ router.get("/:roomID", (req, res) => {
 })
 // GET ALL
 router.get("/", (req, res) => {
-  Audio.find()
+  Audio.find({"isValidate":false})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
         res.status(200).send(audios)
@@ -53,6 +53,7 @@ router.put("/updateTranscript", (req, res) => {
   const audioID = req.body.audioID;
   const userID = req.body.userID;
   const transcript  = req.body.transcript;
+  const isValid = req.body.isValid;
   console.log(req.body)
   Audio.findById(audioID)
       .then(audio => {
@@ -64,6 +65,7 @@ router.put("/updateTranscript", (req, res) => {
         } else {
           audio.transcript = transcript;
           audio.fixBy = userID;
+          audio.isValidate = isValid;
           return audio.save();
         }
       })

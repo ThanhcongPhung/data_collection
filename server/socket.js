@@ -241,8 +241,16 @@ sockets.init = function (server) {
   });
 }
 
-const addToQueue = (queue, userID) => {
-  queue.push(userID)
+const addToQueue = (queue, userInfo) => {
+  let count = 0;
+  for (let i = 0; i < queue.length; i++) {
+    if (queue[i].userID === userInfo.userID) {
+      count++;
+      break;
+    }
+  }
+
+  if (count === 0) queue.push(userInfo);
 }
 
 const removeFromQueue = (queue, target) => {

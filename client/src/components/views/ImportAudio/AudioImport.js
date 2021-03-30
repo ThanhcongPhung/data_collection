@@ -1,13 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import Dropzone from 'react-dropzone';
 import './AudioImport.css';
-import {Alert, Spin, Table, Tooltip} from 'antd';
-import {Input} from 'antd';
+import {Spin} from 'antd';
 import axios from "axios";
-import {OldPlayIcon, PlayOutlineIcon, RedoIcon, ShareIcon, StopIcon} from "../../ui/icons";
 import {useSelector} from "react-redux";
+import {DataGrid} from '@material-ui/data-grid';
+import {Input} from "@material-ui/core";
 
-const {TextArea} = Input;
 export default function AudioImport() {
   const user = useSelector(state => state.user)
   let userID = user.userData ? user.userData._id : "";
@@ -21,35 +20,35 @@ export default function AudioImport() {
       setFileWav(files);
     }
   }
+
   const columns = [
+    {field: 'id', headerName: 'ID', width: 50},
     {
-      title: 'Tên',
-      dataIndex: 'audio_name',
-      key: 'audio_name',
-      render: text => <p>{text}</p>,
+      field: 'audio_name', headerName: 'name', width: 300,
+      renderCell: (params) => (
+          <p>{params.value}</p>
+      )
     },
     {
-      title: 'Âm thanh',
-      dataIndex: 'audio_link',
-      key: 'audio_link',
-      render: text => <audio controls>
-        <source src={text} type="audio/wav"/>
-      </audio>
+      field: 'audio_link', headerName: 'audio', width: 300,
+      renderCell: (params) => (
+          <audio controls style={{margin:"1rem"}}>
+            <source src={params.value} type="audio/wav"/>
+          </audio>
+      )
     },
     {
-      title: 'Phụ đề',
-      dataIndex: 'transcript',
-      key: 'transcript',
-      render: (text, record) => <TextArea
-          value={text}
-          onChange={editText(record)}
-          autoSize={{minRows: 3, maxRows: 5}}
-      />
+      field: 'transcript', headerName: 'transcript', width: 400,
+      renderCell: (params) => (
+          <Input style={{width:"400px"}}
+              value={params.value}
+              onChange={editText(params.id)}
+              autoSize={{minRows: 3, maxRows: 5}}
+          />
+      )
     },
 
   ];
-
-
   const editText = (record) => e => {
     let newSrr = [...fileList]
     const foundIndex = newSrr.findIndex(x => x.audio_link === record.audio_link);
@@ -94,10 +93,12 @@ export default function AudioImport() {
     try {
       setLoading(true)
       await axios.post(
-          '/api/getText/audioImport',
+          '/api/getText/audioImportZip',
           formData
       ).then(res => {
+        console.log(res)
         const results = res.data.files.map(row => ({
+          id: row.id,
           audio_link: row.audio_link,
           transcript: row.transcript,
           audio_name: row.audio_name
@@ -152,19 +153,17 @@ export default function AudioImport() {
               <div className="title-and-search">
                 <div className="abc">
                   <h1 style={{marginRight: "1.5rem"}}>Danh sách tệp</h1>
-                  <button onClick={()=>submitFile(fileList)} type="primary" className="getText">Tải lên</button>
+                  <button onClick={() => submitFile(fileList)} type="primary" className="getText">Tải lên</button>
 
                 </div>
                 <hr className="hr"></hr>
               </div>
               {loading && <Spin tip="Loading...">
-                {/*<Alert*/}
-                {/*    message="Alert message title"*/}
-                {/*    description="Further details about the context of this alert."*/}
-                {/*    type="info"*/}
-                {/*/>*/}
+
               </Spin>}
-              <Table dataSource={fileList} columns={columns}/>
+              <div style={{height: 400, width: '100%'}}>
+                <DataGrid rows={fileList} columns={columns} pageSize={10} checkboxSelection/>
+              </div>
             </section>
           </div>
         </div>
