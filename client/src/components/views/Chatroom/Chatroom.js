@@ -6,7 +6,7 @@ import Scenario from './Section/Scenario';
 import AudioRecordingScreen from './Section/Sub-container/AudioRecordingScreen'
 import {getRoom} from '../../../_actions/chatroom_actions'
 import ChatCard from "./Section/Sub-container/ChatCard";
-import {MicIcon, ThumbsDownIcon, ThumbsUpIcon} from "../../ui/icons";
+import {ThumbsDownIcon, ThumbsUpIcon} from "../../ui/icons";
 
 
 export default function Chatroom(props) {
@@ -116,7 +116,6 @@ export default function Chatroom(props) {
             </div>
             <div className="infinite-container">
               <section className="audioHistory">
-                {/*{console.log([...audioHistory])}*/}
                 <div className="messages">
                   {audioHistory.map((message, i) =>
                       <ChatCard

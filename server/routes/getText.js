@@ -7,6 +7,11 @@ const uploadService = require('../services/upload');
 const multer = require('multer')
 const formidable = require('formidable');
 const {join} = require('path');
+const path = require('path');
+const JSZip = require("jszip");
+// const csv = require('fast-csv');
+const csv = require('csv-parser')
+
 
 const DOMAIN_NAME = "http://localhost:5000"
 const spawn = require("child_process").spawn;
@@ -16,8 +21,8 @@ const fs = bluebird.promisifyAll(require('fs'));
 
 let download = function (uri, filename, callback) {
   request.head(uri, function (err, res, body) {
-    console.log('content-type:', res.headers['content-type']);
-    console.log('content-length:', res.headers['content-length']);
+    // console.log('content-type:', res.headers['content-type']);
+    // console.log('content-length:', res.headers['content-length']);
 
     request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
   });
@@ -111,7 +116,6 @@ function transcript(path, audio_link, audio_name) {
 router.post('/audioImport', async (req, res) => {
   const form = formidable.IncomingForm();
   const uploadFolder = './server/public/upload';
-  const extractDir = './server/public/upload/extract';
 
   form.multiples = true;
   form.maxFileSize = 50 * 1024 * 1024; //50MB
@@ -152,6 +156,161 @@ router.post('/audioImport', async (req, res) => {
               res.json({ok: true, msg: 'Files uploaded successfully!', files: data})
             })
             .catch(err => console.log(err));
+
+      } catch (e) {
+        console.log('Error uploading the file')
+        try {
+          await fs.unlinkSync(file.path)
+        } catch (e) {
+        }
+        return res.json({ok: false, msg: 'Error uploading the file'})
+      }
+    } else {
+      let myUploadedFiles = []
+      let promises = []
+      for (let i = 0; i < files.files.length; i++) {
+        const file = files.files[i]
+        if (!checkFileType(file)) {
+          console.log('The received file is not a valid type')
+          return res.json({ok: false, msg: 'The sent file is not a valid type'})
+        }
+        const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
+        try {
+          await fs.renameSync(file.path, join(uploadFolder, fileName))
+          const filePath = join(uploadFolder, fileName)
+          let path_components = filePath.split('/')
+          const fileType = filePath.split('.')
+
+          if (fileType[1] === 'wav') {
+            const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
+            const listAudio = {
+              audio_link: audio_link,
+              transcript: "",
+              audio_name: path_components[3]
+            }
+            myUploadedFiles.push(listAudio)
+            console.log(filePath)
+            promises.push(transcript(filePath, audio_link, path_components[3]))
+          }
+
+        } catch (e) {
+          console.log('Error uploading the file')
+          try {
+            await fs.unlinkSync(file.path)
+          } catch (e) {
+          }
+          return res.json({ok: false, msg: 'Error uploading the file'})
+        }
+      }
+      Promise.all(promises)
+          .then((data) => {
+            res.json({ok: true, msg: 'Files uploaded successfully!', files: data})
+          })
+          .catch(err => console.log(err));
+      // res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
+    }
+    // res.json({ok: true, msg: 'Files uploaded successfully!', files: myUploadedFiles})
+  })
+})
+function readFiles(dirname) {
+  return new Promise(function (resolve, reject) {
+    let fileList= []
+    fs.readdirSync(dirname).forEach(file => {
+      // console.log(file);
+      fileList.push(file)
+    });
+    resolve(fileList)
+  })
+
+}
+router.post('/audioImportZip', async (req, res) => {
+  const form = formidable.IncomingForm();
+  const uploadFolder = './server/public/upload/';
+  const extractDir = '/home/congpt/GR/data_collection/server/public/upload/extract';
+  form.multiples = true;
+  form.maxFileSize = 100 * 1024 * 1024; //50MB
+  form.keepExtensions = true;
+  form.uploadDir = uploadFolder;
+  const folderExist = await checkCreateUploadFolder(uploadFolder)
+  if (!folderExist) {
+    return res.json({ok: false, msg: 'There was an error when create the folder upload'})
+  }
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.log("error parsing the file")
+      return res.json({ok: false, msg: 'error parsing the file'})
+    }
+    if (!files.files.length) {
+      const file = files.files;
+      const type = file.type.split("/").pop()
+      console.log(type);
+      const isValid = await checkFileType(file)
+      const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
+      // const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
+      // myUploadedFiles.push(fileName)
+      let promises = []
+
+      if (!isValid) {
+        return res.json({ok: false, msg: 'The file receive is invalid'})
+      }
+      try {
+        await fs.renameSync(file.path, join(uploadFolder, fileName));
+        const filePath = join(uploadFolder, fileName)
+        let path_components = filePath.split('/')
+        const zip_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
+        const destDir = path.join(extractDir, fileName);
+        await checkCreateUploadFolder(destDir)
+        const extract_path= `${destDir}_${new Date().getTime()}`
+        console.log(destDir)
+        tmp.file(function _tempFileCreated(err, path, fd, cleanupCallback) {
+          if (err) throw err;
+
+          download(zip_link, path, async function () {
+            console.log('done');
+            console.log('File: ', path);
+            console.log('File descriptor: ', fd);
+            try {
+              await extract(path, { dir: extract_path })
+                  .then(data=>{
+                    const newPath = join(extract_path,'AudioFile')
+                    readFiles(newPath)
+                        .then(data=>{
+                          const transcript = join(newPath,data[0])
+                          console.log(transcript)
+                          const results = [];
+
+                          fs.createReadStream(transcript)
+                              .pipe(csv())
+                              .on('data', (data) => results.push(data))
+                              .on('end', () => {
+                                const resArray=[];
+                                results.forEach((element,index)=>{
+                                  const lastPath = join(newPath,element.path).split("/")
+                                  console.log(lastPath)
+                                  const audioLink= `${DOMAIN_NAME}/${lastPath[6]}/${lastPath[7]}/${lastPath[8]}/${lastPath[9]}/${lastPath[10]}/${element.path}`
+
+                                  const listAudio = {
+                                    id:index,
+                                    audio_link: audioLink,
+                                    transcript: element.transcript,
+                                    audio_name: element.path
+                                  }
+                                  resArray.push(listAudio)
+                                })
+                                res.json({ok: true, msg: 'Files uploaded successfully!', files: resArray})
+                                console.log('Extraction complete')
+
+                              });
+                        })
+                      }
+                  )
+            } catch (err) {
+              console.error('Extraction failed.');
+            }
+          });
+          cleanupCallback();
+        });
+
 
       } catch (e) {
         console.log('Error uploading the file')

@@ -306,13 +306,12 @@ audio.audioPlay{
     flex-direction: column;
 }
 .backgroundBlue {
-    /*background: rgb(23,49,182);*/
     background: #F1F1F1;
-    /*background: radial-gradient(circle, rgba(23,49,182,1) 72%, rgba(252,70,107,1) 100%);*/
 }
 
 .backgroundLight {
     background: #EDD1D1;
+
 }
 
 button.play{
@@ -339,11 +338,17 @@ button.play{
 .check-button{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-end;
+    align-items: center;
+}
+.check-button1{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
     align-items: center;
 }
 button.check{
-    margin: 5px;
+    /*margin: 5px;*/
 }
 button.check svg path{
     fill: black;
@@ -360,7 +365,6 @@ button.check svg path{
     --c:#3E4042;
 }
 .message-area > .check-button> button.check svg path{
-    /*background-color: var(--c);*/
     fill: var(--c);
 }
 .double-button{
@@ -371,8 +375,9 @@ button.check svg path{
 button.send svg path{
     fill: black;
 }
-button.cancel{
+.cancel{
     color:black;
+    font-size: 15px;
 }
 .instruction{
     margin-top: 20px;
@@ -388,15 +393,15 @@ button.cancel{
 }
 p.avatar{
     font-size: 10px;
-    /*display: flex;*/
-    /*align-items: center;*/
-    /*font-family: Helvetica;*/
     letter-spacing: 0.3px;
 }
 .text-checkButton{
     display: flex;
-    /*flex-direction: row;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
+
+}
+.text-checkButton1{
+    display: flex;
+    justify-content: flex-end;
+
 }
 
