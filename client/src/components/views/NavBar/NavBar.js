@@ -2,40 +2,29 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import LeftMenu from './Sections/LeftMenu';
 import RightMenu from './Sections/RightMenu';
-import { Drawer, Button, Icon } from 'antd';
+import { Button, Icon } from 'antd';
 import './Sections/Navbar.css';
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Container
-} from "@material-ui/core";
-import { Home } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core/styles";
-const useStyles = makeStyles({
-  navbarDisplayFlex: {
-    display: `flex`,
-    justifyContent: `space-between`
-  },
-  navDisplayFlex: {
-    display: `flex`,
-    justifyContent: `space-between`
-  },
-  linkText: {
-    textDecoration: `none`,
-    textTransform: `uppercase`,
-    color: `white`
-  }
-});
-const navLinks = [
-  { title: `Trang chủ`, path: `/` },
-  { title: `Tập dữ liệu`, path: `/audioImport` },
-  { title: `Xác thực`, path: `/validateData` },
+import IconButton from '@material-ui/core/IconButton';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import MenuIcon from '@material-ui/icons/Menu';
+import { makeStyles } from '@material-ui/core/styles';
 
-];
+const drawerWidth = 180;
+const useStyles = makeStyles((theme) => ({
+  drawer: {
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
+  },
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth,
+  },
+}));
+
 function NavBar() {
   const [visible, setVisible] = useState(false)
   const classes = useStyles();
@@ -49,61 +38,42 @@ function NavBar() {
   };
 
   return (
-      // <AppBar position="static">
-      //   <Toolbar>
-      //     <Container maxWidth="md" className={classes.navbarDisplayFlex}>
-      //       <IconButton edge="start" color="inherit" aria-label="home">
-      //         <Home fontSize="large" />
-      //       </IconButton>
-      //       <List
-      //           component="nav"
-      //           aria-labelledby="main navigation"
-      //           className={classes.navDisplayFlex}
-      //       >
-      //         {navLinks.map(({ title, path }) => (
-      //             <a href={path} key={title} className={classes.linkText}>
-      //               <ListItem button>
-      //                 <ListItemText primary={title} />
-      //               </ListItem>
-      //             </a>
-      //         ))}
-      //       </List>
-      //       <RightMenu mode="horizontal" />
-      //
-      //       {/*<div className="menu_rigth">*/}
-      //       {/*     </div>*/}
-      //     </Container>
-      //   </Toolbar>
-      // </AppBar>
     <nav className="menu" style={{ position: 'fixed', zIndex: 5, width: '100%' }}>
       <div className="menu__logo">
-        <Link to="/">ASR</Link>
+        <Link to="/" >ASR</Link>
       </div>
       <div className="menu__container">
         <div className="menu_left">
-          <LeftMenu mode="horizontal" />
+          <LeftMenu display="inline-block" />
         </div>
-        <div className="menu_rigth">
-          <RightMenu mode="horizontal" />
+        <div className="menu_right">
+          <RightMenu display="inline-block" />
         </div>
-        <Button
-          className="menu__mobile-button"
-          type="primary"
-          onClick={showDrawer}
+        <IconButton
+            className="menu__mobile-button"
+            type="primary"
+            onClick={showDrawer}
         >
-          <Icon type="align-right" />
-        </Button>
-        <Drawer
-          title="ASR"
-          placement="right"
-          className="menu_drawer"
-          closable={false}
-          onClose={onClose}
-          visible={visible}
-        >
-          <RightMenu mode="inline" />
-          <LeftMenu mode="inline" />
-        </Drawer>
+          <MenuIcon />
+        </IconButton>
+        <nav className={classes.drawer} aria-label="mailbox folders">
+          <Hidden smUp implementation="css">
+            <Drawer
+                variant="temporary"
+                anchor={'right'}
+                onClose={onClose}
+                open={visible}
+                classes={{
+                  paper: classes.drawerPaper,
+                }}
+                ModalProps={{
+                  keepMounted: true,
+                }}>
+              <RightMenu display="block" />
+              <LeftMenu display="block" />
+            </Drawer>
+          </Hidden>
+        </nav>
       </div>
     </nav>
   )
