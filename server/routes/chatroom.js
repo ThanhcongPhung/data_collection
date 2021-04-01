@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Chatroom } = require("../models/Chatroom");
 
-// const { auth } = require("../middleware/auth");
+// const { auth } = require("../middlewares/auth");
 
 // GET ALL
 router.get("/", (req, res) => {
