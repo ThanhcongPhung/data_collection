@@ -1,6 +1,5 @@
-const {text} = require('body-parser');
-
-var sockets = {}
+const sockets = {}
+const { User } = require("./models/User");
 const {Message} = require("./models/Message");
 
 sockets.init = function (server) {
@@ -16,9 +15,17 @@ sockets.init = function (server) {
       // Must be matched with the frontend.
       const token = socket.handshake.query.token;
       if (token !== "undefined") {
+      // if (token !== "undefined" && token !== "null" && token !== "") {
         await jwt.verify(token, 'secret', (err, decode) => {
+        // await jwt.verify(token, '9d5067a5a36f2bd6f5e93008865536c7', (err, decode) => {
           if (err) console.log(err)
           else {
+            // const ssoUserId = decode.ssoUserId;
+            // User.findOne({ ssoUserId: ssoUserId })
+            //     .then(userFound => {
+            //       socket.userId = userFound._id;
+            //       next()
+            //     })
             socket.userId = decode
             next()
           }
