@@ -23,7 +23,7 @@ router.post("/users", (req, res) => {
     email: userInfo.email,
     ssoUserId: userInfo.ssoUserId,
     password: "12345678",
-    // role: 0,
+    role: 0,
     // sex: 0,
     image: userInfo.avatar,
   });
@@ -67,7 +67,7 @@ router.post("/users/token", (req, res) => {
           });
 
           // token, expire, 0 - offline, 1 - online
-          redis_client.set(accessToken, 4*3600, 1);
+          redis_client.setex(accessToken, 4*3600, 1);
           res.status(200).send({ status: 1 });
         }
       })

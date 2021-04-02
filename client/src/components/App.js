@@ -21,14 +21,14 @@ import ValidateData from "./views/ValidateData/ValidateData"
 let socket
 
 function App(props) {
-  // let search = window.location.search;
-  // let params = new URLSearchParams(search);
-  // let accessToken = params.get('accessToken');
-  //
-  // if (accessToken !== null) {
-  //   document.cookie = `accessToken=${accessToken}`;
-  // }
+  let search = window.location.search;
+  let params = new URLSearchParams(search);
+  let accessToken = params.get('accessToken');
 
+  if (accessToken !== null) {
+    document.cookie = `accessToken=${accessToken}`;
+  }
+  console.log(accessToken)
   const ENDPOINT = 'http://localhost:5000/';
   const setupSocket =  async () => {
     // var w_auth
@@ -39,22 +39,25 @@ function App(props) {
     //     return null;
     //   }
     // })
-    // const accessToken = document.cookie.split(";").map(info => {
-    //   if (info.slice(0,"accessToken=".length) === "accessToken=") {
-    //     return document.cookie.substring("accessToken=".length);
-    //   } else {
-    var w_auth
+    let cookieAccessToken;
     document.cookie.split(";").map(info => {
-      if (info.slice(0,8) === " w_auth=") {
-        return w_auth = info.substring(8)
-      }else{
+      info = info.replace(" ","")
+      if (info.slice(0,"accessToken=".length) === "accessToken=") {
+        cookieAccessToken=info.substring("accessToken=".length);
+        return document.cookie.substring("accessToken=".length);
+      } else {
+    // var w_auth
+    // document.cookie.split(";").map(info => {
+    //   if (info.slice(0,8) === " w_auth=") {
+    //     return w_auth = info.substring(8)
+    //   }else{
         return null;
       }
     })
     socket = io(ENDPOINT, {
       query: {
-        // token: accessToken,
-        token: w_auth,
+        token: cookieAccessToken,
+        // token: w_auth,
       },
       transports:['websocket','polling','flashsocket'],
       // path: '/socket',
