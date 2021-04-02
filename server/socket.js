@@ -14,20 +14,21 @@ sockets.init = function (server) {
     try {
       // Must be matched with the frontend.
       const token = socket.handshake.query.token;
-      if (token !== "undefined") {
-      // if (token !== "undefined" && token !== "null" && token !== "") {
-        await jwt.verify(token, 'secret', (err, decode) => {
-        // await jwt.verify(token, '9d5067a5a36f2bd6f5e93008865536c7', (err, decode) => {
+      console.log(token)
+      // if (token !== "undefined") {
+      if (token !== "undefined" && token !== "null" && token !== "") {
+        // await jwt.verify(token, 'secret', (err, decode) => {
+        await jwt.verify(token, '9d5067a5a36f2bd6f5e93008865536c7', (err, decode) => {
           if (err) console.log(err)
           else {
-            // const ssoUserId = decode.ssoUserId;
-            // User.findOne({ ssoUserId: ssoUserId })
-            //     .then(userFound => {
-            //       socket.userId = userFound._id;
-            //       next()
-            //     })
-            socket.userId = decode
-            next()
+            const ssoUserId = decode.ssoUserId;
+            User.findOne({ ssoUserId: ssoUserId })
+                .then(userFound => {
+                  socket.userId = userFound._id;
+                  next()
+                })
+            // socket.userId = decode
+            // next()
           }
         });
       }

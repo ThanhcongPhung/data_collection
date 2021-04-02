@@ -10,9 +10,7 @@ const session = require('express-session');
 const Redis = require('ioredis');
 const connectRedis= require('connect-redis')
 const RedisStore = connectRedis(session)
-const compression = require('compression');
-const morgan = require('morgan');
-const helmet = require('helmet');
+
 
 
 app.use(express.json());

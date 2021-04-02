@@ -16,19 +16,23 @@ let auth = (req, res, next) => {
   //   req.user = user;
   //   next();
   // });
+  console.log("abc: "+req.cookies)
   let accessToken = req.cookies.accessToken;
+
+  console.log("0: "+accessToken)
 
   if (accessToken === null || accessToken === undefined) return res.json({
     isAuth: false,
     error: true,
   });
+  console.log("1: "+accessToken)
   redis_client.get(accessToken, (err, data) => {
     if (err) throw err;
     if (data === null || data === 0 || data === undefined) return res.json({
       isAuth: false,
       error: true,
     });
-
+    console.log("2:   "+accessToken)
     const decodeInfo = jwt.verify(accessToken, "9d5067a5a36f2bd6f5e93008865536c7", (err, decode) => {
       if (err) {
         res.status(500).json({ isAuth: false, error: true });

@@ -23,16 +23,16 @@ const userSchema = mongoose.Schema({
         default: 0 
     },
     image: String,
-    token : {
-        type: String,
-    },
-    tokenExp :{
-        type: Number
-    }
-    // ssoUserId:{
-    //     type:String,
-    //     default:""
+    // token : {
+    //     type: String,
+    // },
+    // tokenExp :{
+    //     type: Number
     // }
+    ssoUserId:{
+        type:String,
+        default:""
+    }
 })
 
 
