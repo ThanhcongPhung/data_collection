@@ -34,7 +34,12 @@ router.post("/import", (req,res) => {
       audioStyle: req.body.audioStyle,
       recordDevice:0,
       fixBy: null,
+      username: req.body.username,
       isValidate:false,
+      origin_transcript:element.transcript,
+      bot_transcript: '',
+      final_transcript:'',
+      duration:element.duration
     }
     listAudio.push(audio)
   })
@@ -74,6 +79,19 @@ router.put("/updateTranscript", (req, res) => {
         console.log(`Error while updating audio ${audioID} transcript... ${err}`)
         res.status(500).send({success: false, message: "Something's wrong internally, so sorry..."})
       })
+
+})
+router.delete("/deleteAudio/:audioId", (req, res) => {
+
+  const audioID = req.params.audioId;
+  Audio.remove({_id: audioID},function (err, temps) {
+    if (err) {
+      return res.send(new Error('Error saving'));
+    }else{
+      res.json({ok :"ok"})
+    }
+  })
+
 
 })
 module.exports = router;

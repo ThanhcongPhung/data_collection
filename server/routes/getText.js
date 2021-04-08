@@ -215,8 +215,9 @@ router.post('/audioImport', async (req, res) => {
 function readFiles(dirname) {
   return new Promise(function (resolve, reject) {
     let fileList= []
+    console.log(dirname)
     fs.readdirSync(dirname).forEach(file => {
-      // console.log(file);
+      console.log(file);
       fileList.push(file)
     });
     resolve(fileList)
@@ -286,17 +287,26 @@ router.post('/audioImportZip', async (req, res) => {
                                 const resArray=[];
                                 results.forEach((element,index)=>{
                                   const lastPath = join(newPath,element.path).split("/")
-                                  console.log(lastPath)
                                   const audioLink= `${DOMAIN_NAME}/${lastPath[6]}/${lastPath[7]}/${lastPath[8]}/${lastPath[9]}/${lastPath[10]}/${element.path}`
-
+                                  console.log(element)
                                   const listAudio = {
                                     id:index,
                                     audio_link: audioLink,
                                     transcript: element.transcript,
-                                    audio_name: element.path
+                                    audio_name: element.path,
+                                    speaker_id: element.speaker_id,
+                                    speaker_accent: element.speaker_accent,
+                                    speaker_name: element.speaker_name,
+                                    speaker_gender: element.speaker_gender,
+                                    duration: element.duration,
+                                    content: element.content,
+                                    style: element.style,
+                                    type:element.type,
+                                    device: element.device,
                                   }
                                   resArray.push(listAudio)
                                 })
+
                                 res.json({ok: true, msg: 'Files uploaded successfully!', files: resArray})
                                 console.log('Extraction complete')
 

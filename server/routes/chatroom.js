@@ -24,6 +24,7 @@ router.get("/", (req, res) => {
 // GET ONE
 router.get("/:roomID", (req, res) => {
   Chatroom.findById(req.params.roomID)
+      .populate('intent')
       .populate({
         path:'audioList',
         populate:{
