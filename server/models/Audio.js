@@ -9,7 +9,6 @@ const audioSchema = new mongoose.Schema({
   room: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Chatroom',
-    // required: true,
   },
   username:{
     type:String,
@@ -37,7 +36,20 @@ const audioSchema = new mongoose.Schema({
   //true: validated,false: no
   isValidate: {
     type: Boolean,
-  }
+  },
+  origin_transcript:{
+    type:String,
+  },
+  bot_transcript:{
+    type:String
+  },
+  final_transcript:{
+    type:String,
+  },
+  duration:{
+    type:String,
+  },
+
 }, {timestamps: true});
 
 const Audio = mongoose.model('Audio', audioSchema);

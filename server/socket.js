@@ -1,6 +1,7 @@
 const sockets = {}
 const { User } = require("./models/User");
 const {Message} = require("./models/Message");
+const { Intent } = require("./models/Intent");
 
 sockets.init = function (server) {
   // socket.io setup
@@ -112,8 +113,10 @@ sockets.init = function (server) {
         username: username,
         inputType: inputType,
       }
-
+      console.log(userInfo)
+      console.log(promptQueue)
       let promptQueueIndex = checkExist(promptQueue, userInfo)
+      console.log(promptQueueIndex)
       if (promptQueueIndex !== -1) {
         let pair = promptQueue[promptQueueIndex]
         if (pair.accepted === 0) {
@@ -318,17 +321,94 @@ const {Chatroom} = require("./models/Chatroom");
 const createRoom = async (userID1, userID2, roomType) => {
 // user1 - client, user2 - servant
   let content_type = roomType === "audio" ? 0 : 1
-  const randomValue = randomGenerator()
+  const name = await generateName(4);
+  let intent = await createRandomIntent()
+
+  // const randomValue = randomGenerator()
 
   const chatroom = await Chatroom.create({
-    name: generateName() + randomValue,
-    task: generateTask() + randomValue,
+    name: name,
+    task: generateTask(),
     content_type: content_type,
     user1: userID1,
     user2: userID2,
+    intent: intent._id,
   })
+      .catch(async err => {
+        if (err.name === "MongoError") {
+          if (err.code === 11000) {
+            return await Chatroom.create({
+              name: await generateName(6),
+              task: generateTask(),
+              content_type: content_type,
+              user1: userID1,
+              user2: userID2,
+              intent: intent._id,
+            })
+          }
+        } else {
+          console.log(err);
+          return null;
+        }
+      });
 
   return chatroom._id
+}
+
+const intentSamplePool = require("./configs/intent");
+
+const createRandomIntent = () => {
+  // gen base intent
+  const intentIndex = getRandomFromArray(intentSamplePool.INTENT);
+  // const intentIndex = 12;
+  const slots = intentSamplePool.INTENT[intentIndex].slot;
+
+  let tempIntent = {
+    intent: intentIndex,
+  }
+
+  // gen slot required for intent.
+  slots.map(slot => {
+    if (intentSamplePool[slot.toUpperCase()] === undefined) {
+      // Have to change it once we know how to handle the city and district.
+      return tempIntent[slot] = -1;
+    }
+    const slotPool = intentSamplePool[slot.toUpperCase()];
+    // we decide the objective.
+    // if (slot === "district") {
+    //   // console.log
+    //   const slotIndex = getRandomFromArray(slotPool[intentSamplePool.CITY[tempIntent["city"]]]);
+    //   return tempIntent[slot] = slotIndex;
+    // }
+    // let users decide the object.
+    if (slot === "city" || slot === "district") {
+      return tempIntent[slot] = -1;
+    }
+    const slotIndex = getRandomFromArray(slotPool);
+    return tempIntent[slot] = slotIndex;
+  })
+
+  const { intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits } = tempIntent;
+  // I can still put this lil piece of crap in the {} up there, but who knows what magic it might hold, so better safe than sorry.
+  const generic_intent = null;
+  return Intent.create({
+    intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits, generic_intent
+  })
+}
+
+// transfer information from newObject to the originalObject
+const transferObject = (originalObject, newObject) => {
+  for (let key in newObject) {
+    if (newObject.hasOwnProperty(key)) {
+      originalObject[key] = newObject[key];
+    }
+  }
+
+  return originalObject;
+}
+
+const getRandomFromArray = (arr) => {
+  return Math.floor(Math.random() * arr.length);
 }
 
 const randomGenerator = () => {

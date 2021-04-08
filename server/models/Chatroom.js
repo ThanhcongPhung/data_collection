@@ -31,7 +31,13 @@ const chatroomSchema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref: 'Audio',
     default: [],
-  }]
+  }],
+  // detailed of the final result
+  intent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Intent',
+    required: 'Intent ID is required',
+  },
   // need to design some stuff for intent.
   // intent goes here
 })

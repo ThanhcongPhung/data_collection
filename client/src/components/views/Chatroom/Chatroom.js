@@ -8,7 +8,6 @@ import {getRoom} from '../../../_actions/chatroom_actions'
 import ChatCard from "./Section/Sub-container/ChatCard";
 import {ThumbsDownIcon, ThumbsUpIcon} from "../../ui/icons";
 
-
 export default function Chatroom(props) {
   const canvasRef = useRef(null);
   let socket = props.socket
@@ -21,6 +20,7 @@ export default function Chatroom(props) {
   const [audioHistory, setAudioHistory] = useState(([]))
   const dispatch = useDispatch();
   const divRef = useRef(null);
+  const [ scenario, setScenario ] = useState([]);
 
   useEffect(() => {
     dispatch(getRoom(chatroomID))
@@ -29,6 +29,19 @@ export default function Chatroom(props) {
           if (userID === response.payload.roomFound.user2) setUserRole("servant");
           const audios = response.payload.roomFound.audioList;
           let tempAudioList = [];
+          const scenario = response.payload.roomFound.intent;
+          let tempScenario = [];
+          for (const property in scenario) {
+            if (property !== '_id' && property !== '__v' && scenario[property] !== null) {
+              tempScenario.push([
+                property,
+                (property === 'floor' ? 'Tầng ' + scenario[property] : scenario[property]),
+                scenario[property],
+
+              ])
+            }
+          }
+          setScenario(tempScenario);
           audios.map(audio => {
             const audio_obj = {
               userID: audio.user._id,

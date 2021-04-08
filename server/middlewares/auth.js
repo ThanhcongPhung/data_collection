@@ -16,7 +16,6 @@ let auth = (req, res, next) => {
   //   req.user = user;
   //   next();
   // });
-  console.log("abc: "+req.cookies)
   let accessToken = req.cookies.accessToken;
 
   console.log("0: "+accessToken)
