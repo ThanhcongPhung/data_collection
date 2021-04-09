@@ -86,12 +86,25 @@ router.delete("/deleteAudio/:audioId", (req, res) => {
   const audioID = req.params.audioId;
   Audio.remove({_id: audioID},function (err, temps) {
     if (err) {
-      return res.send(new Error('Error saving'));
+      return res.send(new Error('Error Remove'));
     }else{
       res.json({ok :"ok"})
     }
   })
+})
+router.post("/deleteAll", (req, res) => {
 
-
+  const listAudioId = req.body.listAudioId;
+  // listAudioId.map(ele=>{
+  //   console.log(ele)
+  // })
+  // console.log(listAudioId)
+  Audio.remove({_id: { $in: listAudioId }},function (err, temps) {
+    if (err) {
+      return res.send(new Error('Error remove'));
+    }else{
+      res.json({ok :"ok",listAudioId: listAudioId})
+    }
+  })
 })
 module.exports = router;
