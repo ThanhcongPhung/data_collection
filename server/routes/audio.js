@@ -39,7 +39,8 @@ router.post("/import", (req,res) => {
       origin_transcript:element.transcript,
       bot_transcript: '',
       final_transcript:'',
-      duration:element.duration
+      duration:element.duration,
+      wer:null
     }
     listAudio.push(audio)
   })
