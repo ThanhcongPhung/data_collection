@@ -87,7 +87,7 @@ router.post('/file', async (req, res) => {
 
       transcript(filePath, audio_link, path_components[3])
           .then((data) => {
-            saveAudioMongo(user, room, username, data.audio_link, data.transcript, "Conversation", 1, null, false,"",data.transcript,"",duration)
+            saveAudioMongo(user, room, username, data.audio_link, data.transcript, "Conversation", 1, null, false,"",data.transcript,"",duration,null)
                 .then(audioID => {
                   // update audio history in room
                   err = updateRoomInfo(room, audioID);
@@ -135,7 +135,7 @@ router.post('/file', async (req, res) => {
 })
 
 
-const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcript, audioStyle, recordDevice, fixBy, isValidate,origin_transcript,bot_transcript,final_transcript,duration) => {
+const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcript, audioStyle, recordDevice, fixBy, isValidate,origin_transcript,bot_transcript,final_transcript,duration,wer) => {
 
   const audio = await Audio.create({
     user: userID,
@@ -150,7 +150,8 @@ const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcrip
     origin_transcript:origin_transcript,
     bot_transcript: bot_transcript,
     final_transcript: final_transcript,
-    duration: duration
+    duration: duration,
+    wer: wer,
   })
 
   return audio._id

@@ -49,6 +49,9 @@ const audioSchema = new mongoose.Schema({
   duration:{
     type:String,
   },
+  wer:{
+    type:Number,
+  },
 
 }, {timestamps: true});
 

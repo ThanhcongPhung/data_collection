@@ -32,6 +32,18 @@ const userSchema = mongoose.Schema({
     ssoUserId:{
         type:String,
         default:""
+    },
+    //long type
+    birthday:{
+        type: String,
+    },
+    //North, central, south
+    accent:{
+        type: String
+    },
+    //Female, male, other
+    gender:{
+        type:String
     }
 })
 
