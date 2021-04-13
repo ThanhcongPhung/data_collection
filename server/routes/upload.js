@@ -76,18 +76,21 @@ router.post('/file', async (req, res) => {
     const username = fields.username;
     const duration = fields.duration;
     // console.log(file)
+    const newPath = join(uploadFolder,room)
+    await checkCreateUploadFolder(newPath)
     const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
     try {
-      await fs.renameSync(file.path, join(uploadFolder, fileName));
-      const filePath = join(uploadFolder, fileName)
-      let path_components = filePath.split('/')
-      console.log(path_components)
-      const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
+      await fs.renameSync(file.path, join(newPath, fileName));
+      const filePath = join(newPath, fileName)
       console.log(filePath)
-
+      let path_components = filePath.split('/')
+      const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}/${path_components[4]}`
+      console.log(audio_link)
       transcript(filePath, audio_link, path_components[3])
           .then((data) => {
-            saveAudioMongo(user, room, username, data.audio_link, data.transcript, "Conversation", 1, null, false,"",data.transcript,"",duration,null)
+            saveAudioMongo(user, room, username, data.audio_link, data.transcript, "Conversation", 1,
+                null, false,"",data.transcript,"",
+                duration,null,false,[],fileName)
                 .then(audioID => {
                   // update audio history in room
                   err = updateRoomInfo(room, audioID);
@@ -96,7 +99,7 @@ router.post('/file', async (req, res) => {
                     throw err
                   }
 
-                  res.status(200).send({link: audio_link, transcript: data.transcript,audioID:audioID})
+                  res.status(200).send({link: audio_link, transcript: data.transcript,audioID:audioID,isLike:false})
                 })
           })
           .catch(err => {
@@ -112,30 +115,12 @@ router.post('/file', async (req, res) => {
     }
 
   })
-
-
-  // try {
-  //   console.log(req.file)
-  //   let path_components = req.file.path.split('/')
-  //   console.log(path_components)
-  //   let audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}`
-  //   let text = "text";
-  //   // save the audio information
-  //   saveAudioMongo(userID, roomID, audio_link, text)
-  //       .then(audioID => {
-  //         // update audio history in room
-  //         err = updateRoomInfo(roomID, audioID);
-  //         if (err) throw err
-  //       })
-  //   return res.status(200).send({success: true, link: audio_link, transcript: text})
-  // } catch (error) {
-  //   console.log("Dead")
-  //   res.status(500).send({success: false, error})
-  // }
 })
 
 
-const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcript, audioStyle, recordDevice, fixBy, isValidate,origin_transcript,bot_transcript,final_transcript,duration,wer) => {
+const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcript, audioStyle,
+                              recordDevice, fixBy, isValidate,origin_transcript,bot_transcript,
+                              final_transcript,duration,wer,isLike,upvote,audio_name) => {
 
   const audio = await Audio.create({
     user: userID,
@@ -152,6 +137,9 @@ const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcrip
     final_transcript: final_transcript,
     duration: duration,
     wer: wer,
+    isLike: isLike,
+    upvote: upvote,
+    audio_name:audio_name
   })
 
   return audio._id
