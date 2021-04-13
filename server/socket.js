@@ -242,10 +242,16 @@ sockets.init = function (server) {
 
     });
     socket.on('update transcript',({chatroomID,sender,newTranscript,audioIndex})=>{
-      console.log(chatroomID+"/"+newTranscript)
       io.to(chatroomID).emit("change transcript",{
         username: sender,
         transcript: newTranscript,
+        index: audioIndex,
+      })
+    });
+    socket.on('update like state',({chatroomID,sender,newIsLikeState,audioIndex})=>{
+      io.to(chatroomID).emit("change like state",{
+        username: sender,
+        isLike: newIsLikeState,
         index: audioIndex,
       })
     })

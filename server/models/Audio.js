@@ -52,6 +52,23 @@ const audioSchema = new mongoose.Schema({
   wer:{
     type:Number,
   },
+  isLike:{
+    type:Boolean,
+  },
+  upvote:[{
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        // default: [],
+      },
+    upVoteTime: {
+      type: String,
+    }
+        },
+  ],
+  audio_name:{
+    type:String,
+  }
 
 }, {timestamps: true});
 
