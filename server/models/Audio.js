@@ -10,8 +10,8 @@ const audioSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Chatroom',
   },
-  username:{
-    type:String,
+  username: {
+    type: String,
     required: false,
   },
   audioLink: {
@@ -31,43 +31,56 @@ const audioSchema = new mongoose.Schema({
   fixBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    default:null,
+    default: null,
   },
   //true: validated,false: no
   isValidate: {
     type: Boolean,
   },
-  origin_transcript:{
-    type:String,
+  origin_transcript: {
+    type: String,
   },
-  bot_transcript:{
-    type:String
+  bot_transcript: {
+    type: String
   },
-  final_transcript:{
-    type:String,
+  final_transcript: {
+    type: String,
   },
-  duration:{
-    type:String,
+  duration: {
+    type: String,
   },
-  wer:{
-    type:Number,
+  wer: {
+    type: Number,
   },
-  isLike:{
-    type:Boolean,
+  isLike: {
+    type: Boolean,
   },
-  upvote:[{
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        // default: [],
-      },
-    upVoteTime: {
+  up_vote: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      // default: [],
+    },
+    up_vote_time: {
       type: String,
     }
-        },
+  },
   ],
-  audio_name:{
-    type:String,
+  down_vote: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    down_vote_time: {
+      type: String,
+    },
+    new_transcript: {
+      type: String,
+    }
+  },
+  ],
+  audio_name: {
+    type: String,
   }
 
 }, {timestamps: true});

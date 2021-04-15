@@ -59,6 +59,8 @@ app.use('/api/audio', require('./routes/audio'));
 app.use('/api/getText', require('./routes/getText'));
 app.use('/api/sso', require('./routes/merge'));
 app.use('/api/wer', require('./routes/WER'));
+app.use('/api/validate', require('./routes/validate'));
+
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
 app.use('/uploads', express.static('uploads'));
@@ -78,7 +80,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 4000
 
 const server = app.listen(port, () => {
   console.log(`Server Listening on ${port}`)

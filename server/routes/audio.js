@@ -16,7 +16,16 @@ router.get("/:roomID", (req, res) => {
 })
 // GET ALL
 router.get("/", (req, res) => {
-  Audio.find({"isValidate": false})
+  // Audio.find({"isValidate": false})
+  Audio.find({wer: { $gt: 5, $lt: 101 }})
+      .exec((err, audios) => {
+        if (err) return res.status(400).send(err);
+        res.status(200).send(audios)
+      })
+});
+
+router.get("/getAudioFilter", (req, res) => {
+  Audio.find({wer: { $gt: 5, $lt: 101 }})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
         res.status(200).send(audios)
@@ -41,7 +50,8 @@ router.post("/import", (req, res) => {
       final_transcript: '',
       duration: element.duration,
       wer: null,
-
+      up_vote:[],
+      down_vote:[],
     }
     listAudio.push(audio)
   })
