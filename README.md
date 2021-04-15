@@ -12,5 +12,6 @@ module.exports = {
 3. Type  " npm install " inside the root directory  ( Download Server Dependencies ) 
 4. Type " npm install " inside the client directory ( Download Front-end Dependencies )
 5. In root directory, type "npm run dev" to launch app
+6. Install python 3.8 and pip i -r requirements.txt
 
 
