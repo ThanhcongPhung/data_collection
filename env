@@ -1,0 +1,2 @@
+ASR_SERVER_NODE=http://localhost:4000
+ASR_MONGO_DATABASE=mongodb+srv://root:root@cluster0.ppiqk.mongodb.net/data-collection?retryWrites=true&w=majority

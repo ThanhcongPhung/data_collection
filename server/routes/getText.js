@@ -4,13 +4,13 @@ const tmp = require('tmp')
 const request = require('request')
 const extract = require('extract-zip')
 const {Audio} = require("../models/Audio");
-
+require('dotenv').config();
 const formidable = require('formidable');
 const {join} = require('path');
 const path = require('path');
 const axios = require("axios");
 const csv = require('csv-parser')
-const DOMAIN_NAME = "http://localhost:5000"
+const DOMAIN_NAME = process.env.ASR_SERVER_NODE
 const spawn = require("child_process").spawn;
 const TEMP_URL = '/home/congpt/GR/data_collection/server/public/download/';
 const bluebird = require('bluebird')
@@ -171,7 +171,6 @@ function checkFileType(file) {
 router.post('/audioImport', async (req, res) => {
   const form = formidable.IncomingForm();
   const uploadFolder = './server/public/upload';
-
   form.multiples = true;
   form.maxFileSize = 50 * 1024 * 1024; //50MB
   form.uploadDir = uploadFolder;

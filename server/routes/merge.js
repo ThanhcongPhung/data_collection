@@ -11,10 +11,10 @@ router.post("/users", (req, res) => {
   // console.log("Client-secret: ", req.headers["client-secret"]);
   // console.log("user info: ", req.body.user);
 
-  if (req.headers["client-secret"] !== CLIENT_SECRET) {
-    res.status(405).send({ status: 0, error: "None of your business!" });
-    return
-  }
+  // if (req.headers["client-secret"] !== CLIENT_SECRET) {
+  //   res.status(405).send({ status: 0, error: "None of your business!" });
+  //   return
+  // }
 
   const userInfo = req.body.user;
 
@@ -37,10 +37,10 @@ router.post("/users", (req, res) => {
 // LOGIN
 router.post("/users/token", (req, res) => {
 
-  if (req.headers["client-secret"] !== CLIENT_SECRET) {
-    res.status(405).send({ status: 0, error: "None of your business!" });
-    return
-  }
+  // if (req.headers["client-secret"] !== CLIENT_SECRET) {
+  //   res.status(405).send({ status: 0, error: "None of your business!" });
+  //   return
+  // }
 
   const accessToken = req.body.accessToken;
   const decodeInfo = jwt.verify(accessToken, "9d5067a5a36f2bd6f5e93008865536c7", (err, decode) => {
@@ -76,10 +76,10 @@ router.post("/users/token", (req, res) => {
 // LOGOUT
 router.post("/users/logout", (req, res) => {
 
-  if (req.headers["client-secret"] !== CLIENT_SECRET) {
-    res.status(405).send({ status: 0, error: "None of your business!" });
-    return
-  }
+  // if (req.headers["client-secret"] !== CLIENT_SECRET) {
+  //   res.status(405).send({ status: 0, error: "None of your business!" });
+  //   return
+  // }
 
   const accessToken = req.body.accessToken;
   const decodeInfo = jwt.verify(accessToken, "9d5067a5a36f2bd6f5e93008865536c7", (err, decode) => {

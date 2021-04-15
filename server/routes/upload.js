@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const uploadService = require('../services/upload')
-const multer = require('multer')
 const {Audio} = require("./../models/Audio");
 const {Chatroom} = require("./../models/Chatroom");
-const {User} = require("./../models/User")
 const formidable = require('formidable');
 const {join} = require('path');
-const DOMAIN_NAME = "http://localhost:5000"
+require('dotenv').config();
+const DOMAIN_NAME = process.env.ASR_SERVER_NODE
 const bluebird = require('bluebird')
 const fs = bluebird.promisifyAll(require('fs'));
 const spawn = require("child_process").spawn;
