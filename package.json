@@ -20,7 +20,7 @@
     "@fast-csv/parse": "^4.3.6",
     "aws-sdk": "^2.838.0",
     "axios": "^0.21.1",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.18.3",
     "camelcase-keys": "^6.2.2",
