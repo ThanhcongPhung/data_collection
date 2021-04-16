@@ -23,18 +23,15 @@ mongoose.connect(config.mongoURI,
     })
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
-const client = new Redis({
-  port:6379,
-  host:'localhost',
-})
 
-app.use(session({
-  store: new RedisStore({client:client}),
-  secret:'mySecret',
-  saveUninitialized:false,
-  resave:false,
-  cookie: { secure: false,httpOnly:true, maxAge: 24 * 60 * 60 * 1000 }
-}))
+
+// app.use(session({
+//   store: new RedisStore({client:client}),
+//   secret:'mySecret',
+//   saveUninitialized:false,
+//   resave:false,
+//   cookie: { secure: false,httpOnly:true, maxAge: 24 * 60 * 60 * 1000 }
+// }))
 
 
 
@@ -45,12 +42,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 // support parsing of application/json type post data
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(session({
-  secret: "9d5067a5a36f2bd6f5e93008865536c7",
-  resave: true,
-  saveUninitialized: true,
-  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
-}))
+// app.use(session({
+//   secret: "9d5067a5a36f2bd6f5e93008865536c7",
+//   resave: true,
+//   saveUninitialized: true,
+//   cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
+// }))
 app.use('/api/users', require('./routes/users'));
 app.use('/api/chatroom', require("./routes/chatroom"));
 app.use('/api/upload', require('./routes/upload'));
