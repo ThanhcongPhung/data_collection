@@ -8,7 +8,7 @@ router.post("/", (req, res) => {
   const userID = req.body.userID
   const audioID = req.body.audioID
   const upvoteTime = req.body.upVoteTime
-
+  const transcript = req.body.transcript;
   Validate.findOne({user: userID}, function (err, existingUser) {
     if (!err && existingUser) {
       existingUser.up_vote.push({audio: audioID, up_vote_time: upvoteTime})
@@ -29,6 +29,7 @@ router.post("/", (req, res) => {
           res.status(404).send({success: false, message: "Audio not found"});
           throw "Can't find audio"
         } else {
+          audio.final_transcript = transcript
           audio.up_vote.push({user: userID, up_vote_time: upvoteTime});
           return audio.save();
         }
@@ -67,6 +68,7 @@ router.post("/update", (req, res) => {
           res.status(404).send({success: false, message: "Audio not found"});
           throw "Can't find audio"
         } else {
+          audio.final_transcript = transcript;
           audio.down_vote.push({user: userID, down_vote_time: downVoteTime,new_transcript: transcript});
           return audio.save();
         }

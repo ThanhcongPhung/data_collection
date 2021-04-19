@@ -282,8 +282,10 @@ function readFiles(dirname) {
 
 router.post('/audioImportZip', async (req, res) => {
   const form = formidable.IncomingForm();
+  const createFolder = './server/public';
+  await checkCreateUploadFolder(createFolder)
   const uploadFolder = './server/public/upload/';
-  const extractDir = '/home/congpt/GR/data_collection/server/public/upload/extract';
+  const extractDir = './server/public/upload/extract';
   form.multiples = true;
   form.maxFileSize = 100 * 1024 * 1024; //50MB
   form.keepExtensions = true;
@@ -315,10 +317,14 @@ router.post('/audioImportZip', async (req, res) => {
         const filePath = join(uploadFolder, fileName)
         let path_components = filePath.split('/')
         const zip_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}`
+        await checkCreateUploadFolder(extractDir)
         const destDir = path.join(extractDir, fileName);
         await checkCreateUploadFolder(destDir)
         const extract_path = `${destDir}_${new Date().getTime()}`
-        console.log(destDir)
+        await checkCreateUploadFolder(extract_path)
+        console.log("extrac_path:",extract_path)
+        const absolutePath = path.resolve(extract_path)
+        console.log("ziplink:",zip_link)
         tmp.file(function _tempFileCreated(err, path, fd, cleanupCallback) {
           if (err) throw err;
 
@@ -327,9 +333,10 @@ router.post('/audioImportZip', async (req, res) => {
             console.log('File: ', path);
             console.log('File descriptor: ', fd);
             try {
-              await extract(path, {dir: extract_path})
-                  .then(data => {
-                        const newPath = join(extract_path, 'AudioFile')
+              await extract(path, {dir: absolutePath})
+                  .then(async data => {
+                        const newPath = join(absolutePath, 'AudioFile')
+                        await checkCreateUploadFolder(newPath)
                         readFiles(newPath)
                             .then(data => {
                               const transcript = join(newPath, data[0])
@@ -371,7 +378,9 @@ router.post('/audioImportZip', async (req, res) => {
                       }
                   )
             } catch (err) {
-              console.error('Extraction failed.');
+
+              res.json({ok: false, msg: 'Files uploaded error!'})
+              console.error('Extraction failed.',err);
             }
           });
           cleanupCallback();
