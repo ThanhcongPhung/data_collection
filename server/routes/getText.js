@@ -349,9 +349,10 @@ router.post('/audioImportZip', async (req, res) => {
                                   .on('end', () => {
                                     const resArray = [];
                                     results.forEach((element, index) => {
-                                      const lastPath = join(newPath, element.path).split("/")
-                                      const audioLink = `${DOMAIN_NAME}/${lastPath[6]}/${lastPath[7]}/${lastPath[8]}/${lastPath[9]}/${lastPath[10]}/${element.path}`
-                                      console.log(element)
+                                      // const lastPath = join(newPath, element.path).split("/")
+                                      const lastPath=extract_path.split("/")
+                                      const audioLink = `${DOMAIN_NAME}/${lastPath[1]}/${lastPath[2]}/${lastPath[3]}/${lastPath[4]}/AudioFile/${element.path}`
+
                                       const listAudio = {
                                         id: index,
                                         audio_link: audioLink,
