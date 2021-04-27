@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const {Audio} = require("../models/Audio");
 
+require('dotenv').config();
+const formidable = require('formidable');
+const bluebird = require('bluebird')
+const fs = bluebird.promisifyAll(require('fs'));
+
 // GET ONE
 router.get("/:roomID", (req, res) => {
   Audio.find({"room": req.params.roomID})
@@ -17,7 +22,7 @@ router.get("/:roomID", (req, res) => {
 // GET ALL
 router.get("/", (req, res) => {
   Audio.find({"isValidate": false})
-  // Audio.find({wer: { $gt: 5, $lt: 101 }})
+      // Audio.find({wer: { $gt: 5, $lt: 101 }})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
         res.status(200).send(audios)
@@ -25,7 +30,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/getAudioFilter", (req, res) => {
-  Audio.find({wer: { $gt: 5, $lt: 101 }})
+  Audio.find({wer: {$gt: 5, $lt: 101}})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
         res.status(200).send(audios)
@@ -50,8 +55,8 @@ router.post("/import", (req, res) => {
       final_transcript: '',
       duration: element.duration,
       wer: null,
-      up_vote:[],
-      down_vote:[],
+      up_vote: [],
+      down_vote: [],
     }
     listAudio.push(audio)
   })
@@ -108,7 +113,7 @@ router.put("/updateLike", (req, res) => {
           throw "Can't find audio"
         } else {
           audio.isLike = isLike;
-          audio.upvote.push({user: userID, upVoteTime: upVoteTime});
+          audio.up_vote.push({user: userID, upVoteTime: upVoteTime});
           return audio.save();
         }
       })
@@ -143,5 +148,111 @@ router.post("/deleteAll", (req, res) => {
       res.json({ok: "ok", listAudioId: listAudioId})
     }
   })
+})
+const uploadFile = require("../utils/uploadFile")
+const multer = require("multer");
+const request = require("request");
+
+
+router.post("/uploadGetText", async (req, res) => {
+  // const form = new formidable.IncomingForm();
+  // form.parse(req, function(err, fields, files){
+  //
+  //   const oldPath = files.file.path+".wav";
+  //   console.log(fields.userID)
+  //   const rawData = fs.readFileSync(oldPath)
+  //   const file =  "/home/congpt/GR/data_collection/server/public/upload/extract/AudioFile.zip_1618913842939/AudioFile/wav/program-0015-00001.wav"
+  //
+  //   const name="adsd2";
+  //   const destination = "congpt"
+  //   console.log(oldPath)
+  //   uploadFile(oldPath,destination,name)
+  //       .then(res=>{
+  //         console.log(res)
+  //       })
+  //
+  // })
+  // form.parse(req, function(err, fields, files){
+  //
+  //   const oldPath = files.file.path;
+  //   const rawData = fs.readFileSync(oldPath)
+  //   console.log(rawData)
+  // const file =  "/home/congpt/GR/data_collection/server/public/upload/extract/AudioFile.zip_1618913842939/AudioFile/wav/program-0015-00001.wav"
+  // const name="adsd1";
+  // const destination = "congpt"
+  // uploadFile(file,destination,name)
+  //     .then(res=>{
+  //       console.log(res)
+  //     })
+  //
+  //   // // var newPath = path.join(__dirname, 'uploads')
+  //   // //     + '/'+files.profilePic.name
+  //   // var rawData = fs.readFileSync(oldPath)
+  //
+  //   // fs.writeFile(newPath, rawData, function(err){
+  //   //   if(err) console.log(err)
+  //   //   return res.send("Successfully uploaded")
+  //   // })
+  // })
+  // request.get({
+  //   url: 'http://43.239.223.87:3087/api/v1/stt?url=https://dev-asr.iristech.club/public/upload/extract/AudioFile.zip_1618915343291/AudioFile/wav/program-0015-00001.wav',
+  //   headers: {
+  //     Authorization: "Bearer zyvZQGPrr6qdbHLTuzqpCmuBgW3TjTxGKEEIFCiy1lCAOzTBtrqPYdPdZ1AtMxU2"
+  //   }
+  // }, function (error, response, body) {
+  //   console.log(response.body);
+  //   // if (!error && response.status == 1) {
+  //   //   // Successful call
+  //   //   var results = JSON.parse(body);
+  //   //   console.log(results) // View Results
+  //   // }
+  // });
+
+  // const form = {
+  //   destination: "congpt",
+  //   name: "congpt",
+  //   file: "/home/congpt/GR/data_collection/server/public/upload/extract/AudioFile.zip_1618913842939/AudioFile/wav/program-0015-00001.wav",
+  // };
+  // const formData = querystring.stringify(form);
+  // const contentLength = formData.length;
+  //
+  // request({
+  //   headers: {
+  //     // 'Content-Length': contentLength,
+  //     // 'Content-Type': 'application/x-www-form-urlencoded',
+  //     'Authorization': 'Bearer zyvZQGPrr6qdbHLTuzqpCmuBgW3TjTxGKEEIFCiy1lCAOzTBtrqPYdPdZ1AtMxUo2',
+  //   },
+  //   uri: 'http://43.239.223.87:3087/api/v1/stt?url=https://dev-asr.iristech.club/public/upload/extract/AudioFile.zip_1618915343291/AudioFile/wav/program-0015-00001.wav',
+  //   // body: formData,
+  //   method: 'GET'
+  // }, function (err, res, body) {
+  //   //it works!
+  //   console.log(res.body)
+  // });
+
+  // const oldPath = files.file.path;
+  // const reader = fs.createReadStream("/home/congpt/GR/data_collection/server/public/upload/extract/AudioFile.zip_1618913842939/AudioFile/wav/program-0015-00001.wav")
+  // const form = {
+  //   destination: "congpt",
+  //   name: "congpt",
+  //   file: "/home/congpt/GR/data_collection/server/public/upload/extract/AudioFile.zip_1618913842939/AudioFile/wav/program-0015-00001.wav",
+  // };
+  // const formData = querystring.stringify(form);
+  // const contentLength = formData.length;
+  //
+  // request({
+  //   headers: {
+  //     'Content-Length': contentLength,
+  //     'Content-Type': 'multipart/form-data',
+  //     'Authorization': 'Bearer zyvZQGPrr6qdbHLTuzqpCmuBgW3TjTxGKEEIFCiy1lCAOzTBtrqPYdPdZ1AtMxUo2',
+  //   },
+  //   uri: 'http://43.239.223.87:5087/api/v1/uploads/file',
+  //   body: formData,
+  //   method: 'POST'
+  // }, function (err, res, body) {
+  //   //it works!
+  //   console.log(res.body)
+  // });
+
 })
 module.exports = router;

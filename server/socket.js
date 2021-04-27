@@ -328,7 +328,7 @@ const createRoom = async (userID1, userID2, roomType) => {
 // user1 - client, user2 - servant
   let content_type = roomType === "audio" ? 0 : 1
   const name = await generateName(4);
-  let intent = await createRandomIntent()
+  let intent = await createRandomScenario()
 
   // const randomValue = randomGenerator()
 
@@ -362,7 +362,44 @@ const createRoom = async (userID1, userID2, roomType) => {
 }
 
 const intentSamplePool = require("./configs/intent");
+const createRandomScenario = () => {
+  // gen base intent
+  const intentIndex = getRandomFromArray(intentSamplePool.SCENARIO);
+  // const intentIndex = 12;
+  const slots = intentSamplePool.INTENT[intentIndex].slot;
 
+  let tempIntent = {
+    intent: intentIndex,
+  }
+
+  // gen slot required for intent.
+  slots.map(slot => {
+    if (intentSamplePool[slot.toUpperCase()] === undefined) {
+      // Have to change it once we know how to handle the city and district.
+      return tempIntent[slot] = -1;
+    }
+    const slotPool = intentSamplePool[slot.toUpperCase()];
+    // we decide the objective.
+    // if (slot === "district") {
+    //   // console.log
+    //   const slotIndex = getRandomFromArray(slotPool[intentSamplePool.CITY[tempIntent["city"]]]);
+    //   return tempIntent[slot] = slotIndex;
+    // }
+    // let users decide the object.
+    if (slot === "city" || slot === "district") {
+      return tempIntent[slot] = -1;
+    }
+    const slotIndex = getRandomFromArray(slotPool);
+    return tempIntent[slot] = slotIndex;
+  })
+
+  const { intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits } = tempIntent;
+  // I can still put this lil piece of crap in the {} up there, but who knows what magic it might hold, so better safe than sorry.
+  const generic_intent = null;
+  return Intent.create({
+    intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits, generic_intent
+  })
+}
 const createRandomIntent = () => {
   // gen base intent
   const intentIndex = getRandomFromArray(intentSamplePool.INTENT);

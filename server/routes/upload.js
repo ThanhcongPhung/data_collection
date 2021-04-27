@@ -4,9 +4,13 @@ const {Audio} = require("./../models/Audio");
 const {Chatroom} = require("./../models/Chatroom");
 const formidable = require('formidable');
 const {join} = require('path');
-require('dotenv').config();
-const DOMAIN_NAME = process.env.ASR_SERVER_NODE
+const {
+  ASR_SERVER_NODE,
+  UPLOAD_DATA_DOMAIN,
+  UPLOAD_AUTH_KEY,
+} = require('../configs');
 const bluebird = require('bluebird')
+const request = require("request");
 const fs = bluebird.promisifyAll(require('fs'));
 const spawn = require("child_process").spawn;
 
@@ -74,7 +78,7 @@ router.post('/file', async (req, res) => {
     const username = fields.username;
     const duration = fields.duration;
     // console.log(file)
-    const newPath = join(uploadFolder,room)
+    const newPath = join(uploadFolder, room)
     await checkCreateUploadFolder(newPath)
     const fileName = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
     try {
@@ -82,13 +86,13 @@ router.post('/file', async (req, res) => {
       const filePath = join(newPath, fileName)
       console.log(filePath)
       let path_components = filePath.split('/')
-      const audio_link = `${DOMAIN_NAME}/${path_components[1]}/${path_components[2]}/${path_components[3]}/${path_components[4]}`
+      const audio_link = `${ASR_SERVER_NODE}/${path_components[1]}/${path_components[2]}/${path_components[3]}/${path_components[4]}`
       console.log(audio_link)
       transcript(filePath, audio_link, path_components[3])
           .then((data) => {
             saveAudioMongo(user, room, username, data.audio_link, data.transcript, "Conversation", 1,
-                null, false,"",data.transcript,"",
-                duration,null,false,[],fileName)
+                null, false, "", data.transcript, "",
+                duration, null, false, [], fileName)
                 .then(audioID => {
                   // update audio history in room
                   err = updateRoomInfo(room, audioID);
@@ -97,7 +101,7 @@ router.post('/file', async (req, res) => {
                     throw err
                   }
 
-                  res.status(200).send({link: audio_link, transcript: data.transcript,audioID:audioID,isLike:false})
+                  res.status(200).send({link: audio_link, transcript: data.transcript, audioID: audioID, isLike: false})
                 })
           })
           .catch(err => {
@@ -115,10 +119,54 @@ router.post('/file', async (req, res) => {
   })
 })
 
+function transcriptGoogle(audio_link) {
+  return new Promise(function (resolve, reject) {
+    request.get({
+      url: `${UPLOAD_DATA_DOMAIN}/api/v1/stt?url=${audio_link}`,
+      headers: {
+        Authorization: "Bearer " + `${UPLOAD_AUTH_KEY}`
+      }
+    }, function (error, response, body) {
+      const results = JSON.parse(response.body);
+      if (results.status === 1) {
+        resolve(results.result.transcription)
+      } else {
+        reject(results.message)
+      }
+    });
+  })
+}
+
+router.post('/fileV2', async (req, res) => {
+  const user = req.body.userID;
+  const room = req.body.roomID;
+  const username = req.body.username;
+  const audio_link = req.body.audio_link;
+  const duration = req.body.duration;
+  const fileName = req.body.audio_link.split("/")[-1]
+  await transcriptGoogle(req.body.audio_link)
+      .then(async (data) => {
+         await saveAudioMongo(user, room, username, audio_link, data, "Conversation", 1,
+            null, false, "", data, "",
+            duration, null, false, [], fileName)
+            .then(audioID => {
+              // update audio history in room
+              let err = updateRoomInfo(room, audioID);
+              if (err) {
+                res.status(500).send(err)
+                throw err
+              }
+              res.status(200).send({link: audio_link, transcript: data, audioID: audioID, isLike: false})
+            })
+            .catch(err => {
+              console.log(err)
+            })
+      })
+})
 
 const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcript, audioStyle,
-                              recordDevice, fixBy, isValidate,origin_transcript,bot_transcript,
-                              final_transcript,duration,wer,isLike,upvote,audio_name) => {
+                              recordDevice, fixBy, isValidate, origin_transcript, bot_transcript,
+                              final_transcript, duration, wer, isLike, upvote, audio_name) => {
 
   const audio = await Audio.create({
     user: userID,
@@ -130,14 +178,14 @@ const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcrip
     recordDevice: recordDevice,
     fixBy: fixBy,
     isValidate: isValidate,
-    origin_transcript:origin_transcript,
+    origin_transcript: origin_transcript,
     bot_transcript: bot_transcript,
     final_transcript: final_transcript,
     duration: duration,
     wer: wer,
     isLike: isLike,
     upvote: upvote,
-    audio_name:audio_name
+    audio_name: audio_name
   })
 
   return audio._id
