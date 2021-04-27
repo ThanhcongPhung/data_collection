@@ -3,3 +3,5 @@ ASR_MONGO_DATABASE=mongodb+srv://root:root@cluster0.ppiqk.mongodb.net/data-colle
 REDIS_HOST=redis-18778.c245.us-east-1-3.ec2.cloud.redislabs.com
 REDIS_PORT=18778
 REDIS_PASSWORD=congpt
+UPLOAD_AUTH_KEY=
+UPLOAD_DATA_DOMAIN=https://asr.vbeecore.com
