@@ -44,7 +44,10 @@ const userSchema = mongoose.Schema({
     //Female, male, other
     gender:{
         type:String
-    }
+    },
+    phone_number:{
+        type:String
+    },
 })
 
 

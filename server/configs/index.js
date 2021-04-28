@@ -4,9 +4,8 @@ const {
   REDIS_HOST,
   REDIS_PORT,
   REDIS_PASSWORD,
-  UPLOAD_AUTH_KEY,
-
-  UPLOAD_DATA_DOMAIN,
+  ASR_AUTH_KEY,
+  ASR_URL,
 } = process.env;
 
 module.exports = {
@@ -15,6 +14,6 @@ module.exports = {
   REDIS_HOST,
   REDIS_PORT,
   REDIS_PASSWORD,
-  UPLOAD_AUTH_KEY,
-  UPLOAD_DATA_DOMAIN,
+  ASR_AUTH_KEY,
+  ASR_URL,
 };

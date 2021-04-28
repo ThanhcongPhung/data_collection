@@ -6,8 +6,8 @@ const formidable = require('formidable');
 const {join} = require('path');
 const {
   ASR_SERVER_NODE,
-  UPLOAD_DATA_DOMAIN,
-  UPLOAD_AUTH_KEY,
+  ASR_URL,
+  ASR_AUTH_KEY,
 } = require('../configs');
 const bluebird = require('bluebird')
 const request = require("request");
@@ -122,9 +122,9 @@ router.post('/file', async (req, res) => {
 function transcriptGoogle(audio_link) {
   return new Promise(function (resolve, reject) {
     request.get({
-      url: `${UPLOAD_DATA_DOMAIN}/api/v1/stt?url=${audio_link}`,
+      url: `${ASR_URL}/api/v1/stt?url=${audio_link}`,
       headers: {
-        Authorization: "Bearer " + `${UPLOAD_AUTH_KEY}`
+        Authorization: "Bearer " + `${ASR_AUTH_KEY}`
       }
     }, function (error, response, body) {
       const results = JSON.parse(response.body);
