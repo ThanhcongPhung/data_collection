@@ -11,6 +11,7 @@ const {
 } = require('../configs');
 const bluebird = require('bluebird')
 const request = require("request");
+const axios = require("axios");
 const fs = bluebird.promisifyAll(require('fs'));
 const spawn = require("child_process").spawn;
 
@@ -121,19 +122,26 @@ router.post('/file', async (req, res) => {
 
 function transcriptGoogle(audio_link) {
   return new Promise(function (resolve, reject) {
-    request.get({
-      url: `${ASR_URL}/api/v1/stt?url=${audio_link}`,
-      headers: {
-        Authorization: "Bearer " + `${ASR_AUTH_KEY}`
-      }
-    }, function (error, response, body) {
-      const results = JSON.parse(response.body);
-      if (results.status === 1) {
-        resolve(results.result.transcription)
-      } else {
-        reject(results.message)
-      }
-    });
+    try {
+      axios({
+        method: 'GET',
+        url: `${ASR_URL}/api/v1/stt?url=${audio_link}`,
+        headers: {
+          'Authorization': "Bearer " + `${ASR_AUTH_KEY}`,
+        },
+      }).then(res => {
+        if (res.data.status === 1) {
+          console.log(res.data)
+          resolve(res.data.result.transcription)
+        } else {
+          reject(res.data.message)
+        }
+
+      })
+    } catch (e) {
+      console.log(e)
+    }
+
   })
 }
 
@@ -146,7 +154,7 @@ router.post('/fileV2', async (req, res) => {
   const fileName = req.body.audio_link.split("/")[-1]
   await transcriptGoogle(req.body.audio_link)
       .then(async (data) => {
-         await saveAudioMongo(user, room, username, audio_link, data, "Conversation", 1,
+        await saveAudioMongo(user, room, username, audio_link, data, "Conversation", 1,
             null, false, "", data, "",
             duration, null, false, [], fileName)
             .then(audioID => {
