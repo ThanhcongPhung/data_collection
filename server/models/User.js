@@ -48,6 +48,9 @@ const userSchema = mongoose.Schema({
     phone_number:{
         type:String
     },
+    speaker_id: {
+        type:String
+    }
 })
 
 

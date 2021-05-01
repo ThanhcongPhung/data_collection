@@ -196,7 +196,20 @@ sockets.init = function (server) {
         username: username,
       });
     });
+    socket.on("Recording", ({ roomID,username }) => {
+      io.to(roomID).emit("user recording", {username});
+    })
 
+    socket.on("Done Recording", ({ roomID ,username}) => {
+      io.to(roomID).emit("user done recording", {username});
+    })
+    socket.on("Get transcript", ({ roomID, username }) => {
+      io.to(roomID).emit("getting transcript", {username});
+    })
+    socket.on("Re record", ({ roomID, username }) => {
+      console.log("rerecording")
+      io.to(roomID).emit("123", {username});
+    })
     socket.on('leaveRoom', ({chatroomID, username}) => {
       socket.leave(chatroomID);
       console.log(`The user ${username} has left chatroom: ${chatroomID}`)

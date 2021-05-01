@@ -17,7 +17,8 @@ router.post("/users", (req, res) => {
   // }
 
   const userInfo = req.body.user;
-
+  const matches = userInfo.match(/(?<!\p{L}\p{M}*)\p{L}\p{M}*/gu);
+  const speaker_id = matches.join('') + userInfo.ssoUserId;
   const user = new User({
     name: userInfo.name,
     email: userInfo.email,
@@ -26,6 +27,7 @@ router.post("/users", (req, res) => {
     role: 0,
     // sex: 0,
     image: userInfo.avatar,
+    speaker_id:speaker_id,
   });
 
   user.save((err, doc) => {

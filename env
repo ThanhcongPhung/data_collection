@@ -5,3 +5,4 @@ REDIS_PORT=18778
 REDIS_PASSWORD=congpt
 ASR_AUTH_KEY=zyvZQGPrr6qdbHLTuzqpCmuBgW3TjTxGKEEIFCiy1lCAOzTBtrqPYdPdZ1AtMxU2
 ASR_URL=https://asr.vbeecore.com
+NODE_ENV=product

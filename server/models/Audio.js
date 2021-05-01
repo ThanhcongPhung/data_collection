@@ -81,6 +81,9 @@ const audioSchema = new mongoose.Schema({
   ],
   audio_name: {
     type: String,
+  },
+  speaker_id:{
+    type:String,
   }
 
 }, {timestamps: true});
