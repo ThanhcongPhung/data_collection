@@ -340,14 +340,13 @@ const {Chatroom} = require("./models/Chatroom");
 const createRoom = async (userID1, userID2, roomType) => {
 // user1 - client, user2 - servant
   let content_type = roomType === "audio" ? 0 : 1
-  const name = await generateName(4);
   let intent = await createRandomScenario()
-
+  const name = await generateName(intent.intent)+`${Date.now()}`;
   // const randomValue = randomGenerator()
 
   const chatroom = await Chatroom.create({
     name: name,
-    task: generateTask(),
+    task: generateTask(intent.intent),
     content_type: content_type,
     user1: userID1,
     user2: userID2,
@@ -357,8 +356,8 @@ const createRoom = async (userID1, userID2, roomType) => {
         if (err.name === "MongoError") {
           if (err.code === 11000) {
             return await Chatroom.create({
-              name: await generateName(6),
-              task: generateTask(),
+              name: await generateName(intent.intent)+`_${Date.now()}`,
+              task: generateTask(intent.intent),
               content_type: content_type,
               user1: userID1,
               user2: userID2,
@@ -471,14 +470,13 @@ const randomGenerator = () => {
   return Math.floor(Math.random() * 1000);
 }
 
-const generateName = () => {
-  // IMPLEMENT!!!
-  return "A random room name "
+const generateName = (index) => {
+  return intentSamplePool.SCENARIO[index].name;
 }
 
-const generateTask = () => {
-  // IMPLEMENT!!!
-  return "A sample task "
+const generateTask = (index) => {
+
+  return intentSamplePool.SCENARIO[index].name;
 }
 
 module.exports = sockets;

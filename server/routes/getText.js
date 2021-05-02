@@ -14,6 +14,8 @@ const DOMAIN_NAME = process.env.ASR_SERVER_NODE
 const spawn = require("child_process").spawn;
 const TEMP_URL = '/home/congpt/GR/data_collection/server/public/download/';
 const bluebird = require('bluebird')
+const uploadFile = require("../utils/uploadFile");
+
 const fs = bluebird.promisifyAll(require('fs'));
 
 let download = function (uri, filename, callback) {
@@ -277,9 +279,144 @@ function readFiles(dirname) {
     });
     resolve(fileList)
   })
-
 }
+function uploadMulAudio(audio) {
+  return new Promise(async function (resolve, reject) {
+    // console.log("audiolink:",audio.audio_link)
+    // console.log("audiodestination:",audio.destination)
+    // console.log("name",audio.name)
 
+    await uploadFile(audio.audio_link,audio.destination,audio.name)
+        .then(res=>{
+          // console.log("gbgubbhu",res.result.link)
+          // console.log(audio)
+          const audio_response = {
+            id: audio.id,
+            audio_link: res.result.link,
+            transcript: audio.transcript,
+            audio_name: audio.audio_name,
+            speaker_id: audio.speaker_id,
+            speaker_accent: audio.speaker_accent,
+            speaker_name: audio.speaker_name,
+            speaker_gender: audio.speaker_gender,
+            duration: audio.duration,
+            content: audio.content,
+            style: audio.style,
+            type: audio.type,
+            device: audio.device,
+          }
+          resolve(audio_response)
+
+        })
+        .catch(err=>{
+          reject(err)
+        })
+  })
+}
+router.post('/unzip',async (req,res)=>{
+  const zip_link = req.body.zip_link
+  const extractDir = './server/public/upload/extract';
+  const createFolder = './server/public';
+  await checkCreateUploadFolder(createFolder)
+  const uploadFolder = './server/public/upload/';
+  await checkCreateUploadFolder(uploadFolder)
+  await checkCreateUploadFolder(extractDir)
+  const fileName =zip_link.split("/").slice(-1).pop()
+  const zip_name = fileName.split(".")[0].split("_")[0]
+  // console.log("zipname",zip_name)
+  try {
+    const destDir = join(extractDir, fileName);
+    // console.log("destination",destDir)
+    await checkCreateUploadFolder(destDir)
+    const extract_path = `${destDir}`
+    await checkCreateUploadFolder(extract_path)
+    // console.log("extract_path:",extract_path)
+    const absolutePath = path.resolve(extract_path)
+    tmp.file(function _tempFileCreated(err, path, fd, cleanupCallback) {
+      if (err) throw err;
+
+      download(zip_link, path, async function () {
+        // console.log('done');
+        // console.log('File: ', path);
+        // console.log('File descriptor: ', fd);
+        try {
+
+          await extract(path, {dir: absolutePath})
+              .then(async data => {
+                    const newPath = join(absolutePath, zip_name)
+                    await checkCreateUploadFolder(newPath)
+                    readFiles(newPath)
+                        .then(data => {
+                          const transcript = join(newPath, data[0])
+                          // console.log(transcript)
+                          const results = [];
+
+                          fs.createReadStream(transcript)
+                              .pipe(csv())
+                              .on('data', (data) => results.push(data))
+                              .on('end', () => {
+                                const promise = [];
+                                results.forEach((element, index) => {
+                                  const lastPath=extract_path.split("/")
+                                  const destination = `congpt/import/${lastPath[2]}/${lastPath[3]}/${lastPath[4].split('.')[0]}/${zip_name}/`
+                                  const audioLink = `${extract_path}/${zip_name}/${element.path}`
+                                  const name = element.path.split("/")[1].split(".")[0]
+
+
+                                  const audio = {
+                                    id: index,
+                                    audio_link: audioLink,
+                                    transcript: element.transcript,
+                                    audio_name: element.path,
+                                    speaker_id: element.speaker_id,
+                                    speaker_accent: element.speaker_accent,
+                                    speaker_name: element.speaker_name,
+                                    speaker_gender: element.speaker_gender,
+                                    duration: element.duration,
+                                    content: element.content,
+                                    style: element.style,
+                                    type: element.type,
+                                    device: element.device,
+                                    destination: destination,
+                                    name: name,
+                                  }
+                                  promise.push(uploadMulAudio(audio))
+                                })
+
+                                Promise.all(promise)
+                                    .then(data=>{
+                                      res.json({ok: true, msg: 'Files uploaded successfully!', files: data})
+                                      console.log('Extraction complete')
+                                      deleteFolderRecursive(uploadFolder)
+
+                                    })
+                                    .catch(err=>{
+                                      res.json({ok: false, msg: 'Files uploaded error!'})
+                                      console.error('Extraction failed.',err);
+                                    })
+
+                              });
+                        })
+                  }
+              )
+        } catch (err) {
+          res.json({ok: false, msg: 'Files uploaded error!'})
+          console.error('Extraction failed.',err);
+        }
+      });
+      cleanupCallback();
+    });
+
+
+  } catch (e) {
+    console.log('Error uploading the file')
+    try {
+      await fs.unlinkSync(file.path)
+    } catch (e) {
+    }
+    return res.json({ok: false, msg: 'Error uploading the file'})
+  }
+})
 router.post('/audioImportZip', async (req, res) => {
   const form = formidable.IncomingForm();
   const createFolder = './server/public';

@@ -1,8 +1,10 @@
 const FormData = require('form-data');
 const fs = require('fs');
 const axios = require('axios');
-// const { CDN_URL } = require('../configs');
-
+const {
+  ASR_URL,
+  ASR_AUTH_KEY,
+} = require('../configs');
 const uploadFile = async (filePath, destination, name) => {
   try {
     const reader = fs.createReadStream(filePath);
@@ -13,18 +15,20 @@ const uploadFile = async (filePath, destination, name) => {
 
     const response = await axios({
       method: 'POST',
-      url: 'http://43.239.223.87:5087/api/v1/uploads/file',
+      url: `${ASR_URL}/api/v1/uploads/file`,
       data: form,
       headers: {
         'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}`,
-        'Authorization': 'Bearer zyvZQGPrr6qdbHLTuzqpCmuBgW3TjTxGKEEIFCiy1lCAOzTBtrqPYdPdZ1AtMxUo2',
+        'Authorization': 'Bearer '+`${ASR_AUTH_KEY}`,
       },
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
     });
 
-    console.log('Successfully upload', response.data);
+    // console.log('Successfully upload', response.data);
+    return response.data;
   } catch (error) {
+    return error.message;
     console.error('Upload file error:', error.message);
   }
 };

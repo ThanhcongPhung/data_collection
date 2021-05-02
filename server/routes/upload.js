@@ -10,7 +10,6 @@ const {
   ASR_AUTH_KEY,
 } = require('../configs');
 const bluebird = require('bluebird')
-const request = require("request");
 const axios = require("axios");
 const fs = bluebird.promisifyAll(require('fs'));
 const spawn = require("child_process").spawn;
