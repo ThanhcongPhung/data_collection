@@ -57,10 +57,11 @@ router.post("/import", (req, res) => {
       wer: null,
       up_vote: [],
       down_vote: [],
+      speaker_id:element.speaker_id
     }
     listAudio.push(audio)
   })
-  console.log(listAudio)
+  // console.log(listAudio)
   Audio.create(listAudio, function (err, temps) {
     if (err) {
       return res.send(new Error('Error saving'));

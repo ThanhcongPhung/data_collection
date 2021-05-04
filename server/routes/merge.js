@@ -17,7 +17,7 @@ router.post("/users", (req, res) => {
   // }
 
   const userInfo = req.body.user;
-  const matches = userInfo.match(/(?<!\p{L}\p{M}*)\p{L}\p{M}*/gu);
+  const matches = userInfo.name.match(/(?<!\p{L}\p{M}*)\p{L}\p{M}*/gu);
   const speaker_id = matches.join('') + userInfo.ssoUserId;
   const user = new User({
     name: userInfo.name,
