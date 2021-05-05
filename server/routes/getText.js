@@ -4,6 +4,7 @@ const tmp = require('tmp')
 const request = require('request')
 const extract = require('extract-zip')
 const {Audio} = require("../models/Audio");
+const {LongTranscript} = require("../models/LongTranscript")
 require('dotenv').config();
 const formidable = require('formidable');
 const {join} = require('path');
@@ -581,5 +582,42 @@ router.post('/audioImportZip', async (req, res) => {
   })
 })
 
+router.post('/long-audio',async (req,res)=>{
+  const longTranscript = {
+    audio_link: req.body.link,
+    transcript:req.body.transcript,
+  }
+  LongTranscript.create(longTranscript, function (err, temps) {
+    if (err) {
+      res.status(500).send({ status: 0, error: err });
+    } else {
+      res.status(200).send({ status: 1 });
+    }
+  });
+})
+router.get("/export", async (req, res) => {
+  const exportFolder = `/home/congpt/GR/`;
+  const longTranscriptExportFile = "LongTranscript.json";
 
+  await LongTranscript.find()
+      .then((scriptFound) => {
+        exportObject(exportFolder + longTranscriptExportFile, scriptFound)
+        res.status(200).send({ status: 1 });
+
+      })
+      .catch(err => {
+        res.status(500).send({ status: 0, error: err });
+        throw err
+      });
+
+
+})
+const exportObject = (destination, object) => {
+  fs.writeFile(destination, JSON.stringify(object), (err) => {
+    // return doesn't work...
+    if (err) {
+      console.log(err)
+    }
+  })
+}
 module.exports = router;
