@@ -341,7 +341,7 @@ const createRoom = async (userID1, userID2, roomType) => {
 // user1 - client, user2 - servant
   let content_type = roomType === "audio" ? 0 : 1
   let intent = await createRandomScenario()
-  const name = await generateName(intent.intent)+`${Date.now()}`;
+  const name = await generateName(intent.intent)+`_${Date.now()}`;
   // const randomValue = randomGenerator()
 
   const chatroom = await Chatroom.create({

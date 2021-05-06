@@ -29,8 +29,8 @@ router.get("/", (req, res) => {
       })
 });
 
-router.get("/getAudioFilter", (req, res) => {
-  Audio.find({wer: {$gt: 5, $lt: 101}})
+router.get("/getAll", (req, res) => {
+  Audio.find()
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
         res.status(200).send(audios)
