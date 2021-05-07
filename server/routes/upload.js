@@ -144,6 +144,16 @@ function transcriptGoogle(audio_link) {
   })
 }
 
+router.post('/transcript', async (req, res) => {
+  const audio_link = req.body.audio_link;
+  await transcriptGoogle(audio_link)
+      .then(async (data) => {
+        res.status(200).send({transcript: data})
+      })
+      .catch(err => {
+        res.status(401).send({transcript: err})
+      })
+})
 router.post('/fileV2', async (req, res) => {
   const user = req.body.userID;
   const room = req.body.roomID;
@@ -171,10 +181,35 @@ router.post('/fileV2', async (req, res) => {
             })
       })
 })
+router.post('/fileV3', async (req, res) => {
+  const user = req.body.userID;
+  const room = req.body.roomID;
+  const username = req.body.username;
+  const audio_link = req.body.audio_link;
+  const duration = req.body.duration;
+  const fileName = req.body.audio_link.split("/")[-1]
+  const speaker_id = req.body.speaker_id;
+  const transcript = req.body.transcript;
 
+  await saveAudioMongo(user, room, username, audio_link, transcript, "Conversation", 1,
+      null, false, "", transcript, "",
+      duration, null, false, [], fileName, speaker_id)
+      .then(audioID => {
+        // update audio history in room
+        let err = updateRoomInfo(room, audioID);
+        if (err) {
+          res.status(500).send(err)
+          throw err
+        }
+        res.status(200).send({link: audio_link, transcript: transcript, audioID: audioID, isLike: false})
+      })
+      .catch(err => {
+        console.log(err)
+      })
+})
 const saveAudioMongo = async (userID, chatroomID, username, audioLink, transcript, audioStyle,
                               recordDevice, fixBy, isValidate, origin_transcript, bot_transcript,
-                              final_transcript, duration, wer, isLike, upvote, audio_name,speaker_id) => {
+                              final_transcript, duration, wer, isLike, upvote, audio_name, speaker_id) => {
 
   const audio = await Audio.create({
     user: userID,
