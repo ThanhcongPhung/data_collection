@@ -617,6 +617,44 @@ const QA = [
         "*7.700 VNĐ/ giao dịch đối với giao dịch giá trị dưới 10.000.000 VNĐ \n" +
         "*0.022% giá trị giao dịch (tối thiểu 11.000 VNĐ) đối với giao dịch giá trị từ 10.000.000 VNĐ trở lên"
   },
+  {
+    scenario: 5,
+    question:"Tổng chi tiêu là gì",
+    answer:"Tổng số tiền anh chị giao dịch trong suốt thời gian 30 ngày kể từ ngày phát hành"
+  },
+  {
+    scenario: 5,
+    question:"Số tiền được tặng",
+    answer:"Thẻ hiện tại là thẻ {tên thương hiệu thẻ} sẽ được tặng {số tiền tương ứng} khi chi tiêu {số tiền tương ứng} trở lên trong 30 ngày kể từ ngày phát hành ạ" +
+        "*Có thể nói lung tung các con số cũng được ^^"
+  },
+  {
+    scenario: 5,
+    question:"Chính sách hoàn tiền",
+    answer:"Với thẻ tín dụng tiền thưởng sẽ hạch toán vào hạn mức thẻ" +
+        "*Với thẻ ghi nợ quốc tế tiền thưởng sẽ hạch toán vào tài khoản liên kết tới thẻ"
+  },
+  {
+    scenario: 5,
+    question:"Thế phải tiêu bao nhiêu",
+    answer:"Vâng để được hoàn tiền, thì a/c cần chi tiêu từ xxx triệu trở lên" +
+        "**Có thể nói lung tung các con số cũng được ^^"
+  },
+  {
+    scenario: 5,
+    question:"Chi tiêu ở đâu",
+    answer:"Dạ, a/c có thể thanh toán tại các điểm chấp nhận thẻ trên toàn quốc, hoặc thanh toán trực tuyến, ngoại trừ các giao dịch rút tiền mặt"
+  },
+  {
+    scenario: 5,
+    question:"Chính sách chương trình",
+    answer:"Dạ với loại thẻ mà anh chị đang sử dụng là {tên thương hiệu thẻ} thì mức hoàn tiền tối đa là {số tiền tương ứng hạng thẻ} đồng ạ"
+  },
+  {
+    scenario: 5,
+    question:"Bao giờ phải chi tiêu",
+    answer:"Dạ thời gian chi tiêu là trong vòng 30 ngày kể từ ngày phát hành thẻ."
+  },
 ]
 
 const INTENT = [
@@ -781,6 +819,36 @@ const INTENT = [
     servant:"Bạn hãy xác thực thông tin tên, số điện thoại, 4 số cuối tài khoản của khách hàng." +
         "Mỗi thông tin xác nhận lại một lần. " +
         "Bạn hãy tham khảo thông tin trong thanh search phù hợp với sự cố của khách hàng để đưa ra tư vấn hợp lý"
+  },
+  //19
+  {
+    name:"Thông tin chương trình khuyến mại",
+    slot:[],
+    servant: "Bước 1: Chào hỏi khách hàng: giới thiệu mình là nhân viên chăm sóc khách hàng của ngân hàng VCB(vietcombank), xin phép được trao đổi một chút được không" +
+        "*Bước 2: Giới thiệu chương trình: Thưa a/c, để tri ân khách hàng vừa phát hành thẻ quốc tế BIDV, Ngân hàng BIDV đang triển khai nhiều quà tặng hấp dẫn, dành cho khách hàng phát hành thẻ trong dịp này. A/c sẽ được hoàn tiền khi giao dịch bằng thẻ trong vòng 30 ngày kể từ ngày phát hành. Xác nhận lại lần với khách hàng có quan tâm không?" +
+        "*Bước 3: Thông tin chương trình: Dạ với chương trình này, tùy theo loại thẻ a/c sẽ được tặng từ 300.000 đến 1.500.000 khi phát sinh chi tiêu. Ví dụ thẻ của a/c là master card, a/c sẽ được tặng 3% giá trị giao dịch khi chi tiêu từ 10 triệu trở lên. hỏi xem khách có thắc mắc gì?"+
+        "*Nếu khách hàng có thắc mắc về chương trình thì có thể tham khảo câu trả lời ở thanh search"+
+        "*Nếu bị khách hàng phàn nàn về CTKM: Dạ, mức hoàn tiền của chương trình tương đối hấp dẫn, chỉ cần chi tiêu số tiền vừa phải, a/c đã được hoàn số tiền tương ứng với phí thường niên thẻ rồi"
+  },
+  //20
+  {
+    name:"Nhắc nợ quá hạn thẻ tín dụng",
+    slot:[],
+    servant: "Bước 1: Chào hỏi khách hàng: giới thiệu mình là nhân viên chăm sóc khách hàng của ngân hàng VCB(vietcombank), xin phép được trao đổi một chút được không" +
+        "*Bước 2: Xác nhận khách hàng: Dạ có phải số điện thoại của {danh_xung} {tên khách hàng} không ạ? Em được biết anh chị đang sử dụng thẻ tín dụng của BIDV. Hiện tại thẻ của anh chị đã quá thời hạn thanh toán số tiền giao dịch. Anh chị dành cho em 1-2 phút để cung cấp thêm thông tin được không ạ?"+
+        "*Bước 3: Thông báo dư nợ: Thưa anh/chị, theo như hệ thống ngân hàng ghi nhận, thẻ tín dụng BIDV của anh chị có 4 số cuối là {4 số cuối thẻ tín dụng} đã quá thời hạn thanh toán với số dư là {dư nợ} đúng không ạ?"+
+        "*Nếu khách hàng nói sẽ trả nợ thì chuyển sang bước 4:" +
+        "*Bước 4: Thông báo sao kê: Thưa anh/chị, để đảm bảo rằng các kì sao kê sau anh/chị không còn chậm thanh toán, anh chị vui lòng lưu ý kì sao kê của sản phẩm thẻ tín dụng mà anh chị đang sử dụng là ngày {ngày sao kê}, và ngày thanh toán dư nợ cuối cùng là 15 ngày kể từ ngày sao kê. Anh chị thanh toán đúng ngày thì mình sẽ không phải chịu phí phạt thanh toán và lịch sử tín dụng của anh/chị sẽ ko bị ảnh hưởng."
+  },
+  //21
+  {
+    name:"Lọc khách hàng quan tâm cuộc gọi",
+    slot:[],
+    servant: "Bước 1: Chào hỏi khách hàng: giới thiệu mình là nhân viên chăm sóc khách hàng của ngân hàng VCB(vietcombank), xin phép được trao đổi một chút được không" +
+        "*Bước 2: Giới thiệu chương trình: Hiện tại BIDV đang có ưu đãi hoàn tiền/miễn phí thường niên cho khách hàng mở thẻ tín dụng trong tháng này. Anh chị có thể dành 1,2 phút để em thông tin chi tiết về chương trình được không ạ"+
+        "*Bước 3: Thông báo dư nợ: Thưa anh/chị, theo như hệ thống ngân hàng ghi nhận, thẻ tín dụng BIDV của anh chị có 4 số cuối là {4 số cuối thẻ tín dụng} đã quá thời hạn thanh toán với số dư là {dư nợ} đúng không ạ?"+
+        "*Nếu khách hàng nói sẽ trả nợ thì chuyển sang bước 4:" +
+        "*Bước 4: Thông báo sao kê: Thưa anh/chị, để đảm bảo rằng các kì sao kê sau anh/chị không còn chậm thanh toán, anh chị vui lòng lưu ý kì sao kê của sản phẩm thẻ tín dụng mà anh chị đang sử dụng là ngày {ngày sao kê}, và ngày thanh toán dư nợ cuối cùng là 15 ngày kể từ ngày sao kê. Anh chị thanh toán đúng ngày thì mình sẽ không phải chịu phí phạt thanh toán và lịch sử tín dụng của anh/chị sẽ ko bị ảnh hưởng."
   }
 ];
 const RISK_REPORT=[
