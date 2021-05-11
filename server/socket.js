@@ -376,7 +376,7 @@ const createRoom = async (userID1, userID2, roomType) => {
 const intentSamplePool = require("./configs/intent");
 const createRandomScenario = () => {
   // gen base intent
-  const intentIndex = getRandomFromArray(intentSamplePool.SCENARIO);
+  const intentIndex = getRandomFromArray(intentSamplePool.INTENT);
   // const intentIndex = 12;
   const slots = intentSamplePool.INTENT[intentIndex].slot;
 
@@ -405,11 +405,11 @@ const createRandomScenario = () => {
     return tempIntent[slot] = slotIndex;
   })
 
-  const { intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits } = tempIntent;
+  const { intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits,risk_report } = tempIntent;
   // I can still put this lil piece of crap in the {} up there, but who knows what magic it might hold, so better safe than sorry.
   const generic_intent = null;
   return Intent.create({
-    intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits, generic_intent
+    intent, loan_purpose, loan_type, card_type, card_usage, digital_bank, card_activation_type, district, city, name, cmnd, four_last_digits, generic_intent,risk_report
   })
 }
 const createRandomIntent = () => {
@@ -471,12 +471,12 @@ const randomGenerator = () => {
 }
 
 const generateName = (index) => {
-  return intentSamplePool.SCENARIO[index].name;
+  return intentSamplePool.INTENT[index].name;
 }
 
 const generateTask = (index) => {
 
-  return intentSamplePool.SCENARIO[index].name;
+  return intentSamplePool.INTENT[index].name;
 }
 
 module.exports = sockets;

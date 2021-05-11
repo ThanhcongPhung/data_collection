@@ -69,6 +69,10 @@ const intentSchema = new mongoose.Schema({
     type: Number,
     default: null,
   },
+  risk_report:{
+    type:Number,
+    default:null,
+  }
 });
 
 const Intent = mongoose.model('Intent', intentSchema);

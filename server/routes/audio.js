@@ -21,21 +21,15 @@ router.get("/:roomID", (req, res) => {
 })
 // GET ALL
 router.get("/", (req, res) => {
-  Audio.find({"isValidate": false})
-      // Audio.find({wer: { $gt: 5, $lt: 101 }})
+  // Audio.find({"isValidate": false})
+      Audio.find({wer: { $gt: 5, $lt: 101 }})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
         res.status(200).send(audios)
       })
 });
 
-router.get("/getAll", (req, res) => {
-  Audio.find()
-      .exec((err, audios) => {
-        if (err) return res.status(400).send(err);
-        res.status(200).send(audios)
-      })
-});
+
 router.post("/import", (req, res) => {
 
   let listAudio = []

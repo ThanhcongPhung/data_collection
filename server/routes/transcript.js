@@ -7,6 +7,7 @@ const {
   ASR_URL,
   ASR_AUTH_KEY,
 } = require('../configs');
+const {Audio} = require("./../models/Audio");
 
 function transcriptGoogle(audio_link,id) {
   return new Promise(function (resolve, reject) {
@@ -108,5 +109,13 @@ const exportObject = (destination, object) => {
     }
   })
 }
+
+router.get("/getAll", (req, res) => {
+  Audio.find()
+      .exec((err, audios) => {
+        if (err) return res.status(400).send(err);
+        res.status(200).send(audios)
+      })
+});
 
 module.exports = router;
