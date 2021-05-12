@@ -12,7 +12,7 @@ const axios = require("axios");
 const csv = require('csv-parser')
 const DOMAIN_NAME = process.env.ASR_SERVER_NODE
 const spawn = require("child_process").spawn;
-const TEMP_URL = '/home/congpt/GR/data_collection/server/public/download/';
+const TEMP_URL = 'server/public';
 const bluebird = require('bluebird')
 const uploadFile = require("../utils/uploadFile");
 
@@ -115,12 +115,10 @@ const deleteFolderRecursive = function (directoryPath) {
   }
 };
 
-async function downloadSyncFile(audioId, downloadURL) {
+async function downloadSyncFile(audioId, downloadURL,download_path) {
   return new Promise(async (fulfill, reject) => {
 
-    let path = TEMP_URL;
-    await checkCreateUploadFolder(path)
-    const newPath = path + `${audioId}.wav`
+    const newPath = download_path + `${audioId}.wav`
     let stream = fs.createWriteStream(newPath);
     let response = await axios.get(downloadURL, {responseType: 'stream'});
     response.data.pipe(stream);
@@ -131,15 +129,22 @@ async function downloadSyncFile(audioId, downloadURL) {
 
 router.post('/getMulAudio', async (req, res) => {
   const listAudio = req.body.listAudio;
+  console.log(listAudio)
+  const root_path = path.resolve(TEMP_URL)
+  console.log(root_path)
+  await checkCreateUploadFolder(root_path)
+  let download_path = path.join(root_path,"/download/")
+  await checkCreateUploadFolder(download_path)
   let promise = []
   listAudio.map(ele => {
-    promise.push(downloadSyncFile(ele._id, ele.audioLink))
+    promise.push(downloadSyncFile(ele._id, ele.audioLink,download_path))
   })
+
   Promise.all(promise)
-      .then(data => {
+      .then(async data => {
         const promises = []
-        fs.readdirSync(TEMP_URL).forEach(file => {
-          const filePath = TEMP_URL + file;
+        fs.readdirSync(download_path).forEach(file => {
+          const filePath = download_path + file;
           promises.push(transcript(filePath, "audioLink", file.split('.')[0]))
         });
         Promise.all(promises)
@@ -152,7 +157,7 @@ router.post('/getMulAudio', async (req, res) => {
                 })
               })
               res.json({ok: true, msg: 'Get transcript Successful', obj: data})
-              deleteFolderRecursive(TEMP_URL)
+              deleteFolderRecursive(download_path)
             })
             .catch(err => console.log(err))
       })

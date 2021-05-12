@@ -21,8 +21,8 @@ router.get("/:roomID", (req, res) => {
 })
 // GET ALL
 router.get("/", (req, res) => {
-  // Audio.find({"isValidate": false})
-      Audio.find({wer: { $gt: 5, $lt: 101 }})
+  Audio.find({"isValidate": false})
+      // Audio.find({wer: { $gt: 5, $lt: 101 }})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
         res.status(200).send(audios)
@@ -40,7 +40,7 @@ router.post("/import", (req, res) => {
       audioLink: element.audio_link,
       transcript: element.transcript,
       audioStyle: req.body.audioStyle,
-      recordDevice: 0,
+      recordDevice: "import",
       fixBy: null,
       username: req.body.username,
       isValidate: false,
@@ -70,7 +70,7 @@ router.put("/updateTranscript", (req, res) => {
   const audioID = req.body.audioID;
   const userID = req.body.userID;
   const transcript = req.body.transcript;
-  const isValid = req.body.isValid;
+  // const isValid = req.body.isValid;
   console.log(req.body)
   Audio.findById(audioID)
       .then(audio => {
@@ -82,7 +82,7 @@ router.put("/updateTranscript", (req, res) => {
         } else {
           audio.transcript = transcript;
           audio.fixBy = userID;
-          audio.isValidate = isValid;
+          audio.isValidate = true;
           return audio.save();
         }
       })
@@ -107,6 +107,7 @@ router.put("/updateLike", (req, res) => {
           res.status(404).send({success: false, message: "Audio not found"});
           throw "Can't find audio"
         } else {
+          audio.isValidate=true;
           audio.isLike = isLike;
           audio.up_vote.push({user: userID, upVoteTime: upVoteTime});
           return audio.save();

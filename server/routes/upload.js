@@ -191,7 +191,7 @@ router.post('/fileV3', async (req, res) => {
   const speaker_id = req.body.speaker_id;
   const transcript = req.body.transcript;
 
-  await saveAudioMongo(user, room, username, audio_link, transcript, "Conversation", 1,
+  await saveAudioMongo(user, room, username, audio_link, transcript, "Conversation", "record",
       null, false, "", transcript, "",
       duration, null, false, [], fileName, speaker_id)
       .then(audioID => {

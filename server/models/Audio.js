@@ -26,7 +26,7 @@ const audioSchema = new mongoose.Schema({
   },
   //0: import,1:record
   recordDevice: {
-    type: Number,
+    type: String,
   },
   fixBy: {
     type: mongoose.Schema.Types.ObjectId,
