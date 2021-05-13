@@ -35,7 +35,36 @@ router.post("/users", (req, res) => {
     return res.status(200).send({ status: 1 });
   });
 })
+// validate accent, gender
+router.post("/validate",(req,res)=>{
+  const accessToken = req.body.accessToken;
+  const decodeInfo = jwt.verify(accessToken, "9d5067a5a36f2bd6f5e93008865536c7", (err, decode) => {
+    if (err) {
+      res.status(500).send({ status: 0, err: `Having problem decoding, ${err}` });
+      throw err;
+    }
+    return decode;
+  });
 
+  console.log(decodeInfo)
+  const ssoUserId = decodeInfo.ssoUserId;
+
+  User.find({ ssoUserId: ssoUserId })
+      .then(userFound => {
+        if (userFound.length === 0) {
+          res.status(404).send({ status: 0, err: "User doesn't exist!" });
+          return
+        } else {
+          const user = userFound[0];
+          if(user.gender !=='' && user.accent!==''){
+            res.status(200).send({ status: 1, redirect_url: "/asr/home"});
+          }else{
+            res.status(200).send({ status: 0,redirect_url: "/info-user" });
+
+          }
+        }
+      })
+})
 // LOGIN
 router.post("/users/token", (req, res) => {
 
@@ -161,6 +190,37 @@ router.put("/updateUser", (req, res) => {
           user.phone_number = userId.phone_number;
           user.accent = userId.accent;
           user.gender = userId.gender;
+          res.status(200).send({ status: 1 });
+          return user.save();
+        }
+      })
+      .catch(err => {
+        res.status(500).send({ status: 0, error: err });
+      });
+})
+router.put("/info_require", (req, res) => {
+  const accessToken = req.body.accessToken;
+  const userId = req.body.user;
+  const decodeInfo = jwt.verify(accessToken, "9d5067a5a36f2bd6f5e93008865536c7", (err, decode) => {
+    if (err) {
+      res.status(500).send({ status: 0, err: `Having problem decoding, ${err}` });
+      throw err;
+    }
+    return decode;
+  });
+
+  const ssoUserId = decodeInfo.ssoUserId;
+  User.find({ ssoUserId: ssoUserId })
+      .then(userFound => {
+        if (userFound.length === 0) {
+          res.status(404).send({ status: 0, err: "User doesn't exist!" });
+          return
+        } else {
+          const user = userFound[0]
+
+          user.accent = userId.accent;
+          user.gender = userId.gender;
+          user.age = userId.age;
           res.status(200).send({ status: 1 });
           return user.save();
         }

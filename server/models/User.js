@@ -39,14 +39,21 @@ const userSchema = mongoose.Schema({
     },
     //North, central, south
     accent:{
-        type: String
+        type: String,
+        default:""
     },
     //Female, male, other
     gender:{
-        type:String
+        type:String,
+        default:""
+    },
+    age:{
+        type:String,
+        default:""
     },
     phone_number:{
-        type:String
+        type:String,
+        default:""
     },
     speaker_id: {
         type:String
