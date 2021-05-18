@@ -63,7 +63,16 @@ router.get("/random", (req, res) => {
     })
   })
 })
-
+router.delete("/delete/:roomId", (req, res) => {
+  const roomID = req.params.roomId;
+  Chatroom.deleteOne({_id: roomID}, function (err, temps) {
+    if (err) {
+      res.status(500).send({ status: 0, error: err });
+    } else {
+      res.status(200).send({ status: 1 });
+    }
+  })
+})
 router.post("/", async (req, res) => {
 
   const { name, task, content_type } = req.body;

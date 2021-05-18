@@ -82,7 +82,7 @@ router.put("/updateTranscript", (req, res) => {
         } else {
           audio.transcript = transcript;
           audio.fixBy = userID;
-          audio.isValidate = true;
+          audio.isValidate = false;
           return audio.save();
         }
       })
@@ -99,6 +99,18 @@ router.put("/updateLike", (req, res) => {
   const isLike = req.body.isLike;
   const upVoteTime = req.body.upVoteTime;
   console.log(req.body)
+  Validate.findOne({user: userID}, function (err, existingUser) {
+    if (!err && existingUser) {
+      existingUser.up_vote.push({audio: audioID, up_vote_time: upVoteTime})
+      return existingUser.save();
+    } else {
+      Validate.create({
+        user: userID,
+        up_vote: [{audio: audioID, up_vote_time: upVoteTime}],
+        down_vote: [],
+      })
+    }
+  })
   Audio.findById(audioID)
       .then(audio => {
 
@@ -122,7 +134,7 @@ router.put("/updateLike", (req, res) => {
 router.delete("/deleteAudio/:audioId", (req, res) => {
 
   const audioID = req.params.audioId;
-  Audio.remove({_id: audioID}, function (err, temps) {
+  Audio.deleteOne({_id: audioID}, function (err, temps) {
     if (err) {
       return res.send(new Error('Error Remove'));
     } else {
@@ -137,7 +149,7 @@ router.post("/deleteAll", (req, res) => {
   //   console.log(ele)
   // })
   // console.log(listAudioId)
-  Audio.remove({_id: {$in: listAudioId}}, function (err, temps) {
+  Audio.deleteMany({_id: {$in: listAudioId}}, function (err, temps) {
     if (err) {
       return res.send(new Error('Error remove'));
     } else {
@@ -148,6 +160,7 @@ router.post("/deleteAll", (req, res) => {
 const uploadFile = require("../utils/uploadFile")
 const multer = require("multer");
 const request = require("request");
+const {Validate} = require("../models/Validate");
 
 
 router.post("/uploadGetText", async (req, res) => {

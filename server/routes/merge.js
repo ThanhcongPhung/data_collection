@@ -46,7 +46,7 @@ router.post("/validate",(req,res)=>{
     return decode;
   });
 
-  console.log(decodeInfo)
+  // console.log(decodeInfo)
   const ssoUserId = decodeInfo.ssoUserId;
 
   User.find({ ssoUserId: ssoUserId })
@@ -82,7 +82,7 @@ router.post("/users/token", (req, res) => {
     return decode;
   });
 
-  console.log(decodeInfo)
+  // console.log(decodeInfo)
   const ssoUserId = decodeInfo.ssoUserId;
 
   User.find({ ssoUserId: ssoUserId })
@@ -149,7 +149,7 @@ router.post("/users/logout", (req, res) => {
 
 router.get("/isLogin", (req, res) => {
   let accessToken = req.cookies.accessToken;
-  console.log(accessToken);
+  // console.log(accessToken);
   if (accessToken === undefined || accessToken === null) return res.status(200).send({ status: 1, isAuth: false });
 
 
@@ -198,7 +198,7 @@ router.put("/updateUser", (req, res) => {
         res.status(500).send({ status: 0, error: err });
       });
 })
-router.put("/info_require", (req, res) => {
+router.put("/info-require", (req, res) => {
   const accessToken = req.body.accessToken;
   const userId = req.body.user;
   const decodeInfo = jwt.verify(accessToken, "9d5067a5a36f2bd6f5e93008865536c7", (err, decode) => {

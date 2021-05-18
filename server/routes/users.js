@@ -77,7 +77,7 @@ router.get("/logout", auth, (req, res) => {
 });
 router.post("/getUser", async (req, res) => {
   const accessToken = req.body.accessToken;
-  console.log(accessToken)
+  // console.log(accessToken)
   const decodeInfo = jwt.verify(accessToken, "9d5067a5a36f2bd6f5e93008865536c7", (err, decode) => {
     if (err) {
       res.status(500).send({status: 0, err: `Having problem decoding, ${err}`});

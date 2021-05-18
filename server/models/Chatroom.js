@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const chatroomSchema = new mongoose.Schema({
   name: {
     type:String,
-    maxlength:50
+    default: "",
   },
   task: {
     type:String,
-    maxlength:50
+    default: "",
   },
   // user1 gives command
   user1: {

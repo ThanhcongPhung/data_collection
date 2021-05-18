@@ -88,7 +88,7 @@ router.get("/:userID", (req, res) => {
   Validate.find({user: userID})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
-        console.log(audios[0])
+        // console.log(audios[0])
         res.status(200).send(audios[0])
       })
 })

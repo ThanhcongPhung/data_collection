@@ -15,7 +15,7 @@ sockets.init = function (server) {
     try {
       // Must be matched with the frontend.
       const token = socket.handshake.query.token;
-      console.log(token)
+      // console.log(token)
       // if (token !== "undefined") {
       if (token !== "undefined" && token !== "null" && token !== "") {
         // await jwt.verify(token, 'secret', (err, decode) => {
@@ -85,7 +85,7 @@ sockets.init = function (server) {
 
       // if found a matching partner
       if (result !== null) {
-        console.log(`Client: ${result.client.username}, Servant: ${result.servant.username}, Room type: ${result.roomType}`)
+        // console.log(`Client: ${result.client.username}, Servant: ${result.servant.username}, Room type: ${result.roomType}`)
 
         // result = { client: , servant: , roomType: , accepted: 0 }
         result.accepted = 0
@@ -113,10 +113,10 @@ sockets.init = function (server) {
         username: username,
         inputType: inputType,
       }
-      console.log(userInfo)
-      console.log(promptQueue)
+      // console.log(userInfo)
+      // console.log(promptQueue)
       let promptQueueIndex = checkExist(promptQueue, userInfo)
-      console.log(promptQueueIndex)
+      // console.log(promptQueueIndex)
       if (promptQueueIndex !== -1) {
         let pair = promptQueue[promptQueueIndex]
         if (pair.accepted === 0) {
@@ -207,7 +207,7 @@ sockets.init = function (server) {
       io.to(roomID).emit("getting transcript", {username});
     })
     socket.on("Re record", ({ roomID, username }) => {
-      console.log("rerecording")
+      // console.log("rerecording")
       io.to(roomID).emit("123", {username});
     })
     socket.on('leaveRoom', ({chatroomID, username}) => {
@@ -376,8 +376,8 @@ const createRoom = async (userID1, userID2, roomType) => {
 const intentSamplePool = require("./configs/intent");
 const createRandomScenario = () => {
   // gen base intent
-  const intentIndex = getRandomFromArray(intentSamplePool.INTENT);
-  // const intentIndex = 12;
+  // const intentIndex = getRandomFromArray(intentSamplePool.INTENT);
+  // const intentIndex = 16;
   const slots = intentSamplePool.INTENT[intentIndex].slot;
 
   let tempIntent = {
