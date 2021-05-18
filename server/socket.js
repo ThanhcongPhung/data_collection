@@ -376,7 +376,7 @@ const createRoom = async (userID1, userID2, roomType) => {
 const intentSamplePool = require("./configs/intent");
 const createRandomScenario = () => {
   // gen base intent
-  // const intentIndex = getRandomFromArray(intentSamplePool.INTENT);
+  const intentIndex = getRandomFromArray(intentSamplePool.INTENT);
   // const intentIndex = 16;
   const slots = intentSamplePool.INTENT[intentIndex].slot;
 
