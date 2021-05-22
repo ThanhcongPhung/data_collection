@@ -8,8 +8,9 @@ const {
   ASR_AUTH_KEY,
 } = require('../configs');
 const {Audio} = require("./../models/Audio");
+const fs = require('fs');
 
-function transcriptGoogle(audio_link,id) {
+function transcriptGoogle(audio_link, id) {
   return new Promise(function (resolve, reject) {
     try {
       axios({
@@ -33,13 +34,14 @@ function transcriptGoogle(audio_link,id) {
 
   })
 }
+
 router.post('/', async (req, res) => {
   const audio_link = req.body.link;
   const transcript = "";
 
-  await saveAudioURLMongo(audio_link,transcript)
+  await saveAudioURLMongo(audio_link, transcript)
       .then(async audioID => {
-        await transcriptGoogle(audio_link,audioID)
+        await transcriptGoogle(audio_link, audioID)
         res.status(200).send({success: true, audio_id: audioID})
         // update audio history in room
       })
@@ -117,5 +119,32 @@ router.get("/getAll", (req, res) => {
         res.status(200).send(audios)
       })
 });
-
+router.post("/export-audio", async (req, res) => {
+  const { destination } = req.body;
+  const audios = await Audio.find()
+      .populate("user")
+      .exec();
+  let result = [];
+  audios.forEach(item => {
+    let audio = {};
+    audio.id = item._id;
+    audio.userid = item.user._id;
+    audio.audio_name = item.audioLink.split('/')[-1];
+    audio.username = item.username;
+    audio.audioLink = item.audioLink;
+    audio.transcript = item.transcript;
+    audio.recordDevice = item.recordDevice;
+    audio.isValidate = item.isValidate;
+    audio.origin_transcript = item.origin_transcript;
+    audio.bot_transcript = item.bot_transcript;
+    audio.final_transcript = item.final_transcript;
+    audio.duration = item.duration;
+    audio.speaker_id = item.speaker_id;
+    audio.up_vote = item.up_vote.length;
+    audio.down_vote = item.down_vote.length;
+    result.push(audio)
+  })
+  exportObject(destination, result)
+  res.status(200).send({result: result});
+});
 module.exports = router;
