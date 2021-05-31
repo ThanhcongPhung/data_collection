@@ -58,6 +58,7 @@ app.use('/api/sso', require('./routes/merge'));
 app.use('/api/wer', require('./routes/WER'));
 app.use('/api/validate', require('./routes/validate'));
 app.use('/api/transcript', require('./routes/transcript'));
+app.use('/api/validate-room',require('./routes/validateRoom'))
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
 // app.use('/uploads', express.static('uploads'));

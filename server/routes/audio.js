@@ -21,11 +21,18 @@ router.get("/:roomID", (req, res) => {
 })
 // GET ALL
 router.get("/", (req, res) => {
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
   Audio.find({"isValidate": false})
       // Audio.find({wer: { $gt: 5, $lt: 101 }})
       .exec((err, audios) => {
         if (err) return res.status(400).send(err);
-        res.status(200).send(audios)
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const results = {}
+
+        results.results = audios.slice(startIndex, endIndex)
+        res.status(200).send(results)
       })
 });
 
@@ -51,7 +58,7 @@ router.post("/import", (req, res) => {
       wer: null,
       up_vote: [],
       down_vote: [],
-      speaker_id:element.speaker_id
+      speaker_id: element.speaker_id
     }
     listAudio.push(audio)
   })
@@ -119,7 +126,7 @@ router.put("/updateLike", (req, res) => {
           res.status(404).send({success: false, message: "Audio not found"});
           throw "Can't find audio"
         } else {
-          audio.isValidate=true;
+          audio.isValidate = true;
           audio.isLike = isLike;
           audio.up_vote.push({user: userID, upVoteTime: upVoteTime});
           return audio.save();
