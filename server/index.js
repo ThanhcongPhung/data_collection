@@ -37,10 +37,13 @@ mongoose.connect(config.mongoURI,
 
 //to not get any deprecation warning or error
 //support parsing of application/x-www-form-urlencoded post data
-app.use(bodyParser.urlencoded({extended: true}));
+// app.use(bodyParser.urlencoded({extended: true}));
 //to get json data
 // support parsing of application/json type post data
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '200mb', extended: true}));
+app.use(bodyParser.urlencoded({limit: '200mb', extended: true,  parameterLimit: 100000,
+}));
+
 app.use(cookieParser());
 // app.use(session({
 //   secret: "9d5067a5a36f2bd6f5e93008865536c7",

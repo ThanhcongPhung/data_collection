@@ -19,7 +19,7 @@ router.post("/create", (req, res) => {
     res.status(401).send({status: 0, message: err})
   })
 })
-router.get("/", (req, res) => {
+router.get("/getAll", (req, res) => {
 
   ValidateRoom.find()
       .populate({
@@ -34,9 +34,24 @@ router.get("/", (req, res) => {
         res.status(200).send(rooms)
       })
 })
-router.put("/", (req, res) => {
-  const id = req.body._id;
+router.get("/:roomID", (req, res) => {
+  ValidateRoom.findById(req.params.roomID)
+      .populate({
+        path:'audioList',
+        populate:{
+          path:'user',
+        }
+      })
+      .exec((err, roomFound) => {
+        if (err) res.status(500).send({ success: false, err })
+        else if (!roomFound) res.status(404).send({ success: false, message: "Room not found" })
+        else res.status(200).send({ success: true, roomFound })
+      })
+})
+router.put("/join", (req, res) => {
+  const id = req.body.room_id;
   const user_id = req.body.user_id;
+  console.log(req.body)
   ValidateRoom.findById(id)
       .then(room => {
         if (!room) {
@@ -44,9 +59,14 @@ router.put("/", (req, res) => {
           res.status(404).send({status: 0, message: "room not found"});
           throw "Can't find room"
         } else {
-          room.user = user_id;
-          room.status = 1;
-          return room.save();
+          if(room.user===null){
+            room.user = user_id;
+            room.status = 1;
+            return room.save();
+          }else{
+            return res.status(500).send({status: 0, message: "Đã có người tham gia"})
+          }
+
         }
       })
       .then(audioUpdated => res.status(200).send({status: 1}))

@@ -65,9 +65,11 @@ router.post("/import", (req, res) => {
   // console.log(listAudio)
   Audio.create(listAudio, function (err, temps) {
     if (err) {
-      return res.send(new Error('Error saving'));
+      return res.status(500).send({status:0, message: err})
+
     } else {
-      res.json({ok: "ok"})
+      res.status(200).send({status:1})
+
     }
   });
 })

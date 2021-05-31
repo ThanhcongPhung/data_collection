@@ -290,32 +290,47 @@ function uploadMulAudio(audio) {
     // console.log("audiolink:",audio.audio_link)
     // console.log("audiodestination:",audio.destination)
     // console.log("name",audio.name)
-
-    await uploadFile(audio.audio_link,audio.destination,audio.name)
-        .then(res=>{
-          // console.log("gbgubbhu",res.result.link)
-          // console.log(audio)
-          const audio_response = {
-            id: audio.id,
-            audio_link: res.result.link,
-            transcript: audio.transcript,
-            audio_name: audio.audio_name,
-            speaker_id: audio.speaker_id,
-            speaker_accent: audio.speaker_accent,
-            speaker_name: audio.speaker_name,
-            speaker_gender: audio.speaker_gender,
-            duration: audio.duration,
-            content: audio.content,
-            style: audio.style,
-            type: audio.type,
-            device: audio.device,
-          }
-          resolve(audio_response)
-
-        })
-        .catch(err=>{
-          reject(err)
-        })
+    const audio_response = {
+      id: audio.id,
+      audio_link: audio.audio_link,
+      transcript: audio.transcript,
+      // audio_name: audio.audio_name,
+      speaker_id: audio.speaker_id,
+      speaker_accent: audio.speaker_accent,
+      // speaker_name: audio.speaker_name,
+      // speaker_gender: audio.speaker_gender,
+      // duration: audio.duration,
+      // content: audio.content,
+      // style: audio.style,
+      // type: audio.type,
+      // device: audio.device,
+    }
+    resolve(audio_response)
+    // await uploadFile(audio.audio_link,audio.destination,audio.name)
+    //     .then(res=>{
+    //       // console.log("gbgubbhu",res.result.link)
+    //       // console.log(audio)
+    //       const audio_response = {
+    //         id: audio.id,
+    //         audio_link: res.result.link,
+    //         transcript: audio.transcript,
+    //         audio_name: audio.audio_name,
+    //         speaker_id: audio.speaker_id,
+    //         speaker_accent: audio.speaker_accent,
+    //         speaker_name: audio.speaker_name,
+    //         speaker_gender: audio.speaker_gender,
+    //         duration: audio.duration,
+    //         content: audio.content,
+    //         style: audio.style,
+    //         type: audio.type,
+    //         device: audio.device,
+    //       }
+    //       resolve(audio_response)
+    //
+    //     })
+    //     .catch(err=>{
+    //       reject(err)
+    //     })
   })
 }
 router.post('/unzip',async (req,res)=>{
@@ -357,33 +372,35 @@ router.post('/unzip',async (req,res)=>{
                           const results = [];
 
                           fs.createReadStream(transcript)
-                              .pipe(csv())
-                              .on('data', (data) => results.push(data))
+                              .pipe(csv({delimiter:','}))
+                              .on('data', (data) => {
+                                // console.log(data)
+                                results.push(data)})
                               .on('end', () => {
                                 const promise = [];
                                 results.forEach((element, index) => {
-                                  const lastPath=extract_path.split("/")
-                                  const destination = `congpt/import/${lastPath[2]}/${lastPath[3]}/${lastPath[4].split('.')[0]}/${zip_name}/`
-                                  const audioLink = `${extract_path}/${zip_name}/${element.path}`
-                                  const name = element.path.split("/")[1].split(".")[0]
+                                  // const lastPath=extract_path.split("/")
+                                  // const destination = `congpt/import/${lastPath[2]}/${lastPath[3]}/${lastPath[4].split('.')[0]}/${zip_name}/`
+                                  // const audioLink = `${extract_path}/${zip_name}/${element.path}`
+                                  // const name = element.path.split("/")[1].split(".")[0]
 
 
                                   const audio = {
                                     id: index,
-                                    audio_link: audioLink,
+                                    audio_link: element.audio_link,
                                     transcript: element.transcript,
-                                    audio_name: element.path,
+                                    // audio_name: element.path,
                                     speaker_id: element.speaker_id,
-                                    speaker_accent: element.speaker_accent,
-                                    speaker_name: element.speaker_name,
-                                    speaker_gender: element.speaker_gender,
+                                    // speaker_accent: element.speaker_accent,
+                                    // speaker_name: element.speaker_name,
+                                    // speaker_gender: element.speaker_gender,
                                     duration: element.duration,
                                     content: element.content,
-                                    style: element.style,
-                                    type: element.type,
-                                    device: element.device,
-                                    destination: destination,
-                                    name: name,
+                                    // style: element.style,
+                                    // type: element.type,
+                                    // device: element.device,
+                                    // destination: destination,
+                                    // name: name,
                                   }
                                   promise.push(uploadMulAudio(audio))
                                 })

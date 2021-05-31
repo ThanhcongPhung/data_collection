@@ -20,7 +20,12 @@ const validateRoomSchema = new mongoose.Schema({
   status:{
     type:Number,
     default:0,
-  }
+  },
+  validatedAudio:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'Audio',
+    default: [],
+  }],
 },{timestamps: true})
 
 

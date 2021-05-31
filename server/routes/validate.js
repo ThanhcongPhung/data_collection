@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {Audio} = require("../models/Audio");
 const {Validate} = require('../models/Validate')
+const {ValidateRoom} = require('../models/ValidateRoom')
 
 
 router.post("/", (req, res) => {
@@ -9,6 +10,7 @@ router.post("/", (req, res) => {
   const audioID = req.body.audioID
   const upvoteTime = req.body.upVoteTime
   const transcript = req.body.transcript;
+  const roomId=req.body.room_id;
   Validate.findOne({user: userID}, function (err, existingUser) {
     if (!err && existingUser) {
       existingUser.up_vote.push({audio: audioID, up_vote_time: upvoteTime})
@@ -21,6 +23,25 @@ router.post("/", (req, res) => {
       })
     }
   })
+  ValidateRoom.findById(roomId)
+      .then(room => {
+
+        if (!room) {
+          console.log("Can't find room to update transcript!");
+          res.status(404).send({success: false, message: "room not found"});
+          throw "Can't find audio"
+        } else {
+
+          room.validatedAudio.push(audioID);
+          return room.save();
+        }
+      })
+      .then(audioUpdated => res.status(200).send({success: true, audioUpdated}))
+      .catch(err => {
+        console.log(`Error while updating audio ${audioID} transcript... ${err}`)
+        res.status(500).send({success: false, message: "Something's wrong internally, so sorry..."})
+      })
+
   Audio.findById(audioID)
       .then(audio => {
 
@@ -47,6 +68,7 @@ router.post("/update", (req, res) => {
   const audioID = req.body.audioID
   const downVoteTime = req.body.downVoteTime
   const transcript = req.body.transcript
+  const roomId=req.body.room_id;
 
   // console.log(userID,audioID,downVoteTime,transcript)
   Validate.findOne({user: userID}, function (err, existingUser) {
@@ -61,6 +83,24 @@ router.post("/update", (req, res) => {
       })
     }
   })
+  ValidateRoom.findById(roomId)
+      .then(room => {
+
+        if (!room) {
+          console.log("Can't find room to update transcript!");
+          res.status(404).send({success: false, message: "room not found"});
+          throw "Can't find audio"
+        } else {
+
+          room.validatedAudio.push(audioID);
+          return room.save();
+        }
+      })
+      .then(audioUpdated => res.status(200).send({success: true, audioUpdated}))
+      .catch(err => {
+        console.log(`Error while updating audio ${audioID} transcript... ${err}`)
+        res.status(500).send({success: false, message: "Something's wrong internally, so sorry..."})
+      })
   Audio.findById(audioID)
       .then(audio => {
 
