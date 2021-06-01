@@ -43,13 +43,13 @@ router.post("/import", (req, res) => {
   req.body.audioList.forEach(element => {
     const audio = {
       user: req.body.user,
-      room: null,
+      room: element.room_id,
       audioLink: element.audio_link,
       transcript: element.transcript,
       audioStyle: req.body.audioStyle,
       recordDevice: "import",
       fixBy: null,
-      username: req.body.username,
+      username: element.speaker_name,
       isValidate: false,
       origin_transcript: element.transcript,
       bot_transcript: '',
@@ -65,6 +65,7 @@ router.post("/import", (req, res) => {
   // console.log(listAudio)
   Audio.create(listAudio, function (err, temps) {
     if (err) {
+      console.log(err)
       return res.status(500).send({status:0, message: err})
 
     } else {

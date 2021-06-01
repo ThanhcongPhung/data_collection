@@ -97,9 +97,12 @@ const audioSchema = new mongoose.Schema({
   },
   speaker_id:{
     type:String,
-    default: null,
+    default: "",
+  },
+  room_name:{
+    type:String,
+    default: "",
   }
-
 }, {timestamps: true});
 
 const Audio = mongoose.model('Audio', audioSchema);

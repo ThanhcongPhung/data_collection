@@ -290,20 +290,41 @@ function uploadMulAudio(audio) {
     // console.log("audiolink:",audio.audio_link)
     // console.log("audiodestination:",audio.destination)
     // console.log("name",audio.name)
+    // const audio_response = {
+    //   id: audio.id,
+    //   audio_link: audio.audio_link,
+    //   transcript: audio.transcript,
+    //   // audio_name: audio.audio_name,
+    //   speaker_id: audio.speaker_id,
+    //   speaker_accent: audio.speaker_accent,
+    //   speaker_name: audio.speaker_name,
+    //   speaker_gender: audio.speaker_gender,
+    //   duration: audio.duration,
+    //   room_id: audio.room_id,
+    //   // content: audio.content,
+    //   // style: audio.style,
+    //   // type: audio.type,
+    //   // device: audio.device,
+    // }
     const audio_response = {
-      id: audio.id,
-      audio_link: audio.audio_link,
+      user: audio.user_id,
+      room: null,
+      audioLink: audio.audio_link,
       transcript: audio.transcript,
-      // audio_name: audio.audio_name,
+      audioStyle: audio.audioStyle,
+      recordDevice: "import",
+      fixBy: null,
+      username: audio.speaker_name,
+      isValidate: false,
+      origin_transcript: audio.transcript,
+      bot_transcript: '',
+      final_transcript: '',
+      duration: audio.duration,
+      wer: null,
+      up_vote: [],
+      down_vote: [],
       speaker_id: audio.speaker_id,
-      speaker_accent: audio.speaker_accent,
-      // speaker_name: audio.speaker_name,
-      // speaker_gender: audio.speaker_gender,
-      // duration: audio.duration,
-      // content: audio.content,
-      // style: audio.style,
-      // type: audio.type,
-      // device: audio.device,
+      room_name: audio.room_id
     }
     resolve(audio_response)
     // await uploadFile(audio.audio_link,audio.destination,audio.name)
@@ -333,8 +354,17 @@ function uploadMulAudio(audio) {
     //     })
   })
 }
+const saveAudioMongo = async (audioList) => {
+
+  const audio = await Audio.create(audioList);
+
+  return audio
+}
 router.post('/unzip',async (req,res)=>{
   const zip_link = req.body.zip_link
+  const user_id = req.body.user;
+  const audioStyle = req.body.audioStyle;
+
   const extractDir = './server/public/upload/extract';
   const createFolder = './server/public';
   await checkCreateUploadFolder(createFolder)
@@ -391,11 +421,14 @@ router.post('/unzip',async (req,res)=>{
                                     transcript: element.transcript,
                                     // audio_name: element.path,
                                     speaker_id: element.speaker_id,
-                                    // speaker_accent: element.speaker_accent,
-                                    // speaker_name: element.speaker_name,
-                                    // speaker_gender: element.speaker_gender,
+                                    speaker_accent: element.speaker_accent,
+                                    speaker_name: element.speaker_name,
+                                    speaker_gender: element.speaker_gender,
                                     duration: element.duration,
-                                    content: element.content,
+                                    room_id: element.room_id,
+                                    user_id: user_id,
+                                    audioStyle: audioStyle
+                                    // content: element.content,
                                     // style: element.style,
                                     // type: element.type,
                                     // device: element.device,
@@ -406,9 +439,18 @@ router.post('/unzip',async (req,res)=>{
                                 })
 
                                 Promise.all(promise)
-                                    .then(data=>{
-                                      res.json({ok: true, msg: 'Files uploaded successfully!', files: data})
-                                      console.log('Extraction complete')
+                                    .then(async data=>{
+                                      await saveAudioMongo(data)
+                                          .then(audioID => {
+                                            // update audio history in room
+                                            res.json({ok: true, msg: 'Files uploaded successfully!', files: audioID})
+                                            console.log('Extraction complete')
+
+                                          })
+                                          .catch(err => {
+                                            res.json({ok: false, msg: err})
+
+                                          })
                                       deleteFolderRecursive(uploadFolder)
 
                                     })
