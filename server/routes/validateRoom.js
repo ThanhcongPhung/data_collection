@@ -4,24 +4,28 @@ const {Audio} = require("../models/Audio");
 const {Validate} = require('../models/Validate')
 const {ValidateRoom} = require('../models/ValidateRoom')
 
-router.post("/create", (req, res) => {
+router.post("/create", async (req, res) => {
   const name = req.body.name;
   const audioList = req.body.listAudio;
   const audioId = []
   audioList.map(ele => audioId.push(ele._id))
-  ValidateRoom.create({
-    name: name,
-    audioList: audioId,
-  }).then(data => {
-        res.status(200).send({status: 1})
-      }
-  ).catch(err => {
-    res.status(401).send({status: 0, message: err})
-  })
-})
-router.get("/getAll", (req, res) => {
+  try{
+    let result = await ValidateRoom.create({
+      name: name,
+      audioList: audioId,
+    })
+    console.log("resut",result)
+    res.status(200).send({status: 1})
+  }catch (e) {
+    console.log(e)
+    res.status(401).send({status: 0, message: e})
 
-  ValidateRoom.find()
+  }
+
+})
+router.get("/getAll", async (req, res) => {
+
+  await ValidateRoom.find()
       .populate({
         path: 'audioList',
         populate: {
@@ -34,8 +38,8 @@ router.get("/getAll", (req, res) => {
         res.status(200).send(rooms)
       })
 })
-router.get("/:roomID", (req, res) => {
-  ValidateRoom.findById(req.params.roomID)
+router.get("/:roomID", async(req, res) => {
+  await ValidateRoom.findById(req.params.roomID)
       .populate({
         path:'audioList',
         populate:{
@@ -48,11 +52,11 @@ router.get("/:roomID", (req, res) => {
         else res.status(200).send({ success: true, roomFound })
       })
 })
-router.put("/join", (req, res) => {
+router.put("/join", async(req, res) => {
   const id = req.body.room_id;
   const user_id = req.body.user_id;
   console.log(req.body)
-  ValidateRoom.findById(id)
+  await ValidateRoom.findById(id)
       .then(room => {
         if (!room) {
           console.log("Can't find room");
