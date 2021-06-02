@@ -102,6 +102,31 @@ router.put("/updateTranscript", (req, res) => {
         res.status(500).send({success: false, message: "Something's wrong internally, so sorry..."})
       })
 })
+router.put("/update", async (req, res) => {
+
+  const audioID = req.body.audio_id;
+  const transcript = req.body.final_transcript;
+  const isValidate = req.body.isValidate;
+
+  await Audio.findById(audioID)
+      .then(audio => {
+
+        if (!audio) {
+          console.log("Can't find audio to update transcript!");
+          res.status(404).send({success: false, message: "Audio not found"});
+          throw "Can't find audio"
+        } else {
+          audio.final_transcript = transcript;
+          audio.isValidate = isValidate;
+          return audio.save();
+        }
+      })
+      .then(audioUpdated => res.status(200).send({status:1, audioUpdated}))
+      .catch(err => {
+        console.log(`Error while updating audio ${audioID} transcript... ${err}`)
+        res.status(500).send({success: false, message: "Something's wrong internally, so sorry..."})
+      })
+})
 router.put("/updateLike", (req, res) => {
 
   const audioID = req.body.audioID;
