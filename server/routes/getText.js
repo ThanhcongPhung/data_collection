@@ -56,24 +56,31 @@ function transcript(path, audio_link, audio_name) {
     // });
   })
 }
+function model_espnet(path) {
+  return new Promise(function (resolve, reject) {
+    let process = spawn('python3', ["./model_espnet/infer.py", path]);
+    process.stdout.on('data', function (data) {
+      resolve(data.toString())
+    })
+    // process.stderr.on('data', function (data) {
+    //   reject(data.toString())
+    // });
 
+  })
+}
 router.post('/', (req, res) => {
-  console.log(req.body.link)
-
   tmp.file(function _tempFileCreated(err, path, fd, cleanupCallback) {
     if (err) throw err;
 
     download(req.body.link, path, function () {
       console.log('done');
     });
-    console.log('File: ', path);
-    console.log('File descriptor: ', fd);
-
-    let process = spawn('python', ["./sample_asr_python_grpc/main.py", path]);
-
-    process.stdout.on('data', function (data) {
-      res.send(data.toString());
-    })
+    model_espnet(path)
+        .then((data) => {
+          console.log(data)
+          res.json({status:1, transcript: data})
+        })
+        .catch(err => res.json({status:0, msg: err}));
 
     cleanupCallback();
   });

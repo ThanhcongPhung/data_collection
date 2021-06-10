@@ -20,3 +20,7 @@ rsa==4.7.2
 six==1.15.0
 uritemplate==3.0.1
 urllib3==1.26.3
+torch==1.8.1
+espnet==0.9.10
+tqdm==4.61.0
+SoundFile==0.10.3.post1
