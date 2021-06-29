@@ -1,15 +1,11 @@
 const express = require("express");
 const app = express();
-const path = require("path");
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config = require("./configs/key");
 const mongoose = require("mongoose");
-const session = require('express-session');
-const Redis = require('ioredis');
-const connectRedis= require('connect-redis')
-const RedisStore = connectRedis(session)
+
 
 
 
@@ -25,21 +21,7 @@ mongoose.connect(config.mongoURI,
     .catch(err => console.log(err));
 
 
-// app.use(session({
-//   store: new RedisStore({client:client}),
-//   secret:'mySecret',
-//   saveUninitialized:false,
-//   resave:false,
-//   cookie: { secure: false,httpOnly:true, maxAge: 24 * 60 * 60 * 1000 }
-// }))
 
-
-
-//to not get any deprecation warning or error
-//support parsing of application/x-www-form-urlencoded post data
-// app.use(bodyParser.urlencoded({extended: true}));
-//to get json data
-// support parsing of application/json type post data
 app.use(bodyParser.json({limit: '200mb', extended: true}));
 app.use(bodyParser.urlencoded({limit: '200mb', extended: true,  parameterLimit: 100000,
 }));
@@ -61,25 +43,11 @@ app.use('/api/sso', require('./routes/merge'));
 app.use('/api/wer', require('./routes/WER'));
 app.use('/api/validate', require('./routes/validate'));
 app.use('/api/transcript', require('./routes/transcript'));
-app.use('/api/validate-room',require('./routes/validateRoom'))
-//use this to show the image you have in node js server to client (react js)
-//https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
-// app.use('/uploads', express.static('uploads'));
-//
-// app.use(express.static(__dirname))
-//
-// // Serve static assets if in production
-// if (process.env.NODE_ENV === "production") {
-//
-//   // Set static folder
-//   // All the javascript and css files will be read and served from this folder
-//   app.use(express.static("client/build"));
-//
-//   // index.html for all page routes    html or routing and naviagtion
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
-//   });
-// }
+app.use('/api/validate-room',require('./routes/validateRoom'));
+// app.use('/api/topic',require('./routes/topic'));
+// app.use('/api/domain',require('./routes/domain'));
+require('./routes')(app);
+
 
 const port = process.env.PORT || 4000
 
@@ -87,10 +55,7 @@ const server = app.listen(port, () => {
   console.log(`Server Listening on ${port}`)
 });
 
-var sockets = require('./socket')
+const sockets = require('./socket')
 sockets.init(server)
 
-// Generate Room ID
-// function uuidv4() {
-//   return mongoose.Types.ObjectId();
-// }
+

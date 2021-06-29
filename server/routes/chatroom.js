@@ -104,4 +104,14 @@ router.get("/:roomID/history", (req, res) => {
   })
 })
 
+router.delete("/deleteRoom/:roomId", (req, res) => {
+  const roomID = req.params.roomId;
+  Chatroom.deleteOne({_id: roomID}, function (err, temps) {
+    if (err) {
+      return res.send(new Error('Error Remove'));
+    } else {
+      res.json({ok: "ok"})
+    }
+  })
+})
 module.exports = router;
