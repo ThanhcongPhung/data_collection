@@ -2,17 +2,12 @@ const express = require('express');
 const router = express.Router();
 const {Chatroom} = require("../models/Chatroom");
 
-// const { auth } = require("../middlewares/auth");
 
 // GET ALL
 router.get("/", (req, res) => {
 
   Chatroom.find()
-      .populate('user1')
-      .populate('user2')
       .exec((err, roomFound) => {
-        // .send() lets the browser automatically assign Content-Type
-        // whereas .json() specifies Content-Type as json type.
         if (err) res.status(500).send({success: false, err})
         return res.status(200).send({
           success: true,
