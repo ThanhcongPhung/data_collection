@@ -1,8 +1,0 @@
-espnet: 0.9.9
-files:
-  asr_model_file: exp/asr_train_asr_conformer6_raw_vi_bpe6000_sp/44epoch.pth
-python: "3.8.8 (default, Apr 13 2021, 19:58:26) \n[GCC 7.3.0]"
-timestamp: 1623293467.841115
-torch: 1.8.1+cu102
-yaml_files:
-  asr_train_config: exp/asr_train_asr_conformer6_raw_vi_bpe6000_sp/config.yaml
