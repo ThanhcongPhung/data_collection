@@ -206,9 +206,9 @@ sockets.init = function (server) {
     socket.on("Get transcript", ({ roomID, username }) => {
       io.to(roomID).emit("getting transcript", {username});
     })
-    socket.on("Re record", ({ roomID, username }) => {
+    socket.on("Re record", ({ chatroomID, username }) => {
       // console.log("rerecording")
-      io.to(roomID).emit("123", {username});
+      io.to(chatroomID).emit("repeat", {username});
     })
     socket.on('leaveRoom', ({chatroomID, username}) => {
       socket.leave(chatroomID);

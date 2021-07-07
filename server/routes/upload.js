@@ -124,10 +124,11 @@ function transcriptGoogle(audio_link) {
     try {
       axios({
         method: 'GET',
-        url: `${ASR_URL}/api/v1/stt?url=${audio_link}`,
-        headers: {
-          'Authorization': "Bearer " + `${ASR_AUTH_KEY}`,
-        },
+        url: `https://dev-asr.iristech.club/v1/transcript?url=${audio_link}`,
+        // url: `${ASR_URL}/api/v1/stt?url=${audio_link}`,
+        // headers: {
+        //   'Authorization': "Bearer " + `${ASR_AUTH_KEY}`,
+        // },
       }).then(res => {
         if (res.data.status === 1) {
           console.log(res.data)
@@ -190,9 +191,9 @@ router.post('/fileV3', async (req, res) => {
   const fileName = req.body.audio_link.split("/")[-1]
   const speaker_id = req.body.speaker_id;
   const transcript = req.body.transcript;
-
+  const bot_transcript = req.body.bot_transcript
   await saveAudioMongo(user, room, username, audio_link, transcript, "Conversation", "record",
-      null, false, "", transcript, "",
+      null, false, "", bot_transcript, "",
       duration, null, false, [], fileName, speaker_id)
       .then(audioID => {
         // update audio history in room

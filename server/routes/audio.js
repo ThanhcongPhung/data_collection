@@ -133,7 +133,8 @@ router.put("/updateLike", (req, res) => {
   const userID = req.body.userID;
   const isLike = req.body.isLike;
   const upVoteTime = req.body.upVoteTime;
-  console.log(req.body)
+  const transcript = req.body.transcript;
+  // console.log(req.body)
   Validate.findOne({user: userID}, function (err, existingUser) {
     if (!err && existingUser) {
       existingUser.up_vote.push({audio: audioID, up_vote_time: upVoteTime})
@@ -156,6 +157,7 @@ router.put("/updateLike", (req, res) => {
         } else {
           audio.isValidate = true;
           audio.isLike = isLike;
+          audio.transcript=transcript;
           audio.up_vote.push({user: userID, upVoteTime: upVoteTime});
           return audio.save();
         }
