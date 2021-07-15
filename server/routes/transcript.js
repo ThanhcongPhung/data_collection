@@ -123,28 +123,44 @@ router.post("/export-audio", async (req, res) => {
   const { destination } = req.body;
   const audios = await Audio.find()
       .populate("user")
+      .populate("room")
       .exec();
   let result = [];
   audios.forEach(item => {
-    let audio = {};
-    audio.id = item._id;
-    audio.userid = item.user._id;
-    audio.audio_name = item.audioLink.split('/')[-1];
-    audio.username = item.username;
-    audio.audioLink = item.audioLink;
-    audio.transcript = item.transcript;
-    audio.recordDevice = item.recordDevice;
-    audio.isValidate = item.isValidate;
-    audio.origin_transcript = item.origin_transcript;
-    audio.bot_transcript = item.bot_transcript;
-    audio.final_transcript = item.final_transcript;
-    audio.duration = item.duration;
-    audio.speaker_id = item.speaker_id;
-    audio.up_vote = item.up_vote.length;
-    audio.down_vote = item.down_vote.length;
-    result.push(audio)
+    // if(item.recordDevice!=="import"){
+      let audio = {};
+      audio.id = item._id;
+      audio.userid = item.user._id;
+      // console.log("room",item.room)
+      if(item.room!==null){
+        audio.topic = item.room.task;
+        audio.room_name_asr = item.room.name;
+      }else{
+        audio.topic = "";
+        audio.room_name_asr = "";
+      }
+      audio.room_name_slu = item.room_name;
+      audio.user_accent = item.user.accent;
+      audio.user_gender = item.user.gender;
+      audio.user_age = item.user.age;
+      audio.audio_name = item.audioLink.split('/')[-1];
+      audio.username = item.username;
+      audio.audioLink = item.audioLink;
+      audio.transcript = item.transcript;
+      audio.recordDevice = item.recordDevice;
+      audio.isValidate = item.isValidate;
+      audio.origin_transcript = item.origin_transcript;
+      audio.bot_transcript = item.bot_transcript;
+      audio.final_transcript = item.final_transcript;
+      audio.duration = item.duration;
+      audio.speaker_id = item.speaker_id;
+      audio.up_vote = item.up_vote.length;
+      audio.down_vote = item.down_vote.length;
+      result.push(audio)
+    // }
   })
-  exportObject(destination, result)
+  // console.log(result)
+  // exportObject(destination, result)
   res.status(200).send({result: result});
 });
 module.exports = router;
