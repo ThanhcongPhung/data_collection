@@ -5,12 +5,25 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config = require("./configs/key");
 const mongoose = require("mongoose");
+const morgan = require('morgan');
+const helmet = require('helmet');
+const compression = require('compression');
 
-
+const camelCaseReq = require('./middlewares/camelCaseReq');
+const omitReq = require('./middlewares/omitReq');
+const snakeCaseRes = require('./middlewares/snakeCaseRes');
+const errorHandler = require('./middlewares/errorHandler');
 
 
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
+app.use(compression());
+app.use(morgan('dev'));
+app.use(camelCaseReq);
+app.use(omitReq);
+app.use(snakeCaseRes());
+app.use(errorHandler);
 
 mongoose.connect(config.mongoURI,
     {
